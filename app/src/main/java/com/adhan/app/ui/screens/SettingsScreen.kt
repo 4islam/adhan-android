@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -24,7 +25,16 @@ fun SettingsScreen(
     onBack: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val methods = listOf("Ahmadiyya", "MWL", "ISNA", "Egypt", "Makkah", "Karachi", "Tehran", "Jafari")
+    val calcMethods = mapOf(
+        "Ahmadiyya" to PrayerTimesCalculator.Ahmadiyya,
+        "MWL" to PrayerTimesCalculator.MWL,
+        "ISNA" to PrayerTimesCalculator.ISNA,
+        "Egypt" to PrayerTimesCalculator.Egypt,
+        "Makkah" to PrayerTimesCalculator.Makkah,
+        "Karachi" to PrayerTimesCalculator.Karachi,
+        "Tehran" to PrayerTimesCalculator.Tehran,
+        "Jafari" to PrayerTimesCalculator.Jafari
+    )
     
     Column(
         modifier = Modifier
@@ -36,7 +46,7 @@ fun SettingsScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(onClick = onBack) {
-                Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = Color.White)
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = Color.White)
             }
             Text(
                 text = "Settings",
@@ -53,11 +63,11 @@ fun SettingsScreen(
         ) {
             item {
                 SettingsSection("Calculation Method") {
-                    methods.forEach { method ->
+                    calcMethods.forEach { (name, id) ->
                         SettingsItem(
-                            label = method,
-                            isSelected = false, // TODO: Connect to state
-                            onClick = { /* TODO */ }
+                            label = name,
+                            isSelected = uiState.calcMethod == id,
+                            onClick = { viewModel.setCalcMethod(id) }
                         )
                     }
                 }
@@ -65,20 +75,68 @@ fun SettingsScreen(
             
             item {
                 SettingsSection("Madhab (Asr)") {
-                    SettingsItem(label = "Standard (Shafi, Maliki, Hanbali)", isSelected = true, onClick = {})
-                    SettingsItem(label = "Hanafi", isSelected = false, onClick = {})
+                    SettingsItem(
+                        label = "Standard (Shafi, Maliki, Hanbali)",
+                        isSelected = uiState.asrJuristic == PrayerTimesCalculator.Shafii,
+                        onClick = { viewModel.setAsrMethod(PrayerTimesCalculator.Shafii) }
+                    )
+                    SettingsItem(
+                        label = "Hanafi",
+                        isSelected = uiState.asrJuristic == PrayerTimesCalculator.Hanafi,
+                        onClick = { viewModel.setAsrMethod(PrayerTimesCalculator.Hanafi) }
+                    )
+                }
+            }
+
+            item {
+                SettingsSection("Tahajjud Alarm") {
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(8.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text("Enable Tahajjud Alarm", color = Color.White)
+                        Switch(
+                            checked = uiState.isTahajjudEnabled,
+                            onCheckedChange = { viewModel.setTahajjudEnabled(it) }
+                        )
+                    }
+                    if (uiState.isTahajjudEnabled) {
+                        Column(modifier = Modifier.padding(8.dp)) {
+                            Text(
+                                text = "Offset: ${uiState.tahajjudOffset} minutes before Fajr",
+                                color = Color.White.copy(alpha = 0.7f),
+                                style = MaterialTheme.typography.labelMedium
+                            )
+                            Slider(
+                                value = uiState.tahajjudOffset.toFloat(),
+                                onValueChange = { viewModel.setTahajjudOffset(it.toInt()) },
+                                valueRange = 30f..90f,
+                                steps = 3, // 30, 45, 60, 75, 90
+                                colors = SliderDefaults.colors(
+                                    thumbColor = Color.White,
+                                    activeTrackColor = Color.White.copy(alpha = 0.7f)
+                                )
+                            )
+                        }
+                    }
                 }
             }
 
             item {
                 SettingsSection("Notifications") {
                     Row(
-                        modifier = Modifier.fillMaxWidth().padding(8.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text("Enable Adhan Audio", color = Color.White)
-                        Switch(checked = true, onCheckedChange = {})
+                        Switch(
+                            checked = uiState.isAudioEnabled,
+                            onCheckedChange = { viewModel.setAudioEnabled(it) }
+                        )
                     }
                 }
             }

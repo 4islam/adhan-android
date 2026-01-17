@@ -57,7 +57,7 @@ fun PrayerTimesScreen(viewModel: PrayerTimesViewModel) {
 }
 
 @Composable
-fun PrayerTimeRow(name: String, time: String, isCombined: Boolean) {
+fun PrayerTimeRow(name: String, time: String, isCombined: Boolean, isEvent: Boolean = false) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -66,9 +66,9 @@ fun PrayerTimeRow(name: String, time: String, isCombined: Boolean) {
         Column {
             Text(
                 text = name,
-                style = MaterialTheme.typography.titleMedium,
-                color = Color.White,
-                fontWeight = if (isCombined) FontWeight.Bold else FontWeight.Medium
+                style = if (isEvent) MaterialTheme.typography.bodyMedium else MaterialTheme.typography.titleMedium,
+                color = if (isEvent) Color.White.copy(alpha = 0.7f) else Color.White,
+                fontWeight = if (isCombined) FontWeight.Bold else if (isEvent) FontWeight.Normal else FontWeight.Medium
             )
             if (isCombined) {
                 Text(
@@ -80,9 +80,9 @@ fun PrayerTimeRow(name: String, time: String, isCombined: Boolean) {
         }
         Text(
             text = time,
-            style = MaterialTheme.typography.headlineSmall,
-            color = Color.White,
-            fontWeight = FontWeight.Bold
+            style = if (isEvent) MaterialTheme.typography.titleMedium else MaterialTheme.typography.headlineSmall,
+            color = if (isEvent) Color.White.copy(alpha = 0.7f) else Color.White,
+            fontWeight = if (isEvent) FontWeight.Medium else FontWeight.Bold
         )
     }
 }

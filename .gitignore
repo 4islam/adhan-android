@@ -1,0 +1,37 @@
+# Android
+build/
+app/build/
+.gradle/
+local.properties
+*.apk
+*.ap_
+*.dex
+*.class
+bin/
+gen/
+
+# Kotlin/JVM
+.kotlin/
+*.kotlin_module
+
+# IDE - Android Studio / IntelliJ
+.idea/
+*.iml
+*.iws
+*.out
+cmake-build-*/
+.cxx/
+capture/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Adhan Project Specific
+*.png
+build.log
+prayerTime.js
+run_test_gen.js
+gen_test_data_fragment.js
+empty.gradle
+Astrology.ts

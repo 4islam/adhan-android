@@ -53,12 +53,42 @@ fun DashboardScreen(viewModel: PrayerTimesViewModel) {
                     .padding(20.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                items(uiState.times) { info ->
+                // Prayer Times Section
+                item {
+                    Text(
+                        "Prayer Times",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = Color.White.copy(alpha = 0.5f),
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                }
+                items(uiState.prayerTimes) { info ->
                     PrayerTimeRow(info.name, info.time, info.isCombined)
-                    if (info != uiState.times.last()) {
+                    if (info != uiState.prayerTimes.last()) {
                         Divider(
                             color = Color.White.copy(alpha = 0.1f),
-                            modifier = Modifier.padding(top = 16.dp)
+                            modifier = Modifier.padding(vertical = 12.dp)
+                        )
+                    }
+                }
+
+                item { Spacer(modifier = Modifier.height(16.dp)) }
+
+                // Solar Events Section
+                item {
+                    Text(
+                        "Solar Events (Not Prayers)",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = Color.White.copy(alpha = 0.5f),
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                }
+                items(uiState.solarEvents) { info ->
+                    PrayerTimeRow(info.name, info.time, false, isEvent = true)
+                    if (info != uiState.solarEvents.last()) {
+                        Divider(
+                            color = Color.White.copy(alpha = 0.05f),
+                            modifier = Modifier.padding(vertical = 8.dp)
                         )
                     }
                 }

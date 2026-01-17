@@ -9,6 +9,7 @@ import com.adhan.app.ui.components.InteractiveMap
 import com.adhan.app.ui.components.QiblaCompass
 import com.adhan.app.ui.components.SkylightVisualizer
 import com.adhan.app.ui.screens.DashboardScreen
+import com.adhan.app.ui.screens.SettingsScreen
 
 @Composable
 fun MainNavigation(
@@ -44,6 +45,12 @@ fun MainNavigation(
                 userLat = uiState.latitude,
                 userLng = uiState.longitude,
                 deviceHeading = uiState.deviceHeading
+            )
+        }
+        composable(NavScreen.Settings.route) {
+            SettingsScreen(
+                viewModel = viewModel,
+                onBack = { navController.popBackStack() }
             )
         }
     }

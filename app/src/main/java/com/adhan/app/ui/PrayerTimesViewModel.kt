@@ -28,7 +28,9 @@ data class PrayerTimesState(
 )
 
 @HiltViewModel
-class PrayerTimesViewModel @Inject constructor() : ViewModel() {
+class PrayerTimesViewModel @Inject constructor(
+    private val alarmManager: com.adhan.app.infra.PrayerAlarmManager
+) : ViewModel() {
     private val _uiState = MutableStateFlow(PrayerTimesState())
     val uiState: StateFlow<PrayerTimesState> = _uiState.asStateFlow()
 
@@ -77,6 +79,10 @@ class PrayerTimesViewModel @Inject constructor() : ViewModel() {
             times = combinedTimes,
             hijriDate = hijriString
         )
+        
+        // Schedule alarms for the new times
+        alarmManager.scheduleAlarms(combinedTimes)
+        
         updateNextPrayer()
     }
 

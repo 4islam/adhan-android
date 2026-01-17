@@ -6,6 +6,7 @@ import android.view.View;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.SavedStateHandle;
 import androidx.lifecycle.ViewModel;
+import com.adhan.app.infra.PrayerAlarmManager;
 import com.adhan.app.ui.PrayerTimesViewModel;
 import com.adhan.app.ui.PrayerTimesViewModel_HiltModules_KeyModule_ProvideFactory;
 import com.google.common.collect.ImmutableMap;
@@ -24,6 +25,7 @@ import dagger.hilt.android.internal.lifecycle.DefaultViewModelFactories_Internal
 import dagger.hilt.android.internal.managers.ActivityRetainedComponentManager_LifecycleModule_ProvideActivityRetainedLifecycleFactory;
 import dagger.hilt.android.internal.managers.SavedStateHandleHolder;
 import dagger.hilt.android.internal.modules.ApplicationContextModule;
+import dagger.hilt.android.internal.modules.ApplicationContextModule_ProvideContextFactory;
 import dagger.internal.DaggerGenerated;
 import dagger.internal.DoubleCheck;
 import dagger.internal.Preconditions;
@@ -51,25 +53,20 @@ public final class DaggerAdhanApplication_HiltComponents_SingletonC {
     return new Builder();
   }
 
-  public static AdhanApplication_HiltComponents.SingletonC create() {
-    return new Builder().build();
-  }
-
   public static final class Builder {
+    private ApplicationContextModule applicationContextModule;
+
     private Builder() {
     }
 
-    /**
-     * @deprecated This module is declared, but an instance is not used in the component. This method is a no-op. For more, see https://dagger.dev/unused-modules.
-     */
-    @Deprecated
     public Builder applicationContextModule(ApplicationContextModule applicationContextModule) {
-      Preconditions.checkNotNull(applicationContextModule);
+      this.applicationContextModule = Preconditions.checkNotNull(applicationContextModule);
       return this;
     }
 
     public AdhanApplication_HiltComponents.SingletonC build() {
-      return new SingletonCImpl();
+      Preconditions.checkBuilderRequirement(applicationContextModule, ApplicationContextModule.class);
+      return new SingletonCImpl(applicationContextModule);
     }
   }
 
@@ -444,7 +441,7 @@ public final class DaggerAdhanApplication_HiltComponents_SingletonC {
       public T get() {
         switch (id) {
           case 0: // com.adhan.app.ui.PrayerTimesViewModel 
-          return (T) new PrayerTimesViewModel();
+          return (T) new PrayerTimesViewModel(singletonCImpl.prayerAlarmManagerProvider.get());
 
           default: throw new AssertionError(id);
         }
@@ -522,15 +519,25 @@ public final class DaggerAdhanApplication_HiltComponents_SingletonC {
   }
 
   private static final class SingletonCImpl extends AdhanApplication_HiltComponents.SingletonC {
+    private final ApplicationContextModule applicationContextModule;
+
     private final SingletonCImpl singletonCImpl = this;
 
-    private SingletonCImpl() {
+    private Provider<PrayerAlarmManager> prayerAlarmManagerProvider;
 
+    private SingletonCImpl(ApplicationContextModule applicationContextModuleParam) {
+      this.applicationContextModule = applicationContextModuleParam;
+      initialize(applicationContextModuleParam);
 
     }
 
+    @SuppressWarnings("unchecked")
+    private void initialize(final ApplicationContextModule applicationContextModuleParam) {
+      this.prayerAlarmManagerProvider = DoubleCheck.provider(new SwitchingProvider<PrayerAlarmManager>(singletonCImpl, 0));
+    }
+
     @Override
-    public void injectAdhanApplication(AdhanApplication arg0) {
+    public void injectAdhanApplication(AdhanApplication adhanApplication) {
     }
 
     @Override
@@ -546,6 +553,28 @@ public final class DaggerAdhanApplication_HiltComponents_SingletonC {
     @Override
     public ServiceComponentBuilder serviceComponentBuilder() {
       return new ServiceCBuilder(singletonCImpl);
+    }
+
+    private static final class SwitchingProvider<T> implements Provider<T> {
+      private final SingletonCImpl singletonCImpl;
+
+      private final int id;
+
+      SwitchingProvider(SingletonCImpl singletonCImpl, int id) {
+        this.singletonCImpl = singletonCImpl;
+        this.id = id;
+      }
+
+      @SuppressWarnings("unchecked")
+      @Override
+      public T get() {
+        switch (id) {
+          case 0: // com.adhan.app.infra.PrayerAlarmManager 
+          return (T) new PrayerAlarmManager(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule));
+
+          default: throw new AssertionError(id);
+        }
+      }
     }
   }
 }

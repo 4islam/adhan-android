@@ -9,6 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CompassCalibration
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Map
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.WbSunny
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -24,6 +25,7 @@ sealed class NavScreen(val route: String, val icon: ImageVector, val label: Stri
     object Skylight : NavScreen("skylight", Icons.Filled.WbSunny, "Sky")
     object Map : NavScreen("map", Icons.Filled.Map, "Map")
     object Qibla : NavScreen("qibla", Icons.Filled.CompassCalibration, "Qibla")
+    object Settings : NavScreen("settings", Icons.Filled.Settings, "Settings")
 }
 
 @Composable
@@ -35,7 +37,8 @@ fun BottomDock(
         NavScreen.Dashboard,
         NavScreen.Skylight,
         NavScreen.Map,
-        NavScreen.Qibla
+        NavScreen.Qibla,
+        NavScreen.Settings
     )
 
     Surface(

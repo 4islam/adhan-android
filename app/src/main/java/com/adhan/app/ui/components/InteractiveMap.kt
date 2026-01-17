@@ -18,20 +18,59 @@ fun InteractiveMap(
     initialLng: Double,
     onLocationOverride: (Double, Double) -> Unit
 ) {
+    val mecca = LatLng(21.4225, 39.8262)
+    val userLocation = LatLng(initialLat, initialLng)
+    
     val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(LatLng(initialLat, initialLng), 10f)
+        position = CameraPosition.fromLatLngZoom(userLocation, 10f)
+    }
+
+    // Keep camera focused on location updates
+    LaunchedEffect(initialLat, initialLng) {
+        cameraPositionState.animate(
+            com.google.android.gms.maps.CameraUpdateFactory.newLatLng(userLocation)
+        )
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
         GoogleMap(
             modifier = Modifier.fillMaxSize(),
             cameraPositionState = cameraPositionState,
-            properties = MapProperties(mapType = MapType.SATELLITE),
-            uiSettings = MapUiSettings(zoomControlsEnabled = false),
+            properties = MapProperties(
+                mapType = MapType.SATELLITE,
+                isMyLocationEnabled = true
+            ),
+            uiSettings = MapUiSettings(
+                zoomControlsEnabled = true,
+                zoomGesturesEnabled = true,
+                myLocationButtonEnabled = true
+            ),
             onMapClick = { latLng ->
                 onLocationOverride(latLng.latitude, latLng.longitude)
             }
-        )
+        ) {
+            // Shortest distance (geodesic) line to Mecca
+            Polyline(
+                points = listOf(userLocation, mecca),
+                color = Color(0xFF2196F3), // Material Blue
+                width = 8f,
+                geodesic = true
+            )
+
+            // Marker for current/override location
+            Marker(
+                state = MarkerState(position = userLocation),
+                title = "Current Location",
+                snippet = "Shortest path to Mecca: Blue Line"
+            )
+
+            // Marker for Mecca
+            Marker(
+                state = MarkerState(position = mecca),
+                title = "Kaaba, Mecca",
+                snippet = "The Qibla Direction"
+            )
+        }
 
         // Overlay Instructions
         Surface(

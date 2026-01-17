@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.adhan.app-mergeDebugResources-75:/values-v24/values-v24.xml",
+            "outputFile": "com.adhan.app-mergeDebugResources-80:/values-v24/values-v24.xml",
             "map": [
                 {
-                    "source": "/Users/nislam/.gradle/caches/transforms-4/a2e494fd29cb145964b7eef5de8d4f02/transformed/material-1.11.0/res/values-v24/values-v24.xml",
+                    "source": "/Users/nislam/.gradle/caches/transforms-4/7908ff9e1a9c8e80dbcddab607181e38/transformed/material-1.11.0/res/values-v24/values-v24.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,9,12,15",
                         "startColumns": "4,4,4,4,4,4,4,4",
@@ -23,7 +23,7 @@
                     }
                 },
                 {
-                    "source": "/Users/nislam/.gradle/caches/transforms-4/8053f29e4721c58d80e771f232f468cf/transformed/media-1.7.0/res/values-v24/values-v24.xml",
+                    "source": "/Users/nislam/.gradle/caches/transforms-4/41550fb6c6c6b289b6ddfd4a8c3b811c/transformed/media-1.7.0/res/values-v24/values-v24.xml",
                     "from": {
                         "startLines": "2,3,4,5",
                         "startColumns": "4,4,4,4",
@@ -40,7 +40,7 @@
                     }
                 },
                 {
-                    "source": "/Users/nislam/.gradle/caches/transforms-4/4a454608a9e4379a5ecfec5841fbbe3c/transformed/appcompat-1.6.1/res/values-v24/values-v24.xml",
+                    "source": "/Users/nislam/.gradle/caches/transforms-4/f57925850062a5ca220430dfe8ad7d5c/transformed/appcompat-1.6.1/res/values-v24/values-v24.xml",
                     "from": {
                         "startLines": "2,3",
                         "startColumns": "4,4",

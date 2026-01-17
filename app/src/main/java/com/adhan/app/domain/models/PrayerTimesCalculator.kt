@@ -44,6 +44,7 @@ class PrayerTimesCalculator {
     private var dhuhrMinutes = 0
     private var adjustHighLats = AngleBased
     private var timeFormat = Time24
+    private var smartCombining = true // Default enabled
 
     private var lat: Double = 0.0
     private var lng: Double = 0.0
@@ -148,6 +149,17 @@ class PrayerTimesCalculator {
         this.timeFormat = timeFormat
     }
 
+    fun setSmartCombining(enabled: Boolean) {
+        smartCombining = enabled
+    }
+
+    data class CombinedPrayerInfo(
+        val name: String,
+        val time: String,
+        val isCombined: Boolean = false,
+        val originalNames: List<String> = emptyList()
+    )
+
     // ---------------------- Calculation Functions -----------------------
 
     private fun sunPosition(jd: Double): DoubleArray {
@@ -213,7 +225,39 @@ class PrayerTimesCalculator {
             times = computeTimes(times)
         }
         times = adjustTimes(times)
+        
         return adjustTimesFormat(times)
+    }
+
+    fun getCombinedPrayerTimes(date: Date, latitude: Double, longitude: Double, tZone: Double? = null): List<CombinedPrayerInfo> {
+        val times = getPrayerTimes(date, latitude, longitude, tZone)
+        val names = timeNames
+        
+        val result = mutableListOf<CombinedPrayerInfo>()
+        var i = 0
+        while (i < names.size) {
+            val name = names[i]
+            val time = times[i]
+            
+            if (smartCombining) {
+                // Combine Dhuhr (2) and Asr (3)
+                if (name == "Dhuhr" && i + 1 < names.size && names[i+1] == "Asr") {
+                    result.add(CombinedPrayerInfo("Dhuhr/Asr", time, true, listOf("Dhuhr", "Asr")))
+                    i += 2
+                    continue
+                }
+                // Combine Maghrib (5) and Isha (6)
+                if (name == "Maghrib" && i + 1 < names.size && names[i+1] == "Isha") {
+                    result.add(CombinedPrayerInfo("Maghrib/Isha", time, true, listOf("Maghrib", "Isha")))
+                    i += 2
+                    continue
+                }
+            }
+            
+            result.add(CombinedPrayerInfo(name, time))
+            i++
+        }
+        return result
     }
 
     private fun adjustTimes(times: DoubleArray): DoubleArray {

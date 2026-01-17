@@ -61,6 +61,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.material.icons.extended)
     implementation(libs.material)
 
     
@@ -76,6 +77,13 @@ dependencies {
     implementation(libs.androidx.media3.exoplayer)
     implementation(libs.androidx.media3.session)
     implementation(libs.androidx.media3.ui)
+
+    // Navigation
+    implementation(libs.androidx.navigation.compose)
+
+    // Maps
+    implementation(libs.maps.compose)
+    implementation(libs.play.services.maps)
 
     // Test
     testImplementation(libs.junit)

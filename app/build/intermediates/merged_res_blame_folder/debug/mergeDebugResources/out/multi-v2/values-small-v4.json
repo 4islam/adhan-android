@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.adhan.app-mergeDebugResources-75:/values-small-v4/values-small-v4.xml",
+            "outputFile": "com.adhan.app-mergeDebugResources-80:/values-small-v4/values-small-v4.xml",
             "map": [
                 {
-                    "source": "/Users/nislam/.gradle/caches/transforms-4/a2e494fd29cb145964b7eef5de8d4f02/transformed/material-1.11.0/res/values-small-v4/values-small-v4.xml",
+                    "source": "/Users/nislam/.gradle/caches/transforms-4/7908ff9e1a9c8e80dbcddab607181e38/transformed/material-1.11.0/res/values-small-v4/values-small-v4.xml",
                     "from": {
                         "startLines": "2,3,4,5",
                         "startColumns": "4,4,4,4",

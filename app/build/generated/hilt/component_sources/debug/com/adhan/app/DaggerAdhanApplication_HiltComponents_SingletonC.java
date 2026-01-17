@@ -530,7 +530,7 @@ public final class DaggerAdhanApplication_HiltComponents_SingletonC {
     }
 
     @Override
-    public void injectAdhanApplication(AdhanApplication adhanApplication) {
+    public void injectAdhanApplication(AdhanApplication arg0) {
     }
 
     @Override

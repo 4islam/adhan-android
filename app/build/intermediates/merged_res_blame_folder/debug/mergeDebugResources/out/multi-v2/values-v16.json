@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.adhan.app-mergeDebugResources-75:/values-v16/values-v16.xml",
+            "outputFile": "com.adhan.app-mergeDebugResources-80:/values-v16/values-v16.xml",
             "map": [
                 {
-                    "source": "/Users/nislam/.gradle/caches/transforms-4/4a454608a9e4379a5ecfec5841fbbe3c/transformed/appcompat-1.6.1/res/values-v16/values-v16.xml",
+                    "source": "/Users/nislam/.gradle/caches/transforms-4/f57925850062a5ca220430dfe8ad7d5c/transformed/appcompat-1.6.1/res/values-v16/values-v16.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",
@@ -23,7 +23,7 @@
                     }
                 },
                 {
-                    "source": "/Users/nislam/.gradle/caches/transforms-4/d05705f996036a9ec1ee2b347d1337a3/transformed/core-1.12.0/res/values-v16/values-v16.xml",
+                    "source": "/Users/nislam/.gradle/caches/transforms-4/abfdfea96cb7bd698d1b343b3d96622c/transformed/core-1.12.0/res/values-v16/values-v16.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",

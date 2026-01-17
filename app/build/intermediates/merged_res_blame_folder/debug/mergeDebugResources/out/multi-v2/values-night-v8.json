@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.adhan.app-mergeDebugResources-75:/values-night-v8/values-night-v8.xml",
+            "outputFile": "com.adhan.app-mergeDebugResources-80:/values-night-v8/values-night-v8.xml",
             "map": [
                 {
-                    "source": "/Users/nislam/.gradle/caches/transforms-4/4a454608a9e4379a5ecfec5841fbbe3c/transformed/appcompat-1.6.1/res/values-night-v8/values-night-v8.xml",
+                    "source": "/Users/nislam/.gradle/caches/transforms-4/f57925850062a5ca220430dfe8ad7d5c/transformed/appcompat-1.6.1/res/values-night-v8/values-night-v8.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9",
                         "startColumns": "4,4,4,4,4,4,4,4",
@@ -21,7 +21,7 @@
                     }
                 },
                 {
-                    "source": "/Users/nislam/.gradle/caches/transforms-4/a2e494fd29cb145964b7eef5de8d4f02/transformed/material-1.11.0/res/values-night-v8/values-night-v8.xml",
+                    "source": "/Users/nislam/.gradle/caches/transforms-4/7908ff9e1a9c8e80dbcddab607181e38/transformed/material-1.11.0/res/values-night-v8/values-night-v8.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",

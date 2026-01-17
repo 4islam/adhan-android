@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.adhan.app-mergeDebugResources-75:/values-hdpi-v4/values-hdpi-v4.xml",
+            "outputFile": "com.adhan.app-mergeDebugResources-80:/values-hdpi-v4/values-hdpi-v4.xml",
             "map": [
                 {
-                    "source": "/Users/nislam/.gradle/caches/transforms-4/4a454608a9e4379a5ecfec5841fbbe3c/transformed/appcompat-1.6.1/res/values-hdpi-v4/values-hdpi-v4.xml",
+                    "source": "/Users/nislam/.gradle/caches/transforms-4/f57925850062a5ca220430dfe8ad7d5c/transformed/appcompat-1.6.1/res/values-hdpi-v4/values-hdpi-v4.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",

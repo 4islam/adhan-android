@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.adhan.app-mergeDebugResources-75:/values-v23/values-v23.xml",
+            "outputFile": "com.adhan.app-mergeDebugResources-80:/values-v23/values-v23.xml",
             "map": [
                 {
-                    "source": "/Users/nislam/.gradle/caches/transforms-4/56f122f0ff660dd25a1c9bd4df2b51f8/transformed/cardview-1.0.0/res/values-v23/values-v23.xml",
+                    "source": "/Users/nislam/.gradle/caches/transforms-4/d49e0c8f0a38b52dfac04645b041aeee/transformed/cardview-1.0.0/res/values-v23/values-v23.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",
@@ -23,7 +23,7 @@
                     }
                 },
                 {
-                    "source": "/Users/nislam/.gradle/caches/transforms-4/a2e494fd29cb145964b7eef5de8d4f02/transformed/material-1.11.0/res/values-v23/values-v23.xml",
+                    "source": "/Users/nislam/.gradle/caches/transforms-4/7908ff9e1a9c8e80dbcddab607181e38/transformed/material-1.11.0/res/values-v23/values-v23.xml",
                     "from": {
                         "startLines": "2,5,9,13,16,19,22,25,28,32",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4",
@@ -42,7 +42,7 @@
                     }
                 },
                 {
-                    "source": "/Users/nislam/.gradle/caches/transforms-4/e252e50f213f15753e6029f6027dca1b/transformed/work-runtime-2.9.0/res/values-v23/values-v23.xml",
+                    "source": "/Users/nislam/.gradle/caches/transforms-4/4845b19d2759c40eb75c901b2195e8a6/transformed/work-runtime-2.9.0/res/values-v23/values-v23.xml",
                     "from": {
                         "startLines": "2,3",
                         "startColumns": "4,4",
@@ -52,7 +52,7 @@
                     }
                 },
                 {
-                    "source": "/Users/nislam/.gradle/caches/transforms-4/4a454608a9e4379a5ecfec5841fbbe3c/transformed/appcompat-1.6.1/res/values-v23/values-v23.xml",
+                    "source": "/Users/nislam/.gradle/caches/transforms-4/f57925850062a5ca220430dfe8ad7d5c/transformed/appcompat-1.6.1/res/values-v23/values-v23.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,20,34,35,36,39,43,44,45,46",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4",

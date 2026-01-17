@@ -11,89 +11,72 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.adhan.app.ui.PrayerTimeRow
+import com.adhan.app.domain.models.PrayerTimesCalculator
 import com.adhan.app.ui.PrayerTimesViewModel
 import com.adhan.app.ui.components.HeroDashboard
+import com.adhan.app.ui.components.AstroRow
+import com.adhan.app.ui.components.PrayerCard
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
+import androidx.compose.ui.graphics.vector.ImageVector
 
 @Composable
 fun DashboardScreen(viewModel: PrayerTimesViewModel) {
     val uiState by viewModel.uiState.collectAsState()
 
-    Column(
+    LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .statusBarsPadding()
-            .padding(bottom = 80.dp), // Leave space for bottom dock
-        horizontalAlignment = Alignment.CenterHorizontally
+            .statusBarsPadding(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        contentPadding = PaddingValues(bottom = 120.dp) // Space for floating dock
     ) {
-        // Hero Dashboard
-        HeroDashboard(
-            nextPrayerName = uiState.nextPrayerName,
-            nextPrayerTime = uiState.nextPrayerTime,
-            hijriDate = uiState.hijriDate,
-            gregorianDate = uiState.gregorianDate
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        // Prayer Times Card
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 24.dp)
-                .weight(1f),
-            shape = RoundedCornerShape(24.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = Color.White.copy(alpha = 0.15f)
-            ),
-            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
-        ) {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(20.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                // Prayer Times Section
-                item {
-                    Text(
-                        "Prayer Times",
-                        style = MaterialTheme.typography.labelMedium,
-                        color = Color.White.copy(alpha = 0.5f),
-                        modifier = Modifier.padding(bottom = 8.dp)
-                    )
-                }
-                items(uiState.prayerTimes) { info ->
-                    PrayerTimeRow(info.name, info.time, info.isCombined)
-                    if (info != uiState.prayerTimes.last()) {
-                        Divider(
-                            color = Color.White.copy(alpha = 0.1f),
-                            modifier = Modifier.padding(vertical = 12.dp)
-                        )
-                    }
-                }
-
-                item { Spacer(modifier = Modifier.height(16.dp)) }
-
-                // Astronomical Events Section
-                item {
-                    Text(
-                        "Astronomical Events (Not Prayers)",
-                        style = MaterialTheme.typography.labelMedium,
-                        color = Color.White.copy(alpha = 0.5f),
-                        modifier = Modifier.padding(bottom = 8.dp)
-                    )
-                }
-                items(uiState.astronomicalEvents) { info ->
-                    PrayerTimeRow(info.name, info.time, false, isEvent = true)
-                    if (info != uiState.astronomicalEvents.last()) {
-                        Divider(
-                            color = Color.White.copy(alpha = 0.05f),
-                            modifier = Modifier.padding(vertical = 8.dp)
-                        )
-                    }
-                }
-            }
+        // Hero Section
+        item {
+            HeroDashboard(
+                nextPrayerName = uiState.nextPrayerName,
+                nextPrayerTime = uiState.nextPrayerTime,
+                hijriDate = uiState.hijriDate,
+                gregorianDate = uiState.gregorianDate
+            )
         }
+
+        // Astro Row
+        item {
+            val moonrise = uiState.astronomicalEvents.find { it.name == "Moonrise" }?.time ?: "--:--"
+            val solarNoon = uiState.astronomicalEvents.find { it.name == "Solar Noon" }?.time ?: "--:--"
+            val moonset = uiState.astronomicalEvents.find { it.name == "Moonset" }?.time ?: "--:--"
+            
+            AstroRow(
+                moonrise = moonrise,
+                solarNoon = solarNoon,
+                moonset = moonset
+            )
+            Spacer(modifier = Modifier.height(24.dp))
+        }
+
+        // Prayer Times List
+        items(uiState.prayerTimes) { info ->
+            val icon = getPrayerIcon(info.name)
+            PrayerCard(
+                name = info.name,
+                time = info.time,
+                icon = icon,
+                isCombined = info.isCombined,
+                isActive = info.name == uiState.nextPrayerName
+            )
+        }
+    }
+}
+
+private fun getPrayerIcon(name: String): ImageVector {
+    return when {
+        name.contains("Fajr") -> Icons.Default.NightsStay
+        name.contains("Sunrise") -> Icons.Default.Brightness5
+        name.contains("Dhuhr") || name.contains("Jummah") -> Icons.Default.WbSunny
+        name.contains("Asr") -> Icons.Default.Brightness7
+        name.contains("Maghrib") -> Icons.Default.Brightness6
+        name.contains("Isha") -> Icons.Default.NightsStay
+        else -> Icons.Default.Star
     }
 }

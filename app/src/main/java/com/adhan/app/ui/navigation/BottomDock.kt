@@ -18,7 +18,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 sealed class NavScreen(val route: String, val icon: ImageVector, val label: String) {
     object Dashboard : NavScreen("dashboard", Icons.Filled.Home, "Home")
@@ -35,40 +37,54 @@ fun BottomDock(
 ) {
     val screens = listOf(
         NavScreen.Dashboard,
-        NavScreen.Skylight,
-        NavScreen.Map,
         NavScreen.Qibla,
+        NavScreen.Map,
+        NavScreen.Skylight,
         NavScreen.Settings
     )
 
-    Surface(
+    Box(
         modifier = Modifier
-            .height(64.dp)
-            .fillMaxWidth(),
-        shape = RoundedCornerShape(32.dp),
-        color = Color.White.copy(alpha = 0.15f),
-        shadowElevation = 0.dp
+            .padding(horizontal = 24.dp)
+            .clip(RoundedCornerShape(32.dp))
+            .background(Color.Black.copy(alpha = 0.4f))
+            .padding(vertical = 12.dp, horizontal = 16.dp),
+        contentAlignment = Alignment.Center
     ) {
         Row(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
             screens.forEach { screen ->
                 val isSelected = currentRoute == screen.route
-                Box(
+                Column(
                     modifier = Modifier
-                        .size(48.dp)
-                        .clip(CircleShape)
-                        .background(if (isSelected) Color.White.copy(alpha = 0.2f) else Color.Transparent)
-                        .clickable { onNavigate(screen.route) },
-                    contentAlignment = Alignment.Center
+                        .clip(RoundedCornerShape(12.dp))
+                        .clickable { onNavigate(screen.route) }
+                        .padding(horizontal = 8.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Icon(
-                        imageVector = screen.icon,
-                        contentDescription = screen.label,
-                        tint = if (isSelected) Color.White else Color.White.copy(alpha = 0.6f),
-                        modifier = Modifier.size(24.dp)
+                    Box(
+                        modifier = Modifier
+                            .size(40.dp)
+                            .clip(CircleShape)
+                            .background(if (isSelected) Color.White.copy(alpha = 0.2f) else Color.Transparent),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = screen.icon,
+                            contentDescription = screen.label,
+                            tint = Color.White,
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+                    Text(
+                        text = screen.label,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = Color.White.copy(alpha = 0.8f),
+                        fontSize = 10.sp,
+                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
                     )
                 }
             }

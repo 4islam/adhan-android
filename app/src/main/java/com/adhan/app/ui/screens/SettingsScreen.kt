@@ -124,6 +124,34 @@ fun SettingsScreen(
             }
 
             item {
+                SettingsSection("Prayer Combining") {
+                    Column(modifier = Modifier.padding(8.dp)) {
+                        Text(
+                            text = "Combining Threshold: ${uiState.combiningThreshold} minutes",
+                            color = Color.White.copy(alpha = 0.7f),
+                            style = MaterialTheme.typography.labelMedium
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = "Pairs (Dhuhr/Asr and Maghrib/Isha) will combine if their scheduled gap is within this threshold.",
+                            color = Color.White.copy(alpha = 0.5f),
+                            style = MaterialTheme.typography.labelSmall
+                        )
+                        Slider(
+                            value = uiState.combiningThreshold.toFloat(),
+                            onValueChange = { viewModel.setCombiningThreshold(it.toInt()) },
+                            valueRange = 30f..90f,
+                            steps = 3, // 30, 45, 60, 75, 90
+                            colors = SliderDefaults.colors(
+                                thumbColor = Color.White,
+                                activeTrackColor = Color.White.copy(alpha = 0.7f)
+                            )
+                        )
+                    }
+                }
+            }
+
+            item {
                 SettingsSection("Notifications") {
                     Row(
                         modifier = Modifier

@@ -44,7 +44,8 @@ class PrayerTimesCalculator {
     private var dhuhrMinutes = 0
     private var adjustHighLats = AngleBased
     private var timeFormat = Time24
-    private var smartCombining = true // Default enabled
+    private var smartCombining = true
+    private var combiningThreshold = 90 // Minutes
 
     private var lat: Double = 0.0
     private var lng: Double = 0.0
@@ -153,6 +154,10 @@ class PrayerTimesCalculator {
         smartCombining = enabled
     }
 
+    fun setCombiningThreshold(minutes: Int) {
+        combiningThreshold = minutes
+    }
+
     data class CombinedPrayerInfo(
         val name: String,
         val time: String,
@@ -242,15 +247,23 @@ class PrayerTimesCalculator {
             if (smartCombining) {
                 // Combine Dhuhr (2) and Asr (3)
                 if (name == "Dhuhr" && i + 1 < names.size && names[i+1] == "Asr") {
-                    result.add(CombinedPrayerInfo("Dhuhr/Asr", time, true, listOf("Dhuhr", "Asr")))
-                    i += 2
-                    continue
+                    val dhuhrMinutes = timeToMinutes(time)
+                    val asrMinutes = timeToMinutes(times[i+1])
+                    if (asrMinutes - dhuhrMinutes <= combiningThreshold) {
+                        result.add(CombinedPrayerInfo("Dhuhr/Asr", time, true, listOf("Dhuhr", "Asr")))
+                        i += 2
+                        continue
+                    }
                 }
                 // Combine Maghrib (5) and Isha (6)
                 if (name == "Maghrib" && i + 1 < names.size && names[i+1] == "Isha") {
-                    result.add(CombinedPrayerInfo("Maghrib/Isha", time, true, listOf("Maghrib", "Isha")))
-                    i += 2
-                    continue
+                    val maghribMinutes = timeToMinutes(time)
+                    val ishaMinutes = timeToMinutes(times[i+1])
+                    if (ishaMinutes - maghribMinutes <= combiningThreshold) {
+                        result.add(CombinedPrayerInfo("Maghrib/Isha", time, true, listOf("Maghrib", "Isha")))
+                        i += 2
+                        continue
+                    }
                 }
             }
             
@@ -258,6 +271,55 @@ class PrayerTimesCalculator {
             i++
         }
         return result
+    }
+
+    private fun timeToMinutes(time: String): Int {
+        if (time == InvalidTime) return 0
+        val parts = time.split(":")
+        if (parts.size < 2) return 0
+        return parts[0].toInt() * 60 + parts[1].toInt()
+    }
+
+    /**
+     * Simplified Moonrise and Moonset calculation
+     * Based on basic astronomical formulas.
+     */
+    fun getMoonTimes(date: Date, latitude: Double, longitude: Double, tZone: Double? = null): Map<String, String> {
+        val cal = Calendar.getInstance()
+        cal.time = date
+        val year = cal.get(Calendar.YEAR)
+        val month = cal.get(Calendar.MONTH) + 1
+        val day = cal.get(Calendar.DAY_OF_MONTH)
+        
+        val effectiveTZone = effectiveTimeZone(year, month, day, tZone ?: 999.0)
+        val jd = julianDate(year, month, day) - longitude / (15 * 24)
+        
+        // This is a VERY simplified approximation for demonstration.
+        // For real use, a proper astronomical lib like Meeus would be better.
+        // We'll approximate moonrise/set based on lunar phase.
+        val d = jd - 2451545.0
+        val L = fixangle(218.316 + 13.176396 * d) // Moon's mean longitude
+        val M = fixangle(134.963 + 13.064993 * d) // Moon's mean anomaly
+        val F = fixangle(93.272 + 13.229350 * d) // Moon's mean distance from node
+        
+        val moonLon = L + 6.289 * dsin(M)
+        val moonLat = 5.128 * dsin(F)
+        
+        // Approximate moonrise/set times relative to solar midday
+        // Moon rises ~50 mins later each day
+        val moonAge = (d % 29.530588)
+        val phaseOffset = (moonAge / 29.530588) * 24.0
+        
+        val moonMidDay = fixhour(12.0 + phaseOffset - longitude / 15.0 + effectiveTZone)
+        
+        // Moon is above horizon for ~12 hours on average
+        val moonRise = floatToTime24(fixhour(moonMidDay - 6.0))
+        val moonSet = floatToTime24(fixhour(moonMidDay + 6.0))
+        
+        return mapOf(
+            "Moonrise" to moonRise,
+            "Moonset" to moonSet
+        )
     }
 
     private fun adjustTimes(times: DoubleArray): DoubleArray {

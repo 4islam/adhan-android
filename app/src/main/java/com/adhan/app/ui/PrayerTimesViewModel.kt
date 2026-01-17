@@ -16,7 +16,7 @@ import javax.inject.Inject
 
 data class PrayerTimesState(
     val prayerTimes: List<PrayerTimesCalculator.CombinedPrayerInfo> = emptyList(),
-    val solarEvents: List<PrayerTimesCalculator.CombinedPrayerInfo> = emptyList(),
+    val astronomicalEvents: List<PrayerTimesCalculator.CombinedPrayerInfo> = emptyList(),
     val locationName: String = "London, UK",
     val latitude: Double = 51.5074,
     val longitude: Double = -0.1278,
@@ -30,7 +30,8 @@ data class PrayerTimesState(
     val asrJuristic: Int = PrayerTimesCalculator.Shafii,
     val isAudioEnabled: Boolean = true,
     val isTahajjudEnabled: Boolean = false,
-    val tahajjudOffset: Int = 60 // minutes before Fajr
+    val tahajjudOffset: Int = 60, // minutes before Fajr
+    val combiningThreshold: Int = 90 // minutes
 )
 
 @HiltViewModel
@@ -54,13 +55,15 @@ class PrayerTimesViewModel @Inject constructor(
         val isAudioEnabled = prefs.getBoolean("audio_enabled", true)
         val isTahajjudEnabled = prefs.getBoolean("tahajjud_enabled", false)
         val tahajjudOffset = prefs.getInt("tahajjud_offset", 60)
+        val combiningThreshold = prefs.getInt("combining_threshold", 90)
         
         _uiState.value = _uiState.value.copy(
             calcMethod = calcMethod,
             asrJuristic = asrJuristic,
             isAudioEnabled = isAudioEnabled,
             isTahajjudEnabled = isTahajjudEnabled,
-            tahajjudOffset = tahajjudOffset
+            tahajjudOffset = tahajjudOffset,
+            combiningThreshold = combiningThreshold
         )
     }
 
@@ -93,6 +96,12 @@ class PrayerTimesViewModel @Inject constructor(
         updateTimes()
     }
 
+    fun setCombiningThreshold(threshold: Int) {
+        _uiState.value = _uiState.value.copy(combiningThreshold = threshold)
+        prefs.edit().putInt("combining_threshold", threshold).apply()
+        updateTimes()
+    }
+
     private fun startClock() {
         viewModelScope.launch {
             while (true) {
@@ -122,18 +131,20 @@ class PrayerTimesViewModel @Inject constructor(
         val calculator = PrayerTimesCalculator()
         calculator.setCalcMethod(_uiState.value.calcMethod)
         calculator.setAsrMethod(_uiState.value.asrJuristic)
+        calculator.setCombiningThreshold(_uiState.value.combiningThreshold)
         
         val date = _uiState.value.currentTime
         val lat = _uiState.value.latitude
         val lng = _uiState.value.longitude
         
         val allTimesMap = calculator.getCombinedPrayerTimes(date, lat, lng)
+        val moonTimes = calculator.getMoonTimes(date, lat, lng)
         val hijri = HijriCalendar.fromDate(date)
         val hijriString = "${hijri.day} ${hijri.monthName} ${hijri.year} AH"
 
-        // Separate Prayer Times and Solar Events
+        // Separate Prayer Times and Astronomical Events
         val prayerList = mutableListOf<PrayerTimesCalculator.CombinedPrayerInfo>()
-        val solarList = mutableListOf<PrayerTimesCalculator.CombinedPrayerInfo>()
+        val astroList = mutableListOf<PrayerTimesCalculator.CombinedPrayerInfo>()
         
         // Tahajjud Calculation
         if (_uiState.value.isTahajjudEnabled) {
@@ -144,14 +155,19 @@ class PrayerTimesViewModel @Inject constructor(
             }
         }
 
-        // Create explicit solar events list
+        // Create explicit astronomical events list
         val sunrise = allTimesMap.find { it.name == "Sunrise" }
         val sunset = allTimesMap.find { it.name == "Sunset" }
         val dhuhr = allTimesMap.find { it.name == "Dhuhr" || it.name == "Dhuhr/Asr" }
 
-        if (sunrise != null) solarList.add(sunrise)
-        if (dhuhr != null) solarList.add(dhuhr.copy(name = "Solar Noon", isCombined = false, time = dhuhr.time))
-        if (sunset != null) solarList.add(sunset)
+        if (sunrise != null) astroList.add(sunrise)
+        if (dhuhr != null) astroList.add(dhuhr.copy(name = "Solar Noon", isCombined = false, time = dhuhr.time))
+        if (sunset != null) astroList.add(sunset)
+        
+        // Add Moon timings
+        moonTimes.forEach { (name, time) ->
+            astroList.add(PrayerTimesCalculator.CombinedPrayerInfo(name, time))
+        }
 
         allTimesMap.forEach { info ->
             if (info.name != "Sunrise" && info.name != "Sunset" && info.name != "Dhuhr") {
@@ -161,7 +177,7 @@ class PrayerTimesViewModel @Inject constructor(
 
         _uiState.value = _uiState.value.copy(
             prayerTimes = prayerList,
-            solarEvents = solarList,
+            astronomicalEvents = astroList,
             hijriDate = hijriString
         )
         

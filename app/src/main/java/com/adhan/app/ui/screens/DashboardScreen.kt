@@ -74,18 +74,18 @@ fun DashboardScreen(viewModel: PrayerTimesViewModel) {
 
                 item { Spacer(modifier = Modifier.height(16.dp)) }
 
-                // Solar Events Section
+                // Astronomical Events Section
                 item {
                     Text(
-                        "Solar Events (Not Prayers)",
+                        "Astronomical Events (Not Prayers)",
                         style = MaterialTheme.typography.labelMedium,
                         color = Color.White.copy(alpha = 0.5f),
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
                 }
-                items(uiState.solarEvents) { info ->
+                items(uiState.astronomicalEvents) { info ->
                     PrayerTimeRow(info.name, info.time, false, isEvent = true)
-                    if (info != uiState.solarEvents.last()) {
+                    if (info != uiState.astronomicalEvents.last()) {
                         Divider(
                             color = Color.White.copy(alpha = 0.05f),
                             modifier = Modifier.padding(vertical = 8.dp)

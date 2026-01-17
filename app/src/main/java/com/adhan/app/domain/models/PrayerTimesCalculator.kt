@@ -281,8 +281,8 @@ class PrayerTimesCalculator {
     }
 
     /**
-     * Simplified Moonrise and Moonset calculation
-     * Based on basic astronomical formulas.
+     * More accurate Moonrise and Moonset calculation
+     * Based on Meeus algorithms with basic perturbations.
      */
     fun getMoonTimes(date: Date, latitude: Double, longitude: Double, tZone: Double? = null): Map<String, String> {
         val cal = Calendar.getInstance()
@@ -292,33 +292,65 @@ class PrayerTimesCalculator {
         val day = cal.get(Calendar.DAY_OF_MONTH)
         
         val effectiveTZone = effectiveTimeZone(year, month, day, tZone ?: 999.0)
-        val jd = julianDate(year, month, day) - longitude / (15 * 24)
         
-        // This is a VERY simplified approximation for demonstration.
-        // For real use, a proper astronomical lib like Meeus would be better.
-        // We'll approximate moonrise/set based on lunar phase.
-        val d = jd - 2451545.0
-        val L = fixangle(218.316 + 13.176396 * d) // Moon's mean longitude
-        val M = fixangle(134.963 + 13.064993 * d) // Moon's mean anomaly
-        val F = fixangle(93.272 + 13.229350 * d) // Moon's mean distance from node
+        fun moonAltitude(hour: Double): Double {
+            val jd = julianDate(year, month, day) + hour / 24.0 - longitude / (15 * 24.0)
+            val d = jd - 2451545.0
+            
+            // Moon's mean elements
+            val Lprime = fixangle(218.316 + 13.176396 * d) // mean longitude
+            val Mprime = fixangle(134.963 + 13.064993 * d) // mean anomaly
+            val F = fixangle(93.272 + 13.229350 * d) // distance from node
+            val D = fixangle(297.850 + 12.190749 * d) // mean elongation
+            
+            // Main perturbations in longitude
+            val moonLon = Lprime + 6.289 * dsin(Mprime) + 1.274 * dsin(2 * D - Mprime) + 
+                          0.658 * dsin(2 * D) + 0.214 * dsin(2 * Mprime)
+            
+            // Main perturbations in latitude
+            val moonLat = 5.128 * dsin(F) + 0.280 * dsin(Mprime + F) + 0.277 * dsin(Mprime - F)
+            
+            // Obliquity of ecliptic
+            val ecl = 23.439 - 0.00000036 * d
+            
+            // Equatorial coordinates
+            val ra = darctan2(dcos(ecl) * dsin(moonLon) - dsin(ecl) * dtan(moonLat), dcos(moonLon))
+            val dec = darcsin(dsin(ecl) * dsin(moonLon) * dcos(moonLat) + dcos(ecl) * dsin(moonLat))
+            
+            // Sidereal time
+            val mDegrees = 280.46061837 + 360.98564736629 * d
+            val lst = fixangle(mDegrees + longitude)
+            
+            val ha = fixangle(lst - ra * 15.0)
+            
+            val alt = darcsin(dsin(latitude) * dsin(dec) + dcos(latitude) * dcos(dec) * dcos(ha))
+            return alt
+        }
+
+        // Iterative search for rise/set
+        var rise: Double? = null
+        var set: Double? = null
         
-        val moonLon = L + 6.289 * dsin(M)
-        val moonLat = 5.128 * dsin(F)
+        val h0 = -0.833 // standard refraction/size correction
+        var prevAlt = moonAltitude(0.0)
         
-        // Approximate moonrise/set times relative to solar midday
-        // Moon rises ~50 mins later each day
-        val moonAge = (d % 29.530588)
-        val phaseOffset = (moonAge / 29.530588) * 24.0
-        
-        val moonMidDay = fixhour(12.0 + phaseOffset - longitude / 15.0 + effectiveTZone)
-        
-        // Moon is above horizon for ~12 hours on average
-        val moonRise = floatToTime24(fixhour(moonMidDay - 6.0))
-        val moonSet = floatToTime24(fixhour(moonMidDay + 6.0))
-        
+        for (h in 1..24) {
+            val hour = h.toDouble()
+            val alt = moonAltitude(hour)
+            
+            if (prevAlt <= h0 && alt > h0) {
+                // Rising
+                rise = hour - (alt - h0) / (alt - prevAlt)
+            } else if (prevAlt >= h0 && alt < h0) {
+                // Setting
+                set = hour - (alt - h0) / (alt - prevAlt)
+            }
+            prevAlt = alt
+        }
+
         return mapOf(
-            "Moonrise" to moonRise,
-            "Moonset" to moonSet
+            "Moonrise" to if (rise != null) floatToTime24(fixhour(rise + effectiveTZone)) else InvalidTime,
+            "Moonset" to if (set != null) floatToTime24(fixhour(set + effectiveTZone)) else InvalidTime
         )
     }
 

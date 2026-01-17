@@ -141,7 +141,6 @@ fun SettingsScreen(
                             value = uiState.combiningThreshold.toFloat(),
                             onValueChange = { viewModel.setCombiningThreshold(it.toInt()) },
                             valueRange = 30f..90f,
-                            steps = 3, // 30, 45, 60, 75, 90
                             colors = SliderDefaults.colors(
                                 thumbColor = Color.White,
                                 activeTrackColor = Color.White.copy(alpha = 0.7f)

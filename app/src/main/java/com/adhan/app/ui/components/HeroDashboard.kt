@@ -22,6 +22,7 @@ fun HeroDashboard(
     nextPrayerName: String,
     nextPrayerTime: String,
     hijriDate: String,
+    gregorianDate: String,
     quranVerse: String = "Indeed, with hardship [will be] ease. (Quran 94:6)"
 ) {
     Column(
@@ -73,12 +74,20 @@ fun HeroDashboard(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Hijri Date
-        Text(
-            text = hijriDate,
-            style = MaterialTheme.typography.headlineSmall,
-            color = Color.White,
-            fontWeight = FontWeight.Medium
-        )
+        // Dates
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                text = hijriDate,
+                style = MaterialTheme.typography.headlineSmall,
+                color = Color.White,
+                fontWeight = FontWeight.Medium
+            )
+            Text(
+                text = gregorianDate,
+                style = MaterialTheme.typography.labelMedium,
+                color = Color.White.copy(alpha = 0.5f),
+                modifier = Modifier.padding(top = 4.dp)
+            )
+        }
     }
 }

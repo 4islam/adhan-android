@@ -21,6 +21,7 @@ data class PrayerTimesState(
     val latitude: Double = 51.5074,
     val longitude: Double = -0.1278,
     val hijriDate: String = "",
+    val gregorianDate: String = "",
     val nextPrayerName: String = "",
     val nextPrayerTime: String = "",
     val currentTime: Date = Date(),
@@ -141,6 +142,7 @@ class PrayerTimesViewModel @Inject constructor(
         val moonTimes = calculator.getMoonTimes(date, lat, lng)
         val hijri = HijriCalendar.fromDate(date)
         val hijriString = "${hijri.day} ${hijri.monthName} ${hijri.year} AH"
+        val gregorianString = SimpleDateFormat("d MMMM yyyy", Locale.ENGLISH).format(date)
 
         // Separate Prayer Times and Astronomical Events
         val prayerList = mutableListOf<PrayerTimesCalculator.CombinedPrayerInfo>()
@@ -170,7 +172,7 @@ class PrayerTimesViewModel @Inject constructor(
         }
 
         allTimesMap.forEach { info ->
-            if (info.name != "Sunrise" && info.name != "Sunset" && info.name != "Dhuhr") {
+            if (info.name != "Sunrise" && info.name != "Sunset") {
                 prayerList.add(info)
             }
         }
@@ -178,7 +180,8 @@ class PrayerTimesViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(
             prayerTimes = prayerList,
             astronomicalEvents = astroList,
-            hijriDate = hijriString
+            hijriDate = hijriString,
+            gregorianDate = gregorianString
         )
         
         // Schedule alarms for prayers only

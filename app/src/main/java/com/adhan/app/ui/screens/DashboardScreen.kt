@@ -30,7 +30,8 @@ fun DashboardScreen(viewModel: PrayerTimesViewModel) {
         HeroDashboard(
             nextPrayerName = uiState.nextPrayerName,
             nextPrayerTime = uiState.nextPrayerTime,
-            hijriDate = uiState.hijriDate
+            hijriDate = uiState.hijriDate,
+            gregorianDate = uiState.gregorianDate
         )
 
         Spacer(modifier = Modifier.height(24.dp))

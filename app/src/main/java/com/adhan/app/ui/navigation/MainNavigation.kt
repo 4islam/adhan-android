@@ -36,8 +36,8 @@ fun MainNavigation(
             InteractiveMap(
                 initialLat = uiState.latitude,
                 initialLng = uiState.longitude,
-                onLocationOverride = { lat, lng ->
-                    viewModel.overrideLocation(lat, lng)
+                onLocationOverride = { lat, lng, name ->
+                    viewModel.overrideLocation(lat, lng, name)
                 },
                 onBack = { navController.popBackStack() }
             )

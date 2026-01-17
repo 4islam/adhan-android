@@ -44,6 +44,7 @@ fun DashboardScreen(viewModel: PrayerTimesViewModel) {
                     nextPrayerTime = uiState.nextPrayerTime,
                     hijriDate = uiState.hijriDate,
                     gregorianDate = uiState.gregorianDate,
+                    locationName = uiState.locationName,
                     currentTime = uiState.currentTime
                 )
                 Spacer(modifier = Modifier.height(16.dp))
@@ -108,7 +109,7 @@ fun DashboardScreen(viewModel: PrayerTimesViewModel) {
         Box(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(bottom = 100.dp)
+                .padding(bottom = 115.dp)
         ) {
             val events = uiState.astronomicalEvents
             val sunrise = events.find { it.name == "Sunrise" }?.time ?: "--:--"

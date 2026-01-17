@@ -29,6 +29,7 @@ fun HeroDashboard(
     nextPrayerTime: String,
     hijriDate: String,
     gregorianDate: String,
+    locationName: String = "London",
     currentTime: java.util.Date = java.util.Date()
 ) {
     val isFriday = java.util.Calendar.getInstance().apply { time = currentTime }
@@ -38,7 +39,7 @@ fun HeroDashboard(
         "يَٰٓأَيُّهَا ٱلَّذِينَ ءَامَنُوٓا۟ إِذَا نُودِىَ لِلصَّلَوٰةِ مِن يَوْمِ ٱلْجُمُعَةِ فَٱسْعَوْا۟ إِلَىٰ ذِكْرِ ٱللَّهِ وَذَرُوا۟ ٱلْبَيْعَ ۚ ذَٰلِكُمْ خَيْرٌ لَّكُمْ إِن كُنتُمْ تَعْلَمُونَ" to
         "O ye who believe! when the call is made for Prayer on Friday, hasten to the remembrance of Allah, and leave off all business. That is better for you, if you only knew. 62:10"
     } else {
-        "...إِنَّ ٱلصَّلَوٰةَ كَانَتْ عَلَى ٱلْمُؤْمِنِينَ كِتَٰبًا مَّوْقُوتًا" to
+        "إِنَّ ٱلصَّلَوٰةَ كَانَتْ عَلَى ٱلْمُؤْمِنِينَ كِتَٰبًا مَّوْقُوتًا..." to
         "...verily Prayer is enjoined on the believers to be performed at fixed hours. 4:104"
     }
 
@@ -109,7 +110,7 @@ fun HeroDashboard(
                 .padding(horizontal = 16.dp, vertical = 4.dp)
         ) {
             Text(
-                text = "London",
+                text = locationName,
                 style = MaterialTheme.typography.labelMedium,
                 color = Color.White.copy(alpha = 0.7f)
             )

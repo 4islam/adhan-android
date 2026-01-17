@@ -81,9 +81,10 @@ dependencies {
     // Navigation
     implementation(libs.androidx.navigation.compose)
 
-    // Maps
+    // Maps & Location
     implementation(libs.maps.compose)
     implementation(libs.play.services.maps)
+    implementation(libs.play.services.location)
 
     // Test
     testImplementation(libs.junit)

@@ -47,6 +47,7 @@ material = { group = "com.google.android.material", name = "material", version.r
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 maps-compose = { group = "com.google.maps.android", name = "maps-compose", version.ref = "mapsCompose" }
 play-services-maps = { group = "com.google.android.gms", name = "play-services-maps", version.ref = "googleMapsServices" }
+play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "googleMapsServices" }
 
 
 [plugins]

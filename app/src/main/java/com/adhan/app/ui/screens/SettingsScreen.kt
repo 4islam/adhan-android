@@ -220,6 +220,35 @@ fun SettingsScreen(
                     }
                 }
             }
+
+            item {
+                SettingsSection("Developer Tools") {
+                    Column(modifier = Modifier.padding(8.dp)) {
+                        Text(
+                            text = "Test Background Playback",
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = "Schedules an Adhan in 1 minute. Lock your device after pressing to test background activation.",
+                            color = Color.White.copy(alpha = 0.5f),
+                            style = MaterialTheme.typography.labelSmall
+                        )
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Button(
+                            onClick = { viewModel.testAdhan() },
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(0xFF00E5FF).copy(alpha = 0.3f)
+                            ),
+                            shape = RoundedCornerShape(8.dp)
+                        ) {
+                            Text("Trigger Test Adhan (1 min delay)", color = Color.White)
+                        }
+                    }
+                }
+            }
         }
     }
 }

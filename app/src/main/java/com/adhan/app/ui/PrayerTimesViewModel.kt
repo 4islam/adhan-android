@@ -10,6 +10,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
@@ -41,6 +43,7 @@ data class PrayerTimesState(
 @HiltViewModel
 class PrayerTimesViewModel @Inject constructor(
     private val alarmManager: com.adhan.app.infra.PrayerAlarmManager,
+    private val repository: com.adhan.app.domain.LocationRepository,
     private val application: android.app.Application
 ) : ViewModel() {
     private val prefs = application.getSharedPreferences("adhan_prefs", android.content.Context.MODE_PRIVATE)
@@ -49,8 +52,22 @@ class PrayerTimesViewModel @Inject constructor(
 
     init {
         loadSettings()
-        updateTimes()
+        observeLocation()
         startClock()
+    }
+
+    private fun observeLocation() {
+        viewModelScope.launch {
+            repository.location.collect { data ->
+                _uiState.value = _uiState.value.copy(
+                    latitude = data.lat,
+                    longitude = data.lng,
+                    locationName = data.name,
+                    isOverrideActive = data.isOverrideActive
+                )
+                updateTimes()
+            }
+        }
     }
 
     private fun loadSettings() {
@@ -62,11 +79,6 @@ class PrayerTimesViewModel @Inject constructor(
         val combiningThreshold = prefs.getInt("combining_threshold", 90)
         val use12HourFormat = prefs.getBoolean("use_12_hour", true)
         
-        val adhanSounds = mutableMapOf<String, String>()
-        listOf("Fajr", "Dhuhr", "Asr", "Maghrib", "Isha").forEach { prayer ->
-            prefs.getString("adhan_sound_$prayer", null)?.let { adhanSounds[prayer] = it }
-        }
-
         _uiState.value = _uiState.value.copy(
             calcMethod = calcMethod,
             asrJuristic = asrJuristic,
@@ -142,14 +154,25 @@ class PrayerTimesViewModel @Inject constructor(
         }
     }
 
-    fun overrideLocation(lat: Double, lng: Double) {
+    fun overrideLocation(lat: Double, lng: Double, name: String? = null) {
+        val finalName = name ?: "Location (%.2f, %.2f)".format(lat, lng)
+        repository.updateLocation(lat, lng, finalName, true)
+    }
+
+    fun testAdhan() {
+        val now = Calendar.getInstance()
+        now.add(Calendar.MINUTE, 1)
+        val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
+        val testTime = sdf.format(now.time)
+        
+        val testPrayer = PrayerTimesCalculator.CombinedPrayerInfo("Test Adhan", testTime)
+        alarmManager.scheduleAlarms(listOf(testPrayer))
+        
+        // Update UI to show we scheduled it
         _uiState.value = _uiState.value.copy(
-            latitude = lat,
-            longitude = lng,
-            locationName = "Custom Location (%.4f, %.4f)".format(lat, lng),
-            isOverrideActive = true
+            nextPrayerName = "Test Adhan",
+            nextPrayerTime = formatDisplayTime(testTime)
         )
-        updateTimes()
     }
 
     fun updateHeading(heading: Float) {
@@ -158,16 +181,18 @@ class PrayerTimesViewModel @Inject constructor(
 
 
     private fun updateTimes() {
-        val calculator = PrayerTimesCalculator()
-        calculator.setCalcMethod(_uiState.value.calcMethod)
-        calculator.setAsrMethod(_uiState.value.asrJuristic)
-        calculator.setCombiningThreshold(_uiState.value.combiningThreshold)
-        
-        val date = _uiState.value.currentTime
-        val lat = _uiState.value.latitude
-        val lng = _uiState.value.longitude
-        
-        val allTimesMap = calculator.getCombinedPrayerTimes(date, lat, lng)
+        viewModelScope.launch(Dispatchers.Default) {
+            val state = _uiState.value
+            val calculator = PrayerTimesCalculator()
+            calculator.setCalcMethod(state.calcMethod)
+            calculator.setAsrMethod(state.asrJuristic)
+            calculator.setCombiningThreshold(state.combiningThreshold)
+            
+            val date = state.currentTime
+            val lat = state.latitude
+            val lng = state.longitude
+            
+            val allTimesMap = calculator.getCombinedPrayerTimes(date, lat, lng)
         val moonTimes = calculator.getMoonTimes(date, lat, lng)
         val hijri = HijriCalendar.fromDate(date)
         val hijriString = "${hijri.day} ${hijri.monthName} ${hijri.year} AH"
@@ -227,18 +252,21 @@ class PrayerTimesViewModel @Inject constructor(
             .map { it.copy(time = formatDisplayTime(it.time)) }
         val displayAstroList = astroList.map { it.copy(time = formatDisplayTime(it.time)) }
 
-        _uiState.value = _uiState.value.copy(
-            prayerTimes = displayPrayerList,
-            astronomicalEvents = displayAstroList,
-            rawPrayerTimes = prayerList,
-            hijriDate = hijriString,
-            gregorianDate = gregorianString
-        )
-        
-        // Schedule alarms for prayers only
-        alarmManager.scheduleAlarms(prayerList)
-        
-        updateNextPrayer()
+            withContext(Dispatchers.Main) {
+                _uiState.value = _uiState.value.copy(
+                    prayerTimes = displayPrayerList,
+                    astronomicalEvents = displayAstroList,
+                    rawPrayerTimes = prayerList,
+                    hijriDate = hijriString,
+                    gregorianDate = gregorianString
+                )
+                
+                // Schedule alarms for prayers only
+                alarmManager.scheduleAlarms(prayerList)
+                
+                updateNextPrayer()
+            }
+        }
     }
 
     private fun calculateTahajjudTime(fajrTime: String, offsetMinutes: Int): String {

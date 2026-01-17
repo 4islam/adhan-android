@@ -32,7 +32,9 @@ data class PrayerTimesState(
     val isAudioEnabled: Boolean = true,
     val isTahajjudEnabled: Boolean = false,
     val tahajjudOffset: Int = 60, // minutes before Fajr
-    val combiningThreshold: Int = 90 // minutes
+    val combiningThreshold: Int = 90, // minutes
+    val use12HourFormat: Boolean = true,
+    val rawPrayerTimes: List<PrayerTimesCalculator.CombinedPrayerInfo> = emptyList() // 24h for logic
 )
 
 @HiltViewModel
@@ -57,6 +59,7 @@ class PrayerTimesViewModel @Inject constructor(
         val isTahajjudEnabled = prefs.getBoolean("tahajjud_enabled", false)
         val tahajjudOffset = prefs.getInt("tahajjud_offset", 60)
         val combiningThreshold = prefs.getInt("combining_threshold", 90)
+        val use12HourFormat = prefs.getBoolean("use_12_hour", true)
         
         _uiState.value = _uiState.value.copy(
             calcMethod = calcMethod,
@@ -64,7 +67,8 @@ class PrayerTimesViewModel @Inject constructor(
             isAudioEnabled = isAudioEnabled,
             isTahajjudEnabled = isTahajjudEnabled,
             tahajjudOffset = tahajjudOffset,
-            combiningThreshold = combiningThreshold
+            combiningThreshold = combiningThreshold,
+            use12HourFormat = use12HourFormat
         )
     }
 
@@ -100,6 +104,12 @@ class PrayerTimesViewModel @Inject constructor(
     fun setCombiningThreshold(threshold: Int) {
         _uiState.value = _uiState.value.copy(combiningThreshold = threshold)
         prefs.edit().putInt("combining_threshold", threshold).apply()
+        updateTimes()
+    }
+
+    fun setUse12HourFormat(enabled: Boolean) {
+        _uiState.value = _uiState.value.copy(use12HourFormat = enabled)
+        prefs.edit().putBoolean("use_12_hour", enabled).apply()
         updateTimes()
     }
 
@@ -177,9 +187,14 @@ class PrayerTimesViewModel @Inject constructor(
             }
         }
 
+        // Format for display
+        val displayPrayerList = prayerList.map { it.copy(time = formatDisplayTime(it.time)) }
+        val displayAstroList = astroList.map { it.copy(time = formatDisplayTime(it.time)) }
+
         _uiState.value = _uiState.value.copy(
-            prayerTimes = prayerList,
-            astronomicalEvents = astroList,
+            prayerTimes = displayPrayerList,
+            astronomicalEvents = displayAstroList,
+            rawPrayerTimes = prayerList,
             hijriDate = hijriString,
             gregorianDate = gregorianString
         )
@@ -199,27 +214,41 @@ class PrayerTimesViewModel @Inject constructor(
         return sdf.format(cal.time)
     }
 
+    private fun formatDisplayTime(time24: String): String {
+        if (!_uiState.value.use12HourFormat) return time24
+        if (time24 == PrayerTimesCalculator.InvalidTime) return time24
+        return try {
+            val sdf24 = SimpleDateFormat("HH:mm", Locale.getDefault())
+            val sdf12 = SimpleDateFormat("h:mm a", Locale.getDefault())
+            val date = sdf24.parse(time24)
+            sdf12.format(date!!).lowercase()
+        } catch (e: Exception) {
+            time24
+        }
+    }
+
     private fun updateNextPrayer() {
         val now = _uiState.value.currentTime
         val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
         val currentStr = sdf.format(now)
 
         var nextFound = false
-        for (info in _uiState.value.prayerTimes) {
+        val prayerList = _uiState.value.rawPrayerTimes
+        for (info in prayerList) {
             if (info.time > currentStr) {
                 _uiState.value = _uiState.value.copy(
                     nextPrayerName = info.name,
-                    nextPrayerTime = info.time
+                    nextPrayerTime = formatDisplayTime(info.time)
                 )
                 nextFound = true
                 break
             }
         }
         
-        if (!nextFound && _uiState.value.prayerTimes.isNotEmpty()) {
+        if (!nextFound && prayerList.isNotEmpty()) {
             _uiState.value = _uiState.value.copy(
-                nextPrayerName = _uiState.value.prayerTimes[0].name,
-                nextPrayerTime = _uiState.value.prayerTimes[0].time
+                nextPrayerName = prayerList[0].name,
+                nextPrayerTime = formatDisplayTime(prayerList[0].time)
             )
         }
     }

@@ -34,6 +34,7 @@ data class PrayerTimesState(
     val tahajjudOffset: Int = 60, // minutes before Fajr
     val combiningThreshold: Int = 90, // minutes
     val use12HourFormat: Boolean = true,
+    val adhanSounds: Map<String, String> = emptyMap(), // Maps prayer name to URI string
     val rawPrayerTimes: List<PrayerTimesCalculator.CombinedPrayerInfo> = emptyList() // 24h for logic
 )
 
@@ -61,6 +62,11 @@ class PrayerTimesViewModel @Inject constructor(
         val combiningThreshold = prefs.getInt("combining_threshold", 90)
         val use12HourFormat = prefs.getBoolean("use_12_hour", true)
         
+        val adhanSounds = mutableMapOf<String, String>()
+        listOf("Fajr", "Dhuhr", "Asr", "Maghrib", "Isha").forEach { prayer ->
+            prefs.getString("adhan_sound_$prayer", null)?.let { adhanSounds[prayer] = it }
+        }
+
         _uiState.value = _uiState.value.copy(
             calcMethod = calcMethod,
             asrJuristic = asrJuristic,
@@ -68,7 +74,8 @@ class PrayerTimesViewModel @Inject constructor(
             isTahajjudEnabled = isTahajjudEnabled,
             tahajjudOffset = tahajjudOffset,
             combiningThreshold = combiningThreshold,
-            use12HourFormat = use12HourFormat
+            use12HourFormat = use12HourFormat,
+            adhanSounds = adhanSounds
         )
     }
 
@@ -111,6 +118,18 @@ class PrayerTimesViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(use12HourFormat = enabled)
         prefs.edit().putBoolean("use_12_hour", enabled).apply()
         updateTimes()
+    }
+
+    fun setAdhanSound(prayerName: String, uri: String?) {
+        val currentSounds = _uiState.value.adhanSounds.toMutableMap()
+        if (uri == null) {
+            currentSounds.remove(prayerName)
+            prefs.edit().remove("adhan_sound_$prayerName").apply()
+        } else {
+            currentSounds[prayerName] = uri
+            prefs.edit().putString("adhan_sound_$prayerName", uri).apply()
+        }
+        _uiState.value = _uiState.value.copy(adhanSounds = currentSounds)
     }
 
     private fun startClock() {

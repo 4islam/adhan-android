@@ -36,7 +36,6 @@ fun BottomDock(
     onNavigate: (String) -> Unit
 ) {
     val screens = listOf(
-        NavScreen.Dashboard,
         NavScreen.Qibla,
         NavScreen.Map,
         NavScreen.Skylight,

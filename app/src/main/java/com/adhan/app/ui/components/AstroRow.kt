@@ -22,9 +22,9 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun AstroRow(
-    moonrise: String,
+    sunrise: String,
     solarNoon: String,
-    moonset: String
+    sunset: String
 ) {
     Row(
         modifier = Modifier
@@ -36,9 +36,9 @@ fun AstroRow(
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        AstroItem("Rise", moonrise, Icons.Default.NightsStay, Color(0xFF4FC3F7))
+        AstroItem("Rise", sunrise, Icons.Default.Brightness5, Color(0xFFFFB74D))
         AstroItem("Noon", solarNoon, Icons.Default.WbSunny, Color(0xFFFFB74D))
-        AstroItem("Set", moonset, Icons.Default.NightsStay, Color(0xFF4FC3F7))
+        AstroItem("Set", sunset, Icons.Default.Brightness5, Color(0xFFFFB74D))
     }
 }
 

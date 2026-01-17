@@ -43,14 +43,14 @@ fun DashboardScreen(viewModel: PrayerTimesViewModel) {
 
         // Astro Row
         item {
-            val moonrise = uiState.astronomicalEvents.find { it.name == "Moonrise" }?.time ?: "--:--"
+            val sunrise = uiState.astronomicalEvents.find { it.name == "Sunrise" }?.time ?: "--:--"
             val solarNoon = uiState.astronomicalEvents.find { it.name == "Solar Noon" }?.time ?: "--:--"
-            val moonset = uiState.astronomicalEvents.find { it.name == "Moonset" }?.time ?: "--:--"
+            val sunset = uiState.astronomicalEvents.find { it.name == "Sunset" }?.time ?: "--:--"
             
             AstroRow(
-                moonrise = moonrise,
+                sunrise = sunrise,
                 solarNoon = solarNoon,
-                moonset = moonset
+                sunset = sunset
             )
             Spacer(modifier = Modifier.height(24.dp))
         }

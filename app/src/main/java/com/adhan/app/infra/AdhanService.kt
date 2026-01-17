@@ -44,21 +44,30 @@ class AdhanService : Service() {
 
         // Load and play Adhan
         try {
-            val resourceName = if (prayerName.contains("Fajr", ignoreCase = true)) {
-                "adhan_fajr"
-            } else {
-                "adhan_regular"
-            }
+            val prefs = getSharedPreferences("adhan_prefs", Context.MODE_PRIVATE)
+            val customUri = prefs.getString("adhan_sound_$prayerName", null)
 
-            val rawResourceId = resources.getIdentifier(resourceName, "raw", packageName)
-            if (rawResourceId != 0) {
-                val mediaItem = MediaItem.fromUri("android.resource://$packageName/$rawResourceId")
+            if (customUri != null) {
+                val mediaItem = MediaItem.fromUri(customUri)
                 player?.setMediaItem(mediaItem)
                 player?.prepare()
                 player?.play()
             } else {
-                android.util.Log.e("AdhanService", "Audio file $resourceName not found")
-                // Keep notification but no audio
+                val resourceName = if (prayerName.contains("Fajr", ignoreCase = true)) {
+                    "adhan_fajr"
+                } else {
+                    "adhan_regular"
+                }
+
+                val rawResourceId = resources.getIdentifier(resourceName, "raw", packageName)
+                if (rawResourceId != 0) {
+                    val mediaItem = MediaItem.fromUri("android.resource://$packageName/$rawResourceId")
+                    player?.setMediaItem(mediaItem)
+                    player?.prepare()
+                    player?.play()
+                } else {
+                    android.util.Log.e("AdhanService", "Audio file $resourceName not found")
+                }
             }
         } catch (e: Exception) {
             android.util.Log.e("AdhanService", "Error playing adhan", e)

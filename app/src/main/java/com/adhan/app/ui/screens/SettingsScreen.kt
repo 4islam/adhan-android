@@ -1,5 +1,7 @@
 package com.adhan.app.ui.screens
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -35,6 +37,19 @@ fun SettingsScreen(
         "Tehran" to PrayerTimesCalculator.Tehran,
         "Jafari" to PrayerTimesCalculator.Jafari
     )
+    
+    val prayers = listOf("Fajr", "Dhuhr", "Asr", "Maghrib", "Isha")
+    var selectedPrayerForAudio by remember { mutableStateOf<String?>(null) }
+    
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri ->
+        uri?.let {
+            selectedPrayerForAudio?.let { prayer ->
+                viewModel.setAdhanSound(prayer, it.toString())
+            }
+        }
+    }
     
     Column(
         modifier = Modifier
@@ -164,6 +179,43 @@ fun SettingsScreen(
                             checked = uiState.isAudioEnabled,
                             onCheckedChange = { viewModel.setAudioEnabled(it) }
                         )
+                    }
+                }
+            }
+
+            item {
+                SettingsSection("Adhan Sounds") {
+                    prayers.forEach { prayer ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(prayer, color = Color.White, fontWeight = FontWeight.Bold)
+                                Text(
+                                    text = uiState.adhanSounds[prayer]?.substringAfterLast("/") ?: "Default",
+                                    color = Color.White.copy(alpha = 0.5f),
+                                    style = MaterialTheme.typography.labelSmall,
+                                    maxLines = 1
+                                )
+                            }
+                            Button(
+                                onClick = {
+                                    selectedPrayerForAudio = prayer
+                                    launcher.launch("audio/*")
+                                },
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = Color.White.copy(alpha = 0.2f)
+                                ),
+                                shape = RoundedCornerShape(8.dp),
+                                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp)
+                            ) {
+                                Text("Pick", color = Color.White, style = MaterialTheme.typography.labelMedium)
+                            }
+                        }
                     }
                 }
             }

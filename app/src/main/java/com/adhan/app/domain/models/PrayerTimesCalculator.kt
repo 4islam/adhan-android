@@ -293,11 +293,11 @@ class PrayerTimesCalculator {
         
         val effectiveTZone = effectiveTimeZone(year, month, day, tZone ?: 999.0)
         
-        fun moonAltitude(hour: Double): Double {
-            val jd = julianDate(year, month, day) + hour / 24.0 - longitude / (15 * 24.0)
+        fun moonAltitude(hourUT: Double): Double {
+            val jd = julianDate(year, month, day) + hourUT / 24.0
             val d = jd - 2451545.0
             
-            // Moon's mean elements
+            // Moon's mean elements (degrees)
             val Lprime = fixangle(218.316 + 13.176396 * d) // mean longitude
             val Mprime = fixangle(134.963 + 13.064993 * d) // mean anomaly
             val F = fixangle(93.272 + 13.229350 * d) // distance from node
@@ -313,16 +313,17 @@ class PrayerTimesCalculator {
             // Obliquity of ecliptic
             val ecl = 23.439 - 0.00000036 * d
             
-            // Equatorial coordinates
+            // Equatorial coordinates (degrees)
             val ra = darctan2(dcos(ecl) * dsin(moonLon) - dsin(ecl) * dtan(moonLat), dcos(moonLon))
             val dec = darcsin(dsin(ecl) * dsin(moonLon) * dcos(moonLat) + dcos(ecl) * dsin(moonLat))
             
-            // Sidereal time
+            // Sidereal time (degrees)
             val mDegrees = 280.46061837 + 360.98564736629 * d
             val lst = fixangle(mDegrees + longitude)
             
-            val ha = fixangle(lst - ra * 15.0)
+            val ha = fixangle(lst - ra)
             
+            // Geocentric altitude
             val alt = darcsin(dsin(latitude) * dsin(dec) + dcos(latitude) * dcos(dec) * dcos(ha))
             return alt
         }
@@ -331,20 +332,26 @@ class PrayerTimesCalculator {
         var rise: Double? = null
         var set: Double? = null
         
-        val h0 = -0.833 // standard refraction/size correction
+        // Target geocentric altitude for moonrise/set (~0.125 deg)
+        // This accounts for parallax (~0.95) and refraction+semidiameter (~0.83)
+        val h0 = 0.125
+        
+        var prevHour = 0.0
         var prevAlt = moonAltitude(0.0)
         
-        for (h in 1..24) {
-            val hour = h.toDouble()
-            val alt = moonAltitude(hour)
+        // Search in 0.5 hour steps throughout the day
+        for (i in 1..48) {
+            val h = i * 0.5
+            val alt = moonAltitude(h)
             
             if (prevAlt <= h0 && alt > h0) {
                 // Rising
-                rise = hour - (alt - h0) / (alt - prevAlt)
+                rise = prevHour + (h0 - prevAlt) * (h - prevHour) / (alt - prevAlt)
             } else if (prevAlt >= h0 && alt < h0) {
                 // Setting
-                set = hour - (alt - h0) / (alt - prevAlt)
+                set = prevHour + (h0 - prevAlt) * (h - prevHour) / (alt - prevAlt)
             }
+            prevHour = h
             prevAlt = alt
         }
 

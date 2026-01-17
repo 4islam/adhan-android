@@ -37,26 +37,31 @@ class AdhanService : Service() {
         
         startForeground(NOTIFICATION_ID, createNotification(prayerName))
         
+        // Tahajjud doesn't have an adhan
+        if (prayerName.equals("Tahajjud", ignoreCase = true)) {
+            return START_NOT_STICKY
+        }
+
         // Load and play Adhan
-        // Note: For now, we assume adhan_makkah exists in res/raw.
-        // If it doesn't, this will fail gracefully or we can add a placeholder.
         try {
-            val rawResourceId = resources.getIdentifier("adhan_makkah", "raw", packageName)
+            val resourceName = if (prayerName.contains("Fajr", ignoreCase = true)) {
+                "adhan_fajr"
+            } else {
+                "adhan_regular"
+            }
+
+            val rawResourceId = resources.getIdentifier(resourceName, "raw", packageName)
             if (rawResourceId != 0) {
                 val mediaItem = MediaItem.fromUri("android.resource://$packageName/$rawResourceId")
                 player?.setMediaItem(mediaItem)
                 player?.prepare()
                 player?.play()
             } else {
-                // No audio file found, just show notification and stop
-                android.util.Log.e("AdhanService", "Audio file adhan_makkah not found")
-                stopForeground(STOP_FOREGROUND_REMOVE)
-                stopSelf()
+                android.util.Log.e("AdhanService", "Audio file $resourceName not found")
+                // Keep notification but no audio
             }
         } catch (e: Exception) {
             android.util.Log.e("AdhanService", "Error playing adhan", e)
-            stopForeground(STOP_FOREGROUND_REMOVE)
-            stopSelf()
         }
 
         return START_NOT_STICKY

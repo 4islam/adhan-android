@@ -57,7 +57,7 @@ fun DashboardScreen(viewModel: PrayerTimesViewModel) {
                 contentType = { "prayer" }
             ) { info ->
                 val icon = getPrayerIcon(info.name)
-                val isActive = info.name == uiState.nextPrayerName
+                val isActive = info.name == uiState.activePrayerName
                 val isTahajjud = info.name.contains("Tahajjud")
                 
                 // --- Phase 14: 3D Spherical Logic ---

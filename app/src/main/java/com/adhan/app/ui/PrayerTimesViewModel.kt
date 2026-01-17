@@ -15,6 +15,7 @@ import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
+import kotlinx.coroutines.Job
 
 data class PrayerTimesState(
     val prayerTimes: List<PrayerTimesCalculator.CombinedPrayerInfo> = emptyList(),
@@ -26,6 +27,7 @@ data class PrayerTimesState(
     val gregorianDate: String = "",
     val nextPrayerName: String = "",
     val nextPrayerTime: String = "",
+    val activePrayerName: String? = null,
     val currentTime: Date = Date(),
     val deviceHeading: Float = 0f,
     val isOverrideActive: Boolean = false,
@@ -49,6 +51,9 @@ class PrayerTimesViewModel @Inject constructor(
     private val prefs = application.getSharedPreferences("adhan_prefs", android.content.Context.MODE_PRIVATE)
     private val _uiState = MutableStateFlow(PrayerTimesState())
     val uiState: StateFlow<PrayerTimesState> = _uiState.asStateFlow()
+
+    private var updateTimesJob: Job? = null
+    private val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
 
     init {
         loadSettings()
@@ -147,8 +152,9 @@ class PrayerTimesViewModel @Inject constructor(
     private fun startClock() {
         viewModelScope.launch {
             while (true) {
-                _uiState.value = _uiState.value.copy(currentTime = Date())
-                updateNextPrayer()
+                val now = Date()
+                _uiState.value = _uiState.value.copy(currentTime = now)
+                updateNextPrayer(now)
                 delay(1000)
             }
         }
@@ -181,7 +187,8 @@ class PrayerTimesViewModel @Inject constructor(
 
 
     private fun updateTimes() {
-        viewModelScope.launch(Dispatchers.Default) {
+        updateTimesJob?.cancel()
+        updateTimesJob = viewModelScope.launch(Dispatchers.Default) {
             val state = _uiState.value
             val calculator = PrayerTimesCalculator()
             calculator.setCalcMethod(state.calcMethod)
@@ -247,7 +254,7 @@ class PrayerTimesViewModel @Inject constructor(
         // because they are now uniquely displayed in the AstroRow panel.
         val displayPrayerList = prayerList
             .filter { info -> 
-                info.name !in listOf("Sunrise", "Sunset", "Solar Noon", "Dhuhr", "Dhuhr/Asr", "Jummah (or Dhuhr)") 
+                info.name !in listOf("Sunrise", "Sunset", "Solar Noon") 
             }
             .map { it.copy(time = formatDisplayTime(it.time)) }
         val displayAstroList = astroList.map { it.copy(time = formatDisplayTime(it.time)) }
@@ -261,11 +268,11 @@ class PrayerTimesViewModel @Inject constructor(
                     gregorianDate = gregorianString
                 )
                 
-                // Schedule alarms for prayers only
-                alarmManager.scheduleAlarms(prayerList)
-                
-                updateNextPrayer()
+                updateNextPrayer(date)
             }
+
+            // Move scheduling to background
+            alarmManager.scheduleAlarms(prayerList)
         }
     }
 
@@ -291,29 +298,59 @@ class PrayerTimesViewModel @Inject constructor(
         }
     }
 
-    private fun updateNextPrayer() {
-        val now = _uiState.value.currentTime
-        val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
-        val currentStr = sdf.format(now)
+    private fun updateNextPrayer(now: Date) {
+        val currentStr = timeFormat.format(now)
+        val prayerList = _uiState.value.rawPrayerTimes
+        if (prayerList.isEmpty()) return
 
         var nextFound = false
-        val prayerList = _uiState.value.rawPrayerTimes
-        for (info in prayerList) {
+        val nowDate = timeFormat.parse(currentStr) ?: return
+        
+        for ((index, info) in prayerList.withIndex()) {
             if (info.time > currentStr) {
-                _uiState.value = _uiState.value.copy(
-                    nextPrayerName = info.name,
-                    nextPrayerTime = formatDisplayTime(info.time)
-                )
+                var activeName: String? = null
+                
+                val diffMinutes = try {
+                    val dateNext = timeFormat.parse(info.time)
+                    if (dateNext != null) {
+                        (dateNext.time - nowDate.time) / (60 * 1000)
+                    } else {
+                        Long.MAX_VALUE
+                    }
+                } catch (e: Exception) {
+                    Long.MAX_VALUE
+                }
+                
+                if (diffMinutes <= 15) {
+                    activeName = info.name
+                } else if (index > 0) {
+                    activeName = prayerList[index - 1].name
+                }
+                
+                // Compare before updating to avoid unnecessary recompositions
+                val currentState = _uiState.value
+                if (currentState.nextPrayerName != info.name || currentState.activePrayerName != activeName) {
+                    _uiState.value = currentState.copy(
+                        nextPrayerName = info.name,
+                        nextPrayerTime = formatDisplayTime(info.time),
+                        activePrayerName = activeName
+                    )
+                }
                 nextFound = true
                 break
             }
         }
         
-        if (!nextFound && prayerList.isNotEmpty()) {
-            _uiState.value = _uiState.value.copy(
-                nextPrayerName = prayerList[0].name,
-                nextPrayerTime = formatDisplayTime(prayerList[0].time)
-            )
+        if (!nextFound) {
+            val currentState = _uiState.value
+            val ishaName = prayerList.last().name
+            if (currentState.activePrayerName != ishaName) {
+                _uiState.value = currentState.copy(
+                    nextPrayerName = prayerList[0].name,
+                    nextPrayerTime = formatDisplayTime(prayerList[0].time),
+                    activePrayerName = ishaName
+                )
+            }
         }
     }
 }

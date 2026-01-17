@@ -32,16 +32,19 @@ fun HeroDashboard(
     locationName: String = "London",
     currentTime: java.util.Date = java.util.Date()
 ) {
-    val isFriday = java.util.Calendar.getInstance().apply { time = currentTime }
-        .get(java.util.Calendar.DAY_OF_WEEK) == java.util.Calendar.FRIDAY
+    val calendar = remember(currentTime) { java.util.Calendar.getInstance().apply { time = currentTime } }
+    val isFriday = remember(calendar) { calendar.get(java.util.Calendar.DAY_OF_WEEK) == java.util.Calendar.FRIDAY }
 
-    val (arabicVerse, englishVerse) = if (isFriday) {
-        "يَٰٓأَيُّهَا ٱلَّذِينَ ءَامَنُوٓا۟ إِذَا نُودِىَ لِلصَّلَوٰةِ مِن يَوْمِ ٱلْجُمُعَةِ فَٱسْعَوْا۟ إِلَىٰ ذِكْرِ ٱللَّهِ وَذَرُوا۟ ٱلْبَيْعَ ۚ ذَٰلِكُمْ خَيْرٌ لَّكُمْ إِن كُنتُمْ تَعْلَمُونَ" to
-        "O ye who believe! when the call is made for Prayer on Friday, hasten to the remembrance of Allah, and leave off all business. That is better for you, if you only knew. 62:10"
-    } else {
-        "إِنَّ ٱلصَّلَوٰةَ كَانَتْ عَلَى ٱلْمُؤْمِنِينَ كِتَٰبًا مَّوْقُوتًا..." to
-        "...verily Prayer is enjoined on the believers to be performed at fixed hours. 4:104"
+    val verses = remember(isFriday) {
+        if (isFriday) {
+            "يَٰٓأَيُّهَا ٱلَّذِينَ ءَامَنُوٓا۟ إِذَا نُودِىَ لِلصَّلَوٰةِ مِن يَوْمِ ٱلْجُمُعَةِ فَٱسْعَوْا۟ إِلَىٰ ذِكْرِ ٱللَّهِ وَذَرُوا۟ ٱلْبَيْعَ ۚ ذَٰلِكُمْ خَيْرٌ لَّكُمْ إِن كُنتُمْ تَعْلَمُونَ" to
+            "O ye who believe! when the call is made for Prayer on Friday, hasten to the remembrance of Allah, and leave off all business. That is better for you, if you only knew. 62:10"
+        } else {
+            "إِنَّ ٱلصَّلَوٰةَ كَانَتْ عَلَى ٱلْمُؤْمِنِينَ كِتَٰبًا مَّوْقُوتًا..." to
+            "...verily Prayer is enjoined on the believers to be performed at fixed hours. 4:104"
+        }
     }
+    val (arabicVerse, englishVerse) = verses
 
     Column(
         modifier = Modifier

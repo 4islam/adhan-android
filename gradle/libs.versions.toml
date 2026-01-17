@@ -18,6 +18,9 @@ material = "1.11.0"
 navigationCompose = "2.7.7"
 mapsCompose = "4.3.3"
 googleMapsServices = "18.2.0"
+mockk = "1.13.8"
+turbine = "1.0.0"
+kotlinxCoroutinesTest = "1.7.3"
 
 
 [libraries]
@@ -48,6 +51,9 @@ androidx-navigation-compose = { group = "androidx.navigation", name = "navigatio
 maps-compose = { group = "com.google.maps.android", name = "maps-compose", version.ref = "mapsCompose" }
 play-services-maps = { group = "com.google.android.gms", name = "play-services-maps", version.ref = "googleMapsServices" }
 play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "googleMapsServices" }
+mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
+turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
+kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }
 
 
 [plugins]

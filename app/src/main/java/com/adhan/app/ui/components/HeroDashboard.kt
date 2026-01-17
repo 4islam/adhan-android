@@ -29,8 +29,19 @@ fun HeroDashboard(
     nextPrayerTime: String,
     hijriDate: String,
     gregorianDate: String,
-    quranVerse: String = "O ye who believe! When the call is made for Prayer on Friday, hasten to the remembrance of Allah..."
+    currentTime: java.util.Date = java.util.Date()
 ) {
+    val isFriday = java.util.Calendar.getInstance().apply { time = currentTime }
+        .get(java.util.Calendar.DAY_OF_WEEK) == java.util.Calendar.FRIDAY
+
+    val (arabicVerse, englishVerse) = if (isFriday) {
+        "يَٰٓأَيُّهَا ٱلَّذِينَ ءَامَنُوٓا۟ إِذَا نُودِىَ لِلصَّلَوٰةِ مِن يَوْمِ ٱلْجُمُعَةِ فَٱسْعَوْا۟ إِلَىٰ ذِكْرِ ٱللَّهِ وَذَرُوا۟ ٱلْبَيْعَ ۚ ذَٰلِكُمْ خَيْرٌ لَّكُمْ إِن كُنتُمْ تَعْلَمُونَ" to
+        "O ye who believe! when the call is made for Prayer on Friday, hasten to the remembrance of Allah, and leave off all business. That is better for you, if you only knew. 62:10"
+    } else {
+        "...إِنَّ ٱلصَّلَوٰةَ كَانَتْ عَلَى ٱلْمُؤْمِنِينَ كِتَٰبًا مَّوْقُوتًا" to
+        "...verily Prayer is enjoined on the believers to be performed at fixed hours. 4:104"
+    }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -47,14 +58,26 @@ fun HeroDashboard(
                 .padding(horizontal = 24.dp, vertical = 20.dp),
             contentAlignment = Alignment.Center
         ) {
-            Text(
-                text = quranVerse,
-                style = MaterialTheme.typography.bodyMedium,
-                color = Color.White.copy(alpha = 0.8f),
-                textAlign = androidx.compose.ui.text.style.TextAlign.Center,
-                lineHeight = 22.sp,
-                fontStyle = androidx.compose.ui.text.font.FontStyle.Italic
-            )
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(
+                    text = arabicVerse,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = Color.White,
+                    textAlign = androidx.compose.ui.text.style.TextAlign.Right, // Traditional right-align for Arabic
+                    lineHeight = 28.sp,
+                    fontSize = 18.sp,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = englishVerse,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color.White.copy(alpha = 0.8f),
+                    textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                    lineHeight = 18.sp,
+                    fontStyle = androidx.compose.ui.text.font.FontStyle.Italic
+                )
+            }
         }
 
         Spacer(modifier = Modifier.height(24.dp))

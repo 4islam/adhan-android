@@ -43,7 +43,8 @@ fun DashboardScreen(viewModel: PrayerTimesViewModel) {
                     nextPrayerName = uiState.nextPrayerName,
                     nextPrayerTime = uiState.nextPrayerTime,
                     hijriDate = uiState.hijriDate,
-                    gregorianDate = uiState.gregorianDate
+                    gregorianDate = uiState.gregorianDate,
+                    currentTime = uiState.currentTime
                 )
                 Spacer(modifier = Modifier.height(16.dp))
             }

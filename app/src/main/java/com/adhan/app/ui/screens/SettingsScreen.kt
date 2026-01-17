@@ -74,7 +74,8 @@ fun SettingsScreen(
         Spacer(modifier = Modifier.height(32.dp))
 
         LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            contentPadding = PaddingValues(bottom = 200.dp)
         ) {
             item {
                 SettingsSection("Calculation Method") {

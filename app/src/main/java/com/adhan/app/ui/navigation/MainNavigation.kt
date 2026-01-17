@@ -28,7 +28,8 @@ fun MainNavigation(
             SkylightVisualizer(
                 currentTime = uiState.currentTime,
                 lat = uiState.latitude,
-                lng = uiState.longitude
+                lng = uiState.longitude,
+                onBack = { navController.popBackStack() }
             )
         }
         composable(NavScreen.Map.route) {
@@ -37,14 +38,16 @@ fun MainNavigation(
                 initialLng = uiState.longitude,
                 onLocationOverride = { lat, lng ->
                     viewModel.overrideLocation(lat, lng)
-                }
+                },
+                onBack = { navController.popBackStack() }
             )
         }
         composable(NavScreen.Qibla.route) {
             QiblaCompass(
                 userLat = uiState.latitude,
                 userLng = uiState.longitude,
-                deviceHeading = uiState.deviceHeading
+                deviceHeading = uiState.deviceHeading,
+                onBack = { navController.popBackStack() }
             )
         }
         composable(NavScreen.Settings.route) {

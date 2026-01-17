@@ -24,45 +24,60 @@ import androidx.compose.ui.unit.sp
 fun AstroRow(
     sunrise: String,
     solarNoon: String,
-    sunset: String
+    sunset: String,
+    moonrise: String,
+    moonset: String
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp)
-            .clip(RoundedCornerShape(24.dp))
+            .padding(horizontal = 8.dp)
+            .clip(RoundedCornerShape(12.dp))
             .background(Color.White.copy(alpha = 0.1f))
-            .padding(16.dp),
+            .padding(vertical = 6.dp, horizontal = 4.dp),
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        AstroItem("Rise", sunrise, Icons.Default.Brightness5, Color(0xFFFFB74D))
-        AstroItem("Noon", solarNoon, Icons.Default.WbSunny, Color(0xFFFFB74D))
-        AstroItem("Set", sunset, Icons.Default.Brightness5, Color(0xFFFFB74D))
+        AstroItemCompact("Rise", sunrise, Icons.Default.Brightness5, Color(0xFFFFB74D))
+        AstroItemCompact("Noon", solarNoon, Icons.Default.WbSunny, Color(0xFFFFB74D))
+        AstroItemCompact("Set", sunset, Icons.Default.Brightness5, Color(0xFFFFB74D))
+        
+        // Subtle Vertical Divider
+        Box(modifier = Modifier.width(1.dp).height(20.dp).background(Color.White.copy(alpha = 0.1f)))
+        
+        AstroItemCompact("Moon ↑", moonrise, Icons.Default.NightsStay, Color(0xFF80DEEA))
+        AstroItemCompact("Moon ↓", moonset, Icons.Default.NightsStay, Color(0xFF80DEEA))
     }
 }
 
 @Composable
-private fun AstroItem(label: String, time: String, icon: ImageVector, iconColor: Color) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+private fun AstroItemCompact(label: String, time: String, icon: ImageVector, iconColor: Color) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
         Icon(
             imageVector = icon,
             contentDescription = label,
             tint = iconColor,
-            modifier = Modifier.size(24.dp)
+            modifier = Modifier.size(14.dp)
         )
-        Text(
-            text = label,
-            style = MaterialTheme.typography.labelSmall,
-            color = Color.White.copy(alpha = 0.6f),
-            modifier = Modifier.padding(top = 4.dp)
-        )
-        Text(
-            text = time,
-            style = MaterialTheme.typography.bodyMedium,
-            color = Color.White,
-            fontWeight = FontWeight.Bold,
-            fontSize = 14.sp
-        )
+        Column(horizontalAlignment = Alignment.Start) {
+            Text(
+                text = label,
+                style = MaterialTheme.typography.labelSmall,
+                color = Color.White.copy(alpha = 0.6f),
+                fontSize = 8.sp,
+                lineHeight = 8.sp
+            )
+            Text(
+                text = time,
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color.White,
+                fontWeight = FontWeight.Bold,
+                fontSize = 10.sp,
+                lineHeight = 10.sp
+            )
+        }
     }
 }

@@ -27,8 +27,8 @@ fun PrayerTimesScreen(viewModel: PrayerTimesViewModel) {
         // Dynamic Background (always present)
         CelestialBackground(
             currentTime = uiState.currentTime,
-            lat = uiState.latitude,
-            lng = uiState.longitude
+            latitude = uiState.latitude,
+            longitude = uiState.longitude
         )
 
         // Main Navigation Host

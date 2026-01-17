@@ -200,14 +200,31 @@ class PrayerTimesViewModel @Inject constructor(
             astroList.add(PrayerTimesCalculator.CombinedPrayerInfo(name, time))
         }
 
-        allTimesMap.forEach { info ->
-            if (info.name != "Sunrise" && info.name != "Sunset") {
-                prayerList.add(info)
-            }
+        val mainCal = Calendar.getInstance().apply { time = date }
+        val isFriday = mainCal.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY
+
+        // Filter for actual prayers only
+        val prayersOnly = allTimesMap.filter { 
+            it.name !in listOf("Sunrise", "Sunset", "Solar Noon") 
         }
 
-        // Format for display
-        val displayPrayerList = prayerList.map { it.copy(time = formatDisplayTime(it.time)) }
+        prayersOnly.forEach { info ->
+            var finalInfo = info
+            if ((info.name == "Dhuhr" || info.name == "Dhuhr/Asr") && isFriday) {
+                finalInfo = info.copy(name = "Jummah (or Dhuhr)")
+            }
+            prayerList.add(finalInfo)
+        }
+        
+        prayerList.sortBy { it.time }
+
+        // Format for display: Filter out astronomical repetitions (Rise/Noon/Set)
+        // because they are now uniquely displayed in the AstroRow panel.
+        val displayPrayerList = prayerList
+            .filter { info -> 
+                info.name !in listOf("Sunrise", "Sunset", "Solar Noon", "Dhuhr", "Dhuhr/Asr", "Jummah (or Dhuhr)") 
+            }
+            .map { it.copy(time = formatDisplayTime(it.time)) }
         val displayAstroList = astroList.map { it.copy(time = formatDisplayTime(it.time)) }
 
         _uiState.value = _uiState.value.copy(

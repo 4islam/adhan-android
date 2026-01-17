@@ -1,84 +1,133 @@
 package com.adhan.app.ui.components
 
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
 import com.adhan.app.domain.models.Astrology
 import java.util.*
-import kotlin.math.cos
-import kotlin.math.sin
+import kotlin.math.abs
+import kotlin.random.Random
 
 @Composable
 fun CelestialBackground(
-    currentTime: Date,
-    lat: Double,
-    lng: Double
+    latitude: Double,
+    longitude: Double,
+    currentTime: Date
 ) {
-    val sunPos = Astrology.getSunPosition(currentTime, lat, lng)
-    val moonPos = Astrology.getMoonPosition(currentTime, lat, lng)
+    val sunPos = Astrology.getSunPosition(currentTime, latitude, longitude)
+    val moonPos = Astrology.getMoonPosition(currentTime, latitude, longitude)
 
-    // Dynamic colors based on sun altitude
-    val skyColor = when {
-        sunPos.altitude > 0 -> Color(0xFF4A90E2) // Day
-        sunPos.altitude > -6 -> Color(0xFFFFA07A) // Golden hour/Twilight
-        sunPos.altitude > -12 -> Color(0xFF483D8B) // Nautical twilight
-        else -> Color(0xFF191970) // Night
-    }
+    Canvas(modifier = Modifier.fillMaxSize()) {
+        val width = size.width
+        val height = size.height
+        val horizonY = height * 0.75f
 
-    val animatedSkyColor by animateColorAsState(
-        targetValue = skyColor,
-        animationSpec = tween(durationMillis = 1000)
-    )
+        // 1. Sky Gradient based on Sun Altitude
+        val sunAlt = sunPos.altitude
+        val skyBrush = when {
+            sunAlt > 10 -> Brush.verticalGradient(listOf(Color(0xFF1E88E5), Color(0xFF90CAF9))) // Day
+            sunAlt > 0 -> Brush.verticalGradient(listOf(Color(0xFF0D47A1), Color(0xFFF06292), Color(0xFFFFB74D))) // Sunset/Rise
+            sunAlt > -6 -> Brush.verticalGradient(listOf(Color(0xFF1A237E), Color(0xFF4A148C), Color(0xFFE91E63))) // Twilight
+            else -> Brush.verticalGradient(listOf(Color(0xFF000428), Color(0xFF004E92))) // Night
+        }
+        drawRect(brush = skyBrush, size = size)
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    colors = listOf(
-                        animatedSkyColor,
-                        animatedSkyColor.copy(alpha = 0.7f),
-                        animatedSkyColor.copy(alpha = 0.5f)
-                    )
+        // 2. Stars for Night/Twilight
+        if (sunAlt < 0) {
+            val starCount = 100
+            val alpha = if (sunAlt < -6) 1f else (abs(sunAlt) / 6f).toFloat()
+            val random = Random(currentTime.time / 86400000) // Consistent per day
+            repeat(starCount) {
+                val x = random.nextFloat() * width
+                val y = random.nextFloat() * horizonY
+                val starSize = random.nextFloat() * 2.dp.toPx()
+                drawCircle(
+                    color = Color.White.copy(alpha = alpha * 0.6f),
+                    radius = starSize,
+                    center = Offset(x, y)
                 )
+            }
+        }
+
+        // 3. Horizon Atmospheric Glow
+        drawRect(
+            brush = Brush.verticalGradient(
+                listOf(Color.White.copy(alpha = 0.1f), Color.Transparent),
+                startY = horizonY - 100.dp.toPx(),
+                endY = horizonY
+            ),
+            size = androidx.compose.ui.geometry.Size(width, 100.dp.toPx()),
+            topLeft = Offset(0f, horizonY - 100.dp.toPx())
+        )
+
+        // 4. Horizon Line
+        drawLine(
+            color = Color.White.copy(alpha = 0.15f),
+            start = Offset(0f, horizonY),
+            end = Offset(width, horizonY),
+            strokeWidth = 1.dp.toPx()
+        )
+
+        // 5. Draw Sun
+        if (sunAlt > -15) {
+            val sunX = (sunPos.azimuth.toFloat() / 360f) * width
+            val sunY = horizonY - (sunAlt.toFloat() / 90f) * (height * 0.5f)
+            
+            // Outer Glow
+            drawCircle(
+                brush = Brush.radialGradient(
+                    listOf(Color(0xFFFFD54F).copy(alpha = 0.3f), Color.Transparent),
+                    center = Offset(sunX, sunY),
+                    radius = 120.dp.toPx()
+                ),
+                radius = 120.dp.toPx(),
+                center = Offset(sunX, sunY)
             )
-    ) {
-        Canvas(modifier = Modifier.fillMaxSize()) {
-            val width = size.width
-            val height = size.height
+            // Inner Body
+            drawCircle(
+                color = Color(0xFFFFD54F),
+                radius = 45.dp.toPx(),
+                center = Offset(sunX, sunY),
+                alpha = if (sunAlt > 0) 1f else (sunAlt + 15).toFloat() / 15f
+            )
+        }
 
-            // Render Sun if above horizon
-            if (sunPos.altitude > -5) {
-                val sunX = (sunPos.azimuth / 360.0) * width
-                val sunY = height * (1.0 - (sunPos.altitude + 20) / 110.0)
-                
-                drawCircle(
-                    color = Color(0xFFFFD700),
-                    radius = 40f,
-                    center = Offset(sunX.toFloat(), sunY.toFloat())
-                )
-            }
-
-            // Render Moon if above horizon
-            if (moonPos.altitude > -5) {
-                val moonX = (moonPos.azimuth / 360.0) * width
-                val moonY = height * (1.0 - (moonPos.altitude + 20) / 110.0)
-                
-                drawCircle(
-                    color = Color(0xFFF5F5F5),
-                    radius = 30f,
-                    center = Offset(moonX.toFloat(), moonY.toFloat())
-                )
-            }
+        // 6. Draw Moon
+        val moonAlt = moonPos.altitude
+        if (moonAlt > -15) {
+            val moonX = (moonPos.azimuth.toFloat() / 360f) * width
+            val moonY = horizonY - (moonAlt.toFloat() / 90f) * (height * 0.5f)
+            
+            // Moon Glow
+            drawCircle(
+                brush = Brush.radialGradient(
+                    listOf(Color(0xFFE0F7FA).copy(alpha = 0.2f), Color.Transparent),
+                    center = Offset(moonX, moonY),
+                    radius = 80.dp.toPx()
+                ),
+                radius = 80.dp.toPx(),
+                center = Offset(moonX, moonY)
+            )
+            // Moon Body
+            drawCircle(
+                color = Color(0xFFE0F7FA),
+                radius = 35.dp.toPx(),
+                center = Offset(moonX, moonY),
+                alpha = if (moonAlt > 0) 0.8f else (moonAlt + 15).toFloat() / 15f * 0.8f
+            )
+            // Crescent cutout
+            drawCircle(
+                color = Color.Black.copy(alpha = 0.01f), // Subtle cutout
+                radius = 30.dp.toPx(),
+                center = Offset(moonX - 8.dp.toPx(), moonY - 4.dp.toPx()),
+                blendMode = androidx.compose.ui.graphics.BlendMode.DstOut
+            )
         }
     }
 }

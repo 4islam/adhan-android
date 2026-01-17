@@ -17,11 +17,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlin.math.*
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.*
+
 @Composable
 fun QiblaCompass(
     userLat: Double,
     userLng: Double,
-    deviceHeading: Float // from sensors
+    deviceHeading: Float,
+    onBack: () -> Unit
 ) {
     val qiblaDirection = calculateQibla(userLat, userLng)
     val rotation by animateFloatAsState(targetValue = qiblaDirection.toFloat() - deviceHeading)
@@ -29,16 +34,26 @@ fun QiblaCompass(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .statusBarsPadding()
             .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            text = "Qibla",
-            style = MaterialTheme.typography.headlineMedium,
-            color = Color.White,
-            fontWeight = FontWeight.Bold
-        )
+        // Top Bar
+        Box(modifier = Modifier.fillMaxWidth()) {
+            IconButton(
+                onClick = onBack,
+                modifier = Modifier.align(Alignment.CenterStart)
+            ) {
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = Color.White)
+            }
+            Text(
+                text = "Qibla",
+                style = MaterialTheme.typography.headlineMedium,
+                color = Color.White,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.align(Alignment.Center)
+            )
+        }
         
         Spacer(modifier = Modifier.height(48.dp))
 

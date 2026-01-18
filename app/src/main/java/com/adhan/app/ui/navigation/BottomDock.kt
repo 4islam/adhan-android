@@ -8,6 +8,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CompassCalibration
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Map
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.WbSunny
@@ -28,6 +29,7 @@ sealed class NavScreen(val route: String, val icon: ImageVector, val label: Stri
     object Map : NavScreen("map", Icons.Filled.Map, "Map")
     object Qibla : NavScreen("qibla", Icons.Filled.CompassCalibration, "Qibla")
     object Settings : NavScreen("settings", Icons.Filled.Settings, "Settings")
+    object Logs : NavScreen("logs", Icons.Filled.List, "Debug Logs")
 }
 
 @Composable

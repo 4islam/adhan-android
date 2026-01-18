@@ -56,5 +56,11 @@ fun MainNavigation(
                 onBack = { navController.popBackStack() }
             )
         }
+        composable(NavScreen.Logs.route) {
+            com.adhan.app.ui.screens.LogsScreen(
+                viewModel = viewModel,
+                onBack = { navController.popBackStack() }
+            )
+        }
     }
 }

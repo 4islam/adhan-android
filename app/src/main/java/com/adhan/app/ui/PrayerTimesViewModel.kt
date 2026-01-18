@@ -39,18 +39,36 @@ data class PrayerTimesState(
     val combiningThreshold: Int = 90, // minutes
     val use12HourFormat: Boolean = true,
     val adhanSounds: Map<String, String> = emptyMap(), // Maps prayer name to URI string
-    val rawPrayerTimes: List<PrayerTimesCalculator.CombinedPrayerInfo> = emptyList() // 24h for logic
+    val rawPrayerTimes: List<PrayerTimesCalculator.CombinedPrayerInfo> = emptyList(), // 24h for logic
+    val isLocationSet: Boolean = true,
+    val nextPrayerDateLabel: String = ""
 )
 
 @HiltViewModel
 class PrayerTimesViewModel @Inject constructor(
     private val alarmManager: com.adhan.app.infra.PrayerAlarmManager,
     private val repository: com.adhan.app.domain.LocationRepository,
-    private val application: android.app.Application
+    private val application: android.app.Application,
+    private val logRepository: com.adhan.app.domain.LogRepository
 ) : ViewModel() {
     private val prefs = application.getSharedPreferences("adhan_prefs", android.content.Context.MODE_PRIVATE)
     private val _uiState = MutableStateFlow(PrayerTimesState())
     val uiState: StateFlow<PrayerTimesState> = _uiState.asStateFlow()
+
+    val logs = MutableStateFlow<List<com.adhan.app.domain.LogEntry>>(emptyList())
+
+    fun loadLogs() {
+        viewModelScope.launch {
+            logs.value = logRepository.getLogs()
+        }
+    }
+
+    fun clearLogs() {
+        viewModelScope.launch {
+            logRepository.clearLogs()
+            loadLogs()
+        }
+    }
 
     private var updateTimesJob: Job? = null
     private val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
@@ -68,7 +86,8 @@ class PrayerTimesViewModel @Inject constructor(
                     latitude = data.lat,
                     longitude = data.lng,
                     locationName = data.name,
-                    isOverrideActive = data.isOverrideActive
+                    isOverrideActive = data.isOverrideActive,
+                    isLocationSet = data.isSet
                 )
                 updateTimes()
             }
@@ -83,6 +102,12 @@ class PrayerTimesViewModel @Inject constructor(
         val tahajjudOffset = prefs.getInt("tahajjud_offset", 60)
         val combiningThreshold = prefs.getInt("combining_threshold", 90)
         val use12HourFormat = prefs.getBoolean("use_12_hour", true)
+
+        val loadedSounds = mutableMapOf<String, String>()
+        listOf("Fajr", "Dhuhr", "Asr", "Maghrib", "Isha").forEach { prayer ->
+            val uri = prefs.getString("adhan_sound_$prayer", null)
+            if (uri != null) loadedSounds[prayer] = uri
+        }
         
         _uiState.value = _uiState.value.copy(
             calcMethod = calcMethod,
@@ -92,7 +117,7 @@ class PrayerTimesViewModel @Inject constructor(
             tahajjudOffset = tahajjudOffset,
             combiningThreshold = combiningThreshold,
             use12HourFormat = use12HourFormat,
-            adhanSounds = adhanSounds
+            adhanSounds = loadedSounds
         )
     }
 
@@ -165,24 +190,44 @@ class PrayerTimesViewModel @Inject constructor(
         repository.updateLocation(lat, lng, finalName, true)
     }
 
-    fun testAdhan() {
+    fun testAdhan(): Boolean {
         val now = Calendar.getInstance()
         now.add(Calendar.MINUTE, 1)
         val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
         val testTime = sdf.format(now.time)
         
         val testPrayer = PrayerTimesCalculator.CombinedPrayerInfo("Test Adhan", testTime)
-        alarmManager.scheduleAlarms(listOf(testPrayer))
+        val success = alarmManager.scheduleAlarms(listOf(testPrayer))
         
-        // Update UI to show we scheduled it
-        _uiState.value = _uiState.value.copy(
-            nextPrayerName = "Test Adhan",
-            nextPrayerTime = formatDisplayTime(testTime)
-        )
+        if (success) {
+            // Update UI to show we scheduled it
+            _uiState.value = _uiState.value.copy(
+                nextPrayerName = "Test Adhan",
+                nextPrayerTime = formatDisplayTime(testTime),
+                nextPrayerDateLabel = ""
+            )
+        }
+        return success
     }
 
     fun updateHeading(heading: Float) {
         _uiState.value = _uiState.value.copy(deviceHeading = heading)
+    }
+
+    fun openAudioOutputPicker() {
+        try {
+            val intent = android.content.Intent("com.android.settings.panel.action.MEDIA_OUTPUT").apply {
+                putExtra("com.android.settings.panel.extra.PACKAGE_NAME", application.packageName)
+                addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            application.startActivity(intent)
+        } catch (e: Exception) {
+            // Fallback for older Android versions or if panel is not available
+            val intent = android.content.Intent(android.provider.Settings.ACTION_BLUETOOTH_SETTINGS).apply {
+                addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            application.startActivity(intent)
+        }
     }
 
 
@@ -250,12 +295,10 @@ class PrayerTimesViewModel @Inject constructor(
         
         prayerList.sortBy { it.time }
 
-        // Format for display: Filter out astronomical repetitions (Rise/Noon/Set)
-        // because they are now uniquely displayed in the AstroRow panel.
+        // Format for display: Inclusive list of prayers only
+        val allowedPrayers = listOf("Tahajjud", "Fajr", "Dhuhr", "Dhuhr/Asr", "Jummah (or Dhuhr)", "Asr", "Maghrib", "Maghrib/Isha", "Isha")
         val displayPrayerList = prayerList
-            .filter { info -> 
-                info.name !in listOf("Sunrise", "Sunset", "Solar Noon") 
-            }
+            .filter { it.name in allowedPrayers }
             .map { it.copy(time = formatDisplayTime(it.time)) }
         val displayAstroList = astroList.map { it.copy(time = formatDisplayTime(it.time)) }
 
@@ -333,7 +376,8 @@ class PrayerTimesViewModel @Inject constructor(
                     _uiState.value = currentState.copy(
                         nextPrayerName = info.name,
                         nextPrayerTime = formatDisplayTime(info.time),
-                        activePrayerName = activeName
+                        activePrayerName = activeName,
+                        nextPrayerDateLabel = ""
                     )
                 }
                 nextFound = true
@@ -348,7 +392,8 @@ class PrayerTimesViewModel @Inject constructor(
                 _uiState.value = currentState.copy(
                     nextPrayerName = prayerList[0].name,
                     nextPrayerTime = formatDisplayTime(prayerList[0].time),
-                    activePrayerName = ishaName
+                    activePrayerName = ishaName,
+                    nextPrayerDateLabel = "(Tomorrow)"
                 )
             }
         }

@@ -18,9 +18,13 @@ material = "1.11.0"
 navigationCompose = "2.7.7"
 mapsCompose = "4.3.3"
 googleMapsServices = "18.2.0"
+googleLocationServices = "21.0.1"
 mockk = "1.13.8"
 turbine = "1.0.0"
 kotlinxCoroutinesTest = "1.7.3"
+googleServices = "4.4.0"
+firebaseAppDistribution = "4.0.0"
+firebaseBom = "32.7.0"
 
 
 [libraries]
@@ -50,10 +54,12 @@ material = { group = "com.google.android.material", name = "material", version.r
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 maps-compose = { group = "com.google.maps.android", name = "maps-compose", version.ref = "mapsCompose" }
 play-services-maps = { group = "com.google.android.gms", name = "play-services-maps", version.ref = "googleMapsServices" }
-play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "googleMapsServices" }
+play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "googleLocationServices" }
 mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
 turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }
+firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
+google-services = { group = "com.google.gms", name = "google-services", version.ref = "googleServices" }
 
 
 [plugins]
@@ -61,3 +67,5 @@ android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }
+firebase-app-distribution = { id = "com.google.firebase.appdistribution", version.ref = "firebaseAppDistribution" }

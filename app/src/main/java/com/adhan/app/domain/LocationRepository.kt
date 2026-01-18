@@ -14,17 +14,40 @@ class LocationRepository @Inject constructor(
     private val prefs = context.getSharedPreferences("adhan_prefs", Context.MODE_PRIVATE)
 
     private val _location = MutableStateFlow(
-        LocationData(
-            lat = prefs.getFloat("last_lat", 51.5074f).toDouble(),
-            lng = prefs.getFloat("last_lng", -0.1278f).toDouble(),
-            name = prefs.getString("last_location_name", "London, UK") ?: "London, UK",
-            isOverrideActive = prefs.getBoolean("is_override_active", false)
-        )
+        if (prefs.contains("last_lat")) {
+            val savedName = prefs.getString("last_location_name", "London, UK") ?: "London, UK"
+            // If the saved location is the old default (London), treat is as unset to force auto-detection
+            if (savedName == "London, UK" || savedName == "Toronto, Canada") {
+                LocationData(
+                    lat = 0.0,
+                    lng = 0.0,
+                    name = "Detecting Location...",
+                    isOverrideActive = false,
+                    isSet = false
+                )
+            } else {
+                LocationData(
+                    lat = prefs.getFloat("last_lat", 51.5074f).toDouble(),
+                    lng = prefs.getFloat("last_lng", -0.1278f).toDouble(),
+                    name = savedName,
+                    isOverrideActive = prefs.getBoolean("is_override_active", false),
+                    isSet = true
+                )
+            }
+        } else {
+            LocationData(
+                lat = 0.0,
+                lng = 0.0,
+                name = "Detecting Location...",
+                isOverrideActive = false,
+                isSet = false
+            )
+        }
     )
     val location: StateFlow<LocationData> = _location
 
     fun updateLocation(lat: Double, lng: Double, name: String, isOverride: Boolean) {
-        _location.value = LocationData(lat, lng, name, isOverride)
+        _location.value = LocationData(lat, lng, name, isOverride, true)
         
         prefs.edit().apply {
             putFloat("last_lat", lat.toFloat())
@@ -38,6 +61,7 @@ class LocationRepository @Inject constructor(
         val lat: Double,
         val lng: Double,
         val name: String,
-        val isOverrideActive: Boolean
+        val isOverrideActive: Boolean,
+        val isSet: Boolean
     )
 }

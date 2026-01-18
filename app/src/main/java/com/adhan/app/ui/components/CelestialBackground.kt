@@ -4,6 +4,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -23,7 +24,7 @@ fun CelestialBackground(
     val sunPos = Astrology.getSunPosition(currentTime, latitude, longitude)
     val moonPos = Astrology.getMoonPosition(currentTime, latitude, longitude)
 
-    Canvas(modifier = Modifier.fillMaxSize()) {
+    Canvas(modifier = Modifier.fillMaxSize().blur(32.dp)) {
         val width = size.width
         val height = size.height
         val horizonY = height * 0.75f
@@ -129,5 +130,11 @@ fun CelestialBackground(
                 blendMode = androidx.compose.ui.graphics.BlendMode.DstOut
             )
         }
+
+        // 7. Dimming Layer (Requested Polish)
+        drawRect(
+            color = Color.Black.copy(alpha = 0.4f),
+            size = size
+        )
     }
 }

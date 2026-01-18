@@ -62,8 +62,8 @@ class LocationService : Service() {
         val distance = FloatArray(1)
         android.location.Location.distanceBetween(lat, lng, lastLoc.lat, lastLoc.lng, distance)
         
-        // Only update if significant change (> 2km) or if no name set (first run)
-        if (distance[0] > 2000 || lastLoc.name == "London, UK") {
+        // Only update if significant change (> 2km) or if no name set (first run/detecting)
+        if (distance[0] > 2000 || lastLoc.name == "Detecting Location..." || lastLoc.name == "London, UK" || !lastLoc.isSet) {
             lastUpdateTime = currentTime
             val geocoder = Geocoder(this, Locale.getDefault())
             val addresses = geocoder.getFromLocation(lat, lng, 1)

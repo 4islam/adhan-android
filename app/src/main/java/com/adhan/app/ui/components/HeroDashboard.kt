@@ -27,6 +27,7 @@ import kotlinx.coroutines.delay
 fun HeroDashboard(
     nextPrayerName: String,
     nextPrayerTime: String,
+    nextPrayerDateLabel: String,
     hijriDate: String,
     gregorianDate: String,
     locationName: String = "London",
@@ -154,7 +155,7 @@ fun HeroDashboard(
 
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
-                    text = "$nextPrayerName (Tomorrow)",
+                    text = "$nextPrayerName $nextPrayerDateLabel".trim(),
                     style = MaterialTheme.typography.titleLarge,
                     color = Color.White,
                     fontWeight = FontWeight.Light,

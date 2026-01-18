@@ -78,13 +78,48 @@ fun SettingsScreen(
             contentPadding = PaddingValues(bottom = 200.dp)
         ) {
             item {
+                val selectedMethodName = calcMethods.entries.find { it.value == uiState.calcMethod }?.key ?: "Select Method"
+                var expanded by remember { mutableStateOf(false) }
+
                 SettingsSection("Calculation Method") {
-                    calcMethods.forEach { (name, id) ->
-                        SettingsItem(
-                            label = name,
-                            isSelected = uiState.calcMethod == id,
-                            onClick = { viewModel.setCalcMethod(id) }
-                        )
+                    Box(modifier = Modifier.padding(8.dp)) {
+                        ExposedDropdownMenuBox(
+                            expanded = expanded,
+                            onExpandedChange = { expanded = !expanded }
+                        ) {
+                            OutlinedTextField(
+                                value = selectedMethodName,
+                                onValueChange = {},
+                                readOnly = true,
+                                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                                colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(
+                                    focusedTextColor = Color.White,
+                                    unfocusedTextColor = Color.White,
+                                    focusedBorderColor = Color.White.copy(alpha = 0.5f),
+                                    unfocusedBorderColor = Color.White.copy(alpha = 0.3f),
+                                    focusedContainerColor = Color.Transparent,
+                                    unfocusedContainerColor = Color.Transparent
+                                ),
+                                modifier = Modifier
+                                    .menuAnchor()
+                                    .fillMaxWidth()
+                            )
+
+                            ExposedDropdownMenu(
+                                expanded = expanded,
+                                onDismissRequest = { expanded = false }
+                            ) {
+                                calcMethods.forEach { (name, id) ->
+                                    DropdownMenuItem(
+                                        text = { Text(text = name) },
+                                        onClick = {
+                                            viewModel.setCalcMethod(id)
+                                            expanded = false
+                                        }
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -185,6 +220,35 @@ fun SettingsScreen(
             }
 
             item {
+                SettingsSection("Audio Configuration") {
+                    Column(modifier = Modifier.padding(8.dp)) {
+                        Text(
+                            text = "Audio Output Route",
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = "Select where to play the Adhan (e.g., Bluetooth speakers, phone speaker, or wireless devices).",
+                            color = Color.White.copy(alpha = 0.5f),
+                            style = MaterialTheme.typography.labelSmall
+                        )
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Button(
+                            onClick = { viewModel.openAudioOutputPicker() },
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color.White.copy(alpha = 0.2f)
+                            ),
+                            shape = RoundedCornerShape(8.dp)
+                        ) {
+                            Text("Select Audio Output", color = Color.White)
+                        }
+                    }
+                }
+            }
+
+            item {
                 SettingsSection("Adhan Sounds") {
                     prayers.forEach { prayer ->
                         Row(
@@ -236,8 +300,20 @@ fun SettingsScreen(
                             style = MaterialTheme.typography.labelSmall
                         )
                         Spacer(modifier = Modifier.height(12.dp))
+                            val context = androidx.compose.ui.platform.LocalContext.current
                         Button(
-                            onClick = { viewModel.testAdhan() },
+                            onClick = { 
+                                val success = viewModel.testAdhan()
+                                if (success) {
+                                    android.widget.Toast.makeText(context, "Test Adhan scheduled for 1 minute from now", android.widget.Toast.LENGTH_SHORT).show()
+                                } else {
+                                    android.widget.Toast.makeText(context, "Permission for exact alarms required", android.widget.Toast.LENGTH_LONG).show()
+                                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+                                        val intent = android.content.Intent(android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
+                                        context.startActivity(intent)
+                                    }
+                                }
+                            },
                             modifier = Modifier.fillMaxWidth(),
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = Color(0xFF00E5FF).copy(alpha = 0.3f)

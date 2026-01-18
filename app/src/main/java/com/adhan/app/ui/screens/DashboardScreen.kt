@@ -28,103 +28,119 @@ fun DashboardScreen(viewModel: PrayerTimesViewModel) {
     val listState = rememberLazyListState()
 
     Box(modifier = Modifier.fillMaxSize()) {
-        // 1. Scrollable Content (Hero & Prayers)
-        LazyColumn(
-            state = listState,
-            modifier = Modifier
-                .fillMaxSize()
-                .statusBarsPadding(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            contentPadding = PaddingValues(top = 16.dp, bottom = 250.dp)
-        ) {
-            // Hero Section
-            item(key = "hero") {
-                HeroDashboard(
-                    nextPrayerName = uiState.nextPrayerName,
-                    nextPrayerTime = uiState.nextPrayerTime,
-                    hijriDate = uiState.hijriDate,
-                    gregorianDate = uiState.gregorianDate,
-                    locationName = uiState.locationName,
-                    currentTime = uiState.currentTime
-                )
+        if (!uiState.isLocationSet) {
+            Column(
+                modifier = Modifier.align(Alignment.Center),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                CircularProgressIndicator(color = Color.White)
                 Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = "Detecting Location...",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = Color.White
+                )
             }
-
-            // Prayer Times List
-            items(
-                items = uiState.prayerTimes,
-                key = { it.name },
-                contentType = { "prayer" }
-            ) { info ->
-                val icon = getPrayerIcon(info.name)
-                val isActive = info.name == uiState.activePrayerName
-                val isTahajjud = info.name.contains("Tahajjud")
-                
-                // --- Phase 14: 3D Spherical Logic ---
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(80.dp)
-                        .graphicsLayer {
-                            val infoKey = info.name
-                            val layoutInfo = listState.layoutInfo
-                            val itemInfo = layoutInfo.visibleItemsInfo.find { it.key == infoKey }
-                            
-                            if (itemInfo != null) {
-                                val viewportHeight = layoutInfo.viewportEndOffset - layoutInfo.viewportStartOffset
-                                val itemCenter = itemInfo.offset + (itemInfo.size / 2f)
-                                val viewportCenter = viewportHeight / 2f
-                                
-                                val distFromCenter = (itemCenter - viewportCenter) / (viewportHeight / 2f)
-                                val absDist = kotlin.math.abs(distFromCenter).coerceAtMost(1f)
-
-                                rotationX = distFromCenter * -30f
-                                cameraDistance = 12f * density
-                                
-                                val focalScale = if (isActive) 1.25f else 1.0f
-                                val distScale = 1.0f - (absDist * 0.4f)
-                                scaleX = focalScale * distScale
-                                scaleY = focalScale * distScale
-                                
-                                alpha = (1.0f - (absDist * 0.3f)).coerceIn(0.4f, 1.0f)
-                                translationY = distFromCenter * -20f
-                            }
-                        }
-                ) {
-                    PrayerCard(
-                        name = info.name,
-                        time = info.time,
-                        icon = icon,
-                        isCombined = info.isCombined,
-                        isActive = isActive,
-                        isTahajjud = isTahajjud,
-                        scale = 1f
+        } else {
+            // 1. Scrollable Content (Hero & Prayers)
+            LazyColumn(
+                state = listState,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .statusBarsPadding(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                contentPadding = PaddingValues(top = 16.dp, bottom = 250.dp)
+            ) {
+                // Hero Section
+                item(key = "hero") {
+                    HeroDashboard(
+                        nextPrayerName = uiState.nextPrayerName,
+                        nextPrayerTime = uiState.nextPrayerTime,
+                        nextPrayerDateLabel = uiState.nextPrayerDateLabel,
+                        hijriDate = uiState.hijriDate,
+                        gregorianDate = uiState.gregorianDate,
+                        locationName = uiState.locationName,
+                        currentTime = uiState.currentTime
                     )
+                    Spacer(modifier = Modifier.height(16.dp))
                 }
-                Spacer(modifier = Modifier.height(12.dp))
-            }
-        }
 
-        // 3. Fixed Astro Panel at bottom
-        Box(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 115.dp)
-        ) {
-            val events = uiState.astronomicalEvents
-            val sunrise = events.find { it.name == "Sunrise" }?.time ?: "--:--"
-            val solarNoon = events.find { it.name == "Solar Noon" }?.time ?: "--:--"
-            val sunset = events.find { it.name == "Sunset" }?.time ?: "--:--"
-            val moonrise = events.find { it.name == "Moonrise" }?.time ?: "--:--"
-            val moonset = events.find { it.name == "Moonset" }?.time ?: "--:--"
-            
-            AstroRow(
-                sunrise = sunrise,
-                solarNoon = solarNoon,
-                sunset = sunset,
-                moonrise = moonrise,
-                moonset = moonset
-            )
+                // Prayer Times List
+                items(
+                    items = uiState.prayerTimes,
+                    key = { it.name },
+                    contentType = { "prayer" }
+                ) { info ->
+                    val icon = getPrayerIcon(info.name)
+                    val isActive = info.name == uiState.activePrayerName
+                    val isTahajjud = info.name.contains("Tahajjud")
+                    
+                    // --- Phase 14: 3D Spherical Logic ---
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(80.dp)
+                            .graphicsLayer {
+                                val infoKey = info.name
+                                val layoutInfo = listState.layoutInfo
+                                val itemInfo = layoutInfo.visibleItemsInfo.find { it.key == infoKey }
+                                
+                                if (itemInfo != null) {
+                                    val viewportHeight = layoutInfo.viewportEndOffset - layoutInfo.viewportStartOffset
+                                    val itemCenter = itemInfo.offset + (itemInfo.size / 2f)
+                                    val viewportCenter = viewportHeight / 2f
+                                    
+                                    val distFromCenter = (itemCenter - viewportCenter) / (viewportHeight / 2f)
+                                    val absDist = kotlin.math.abs(distFromCenter).coerceAtMost(1f)
+
+                                    rotationX = distFromCenter * -30f
+                                    cameraDistance = 12f * density
+                                    
+                                    val focalScale = if (isActive) 1.25f else 1.0f
+                                    val distScale = 1.0f - (absDist * 0.4f)
+                                    scaleX = focalScale * distScale
+                                    scaleY = focalScale * distScale
+                                    
+                                    alpha = (1.0f - (absDist * 0.3f)).coerceIn(0.4f, 1.0f)
+                                    translationY = distFromCenter * -20f
+                                }
+                            }
+                    ) {
+                        PrayerCard(
+                            name = info.name,
+                            time = info.time,
+                            icon = icon,
+                            isCombined = info.isCombined,
+                            isActive = isActive,
+                            isTahajjud = isTahajjud,
+                            scale = 1f
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(12.dp))
+                }
+            }
+
+            // 3. Fixed Astro Panel at bottom
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 115.dp)
+            ) {
+                val events = uiState.astronomicalEvents
+                val sunrise = events.find { it.name == "Sunrise" }?.time ?: "--:--"
+                val solarNoon = events.find { it.name == "Solar Noon" }?.time ?: "--:--"
+                val sunset = events.find { it.name == "Sunset" }?.time ?: "--:--"
+                val moonrise = events.find { it.name == "Moonrise" }?.time ?: "--:--"
+                val moonset = events.find { it.name == "Moonset" }?.time ?: "--:--"
+                
+                AstroRow(
+                    sunrise = sunrise,
+                    solarNoon = solarNoon,
+                    sunset = sunset,
+                    moonrise = moonrise,
+                    moonset = moonset
+                )
+            }
         }
     }
 }

@@ -17,7 +17,13 @@ class PrayerAlarmManager @Inject constructor(
 ) {
     private val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-    fun scheduleAlarms(times: List<PrayerTimesCalculator.CombinedPrayerInfo>) {
+    fun scheduleAlarms(times: List<PrayerTimesCalculator.CombinedPrayerInfo>): Boolean {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            if (!alarmManager.canScheduleExactAlarms()) {
+                return false
+            }
+        }
+
         val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
         val now = Calendar.getInstance()
 
@@ -35,6 +41,7 @@ class PrayerAlarmManager @Inject constructor(
                 scheduleAlarm(info.name, prayerTime.timeInMillis)
             }
         }
+        return true
     }
 
     private fun scheduleAlarm(prayerName: String, timeInMillis: Long) {
@@ -54,5 +61,13 @@ class PrayerAlarmManager @Inject constructor(
             timeInMillis,
             pendingIntent
         )
+    }
+
+    fun canScheduleExactAlarms(): Boolean {
+        return if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            alarmManager.canScheduleExactAlarms()
+        } else {
+            true
+        }
     }
 }

@@ -15,8 +15,8 @@ android {
         applicationId = "com.adhan.app"
         minSdk = 26
         targetSdk = 34
-        versionCode = 8
-        versionName = "1.7"
+        versionCode = 9
+        versionName = "1.8"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -96,6 +96,7 @@ dependencies {
     implementation(libs.maps.compose)
     implementation(libs.play.services.maps)
     implementation(libs.play.services.location)
+    implementation(libs.maps.utils)
 
     // Test
     testImplementation(libs.junit)

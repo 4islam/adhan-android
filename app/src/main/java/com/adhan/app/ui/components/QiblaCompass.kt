@@ -1,5 +1,7 @@
 package com.adhan.app.ui.components
 
+import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.SphericalUtil
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.*
@@ -109,17 +111,10 @@ fun QiblaCompass(
     }
 }
 
-private fun calculateQibla(lat: Double, lng: Double): Double {
-    val mekkaLat = Math.toRadians(21.4225)
-    val mekkaLng = Math.toRadians(39.8262)
-    val phi1 = Math.toRadians(lat)
-    val lambda1 = Math.toRadians(lng)
 
-    val deltaL = mekkaLng - lambda1
-    
-    val y = sin(deltaL)
-    val x = cos(phi1) * tan(mekkaLat) - sin(phi1) * cos(deltaL)
-    
-    var qibla = Math.toDegrees(atan2(y, x))
-    return (qibla + 360) % 360
+private fun calculateQibla(lat: Double, lng: Double): Double {
+    val userLoc = LatLng(lat, lng)
+    val mekkaLoc = LatLng(21.4225, 39.8262)
+    val heading = SphericalUtil.computeHeading(userLoc, mekkaLoc)
+    return (heading + 360) % 360
 }

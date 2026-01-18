@@ -25,6 +25,7 @@ kotlinxCoroutinesTest = "1.7.3"
 googleServices = "4.4.0"
 firebaseAppDistribution = "4.0.0"
 firebaseBom = "32.7.0"
+mapsUtils = "3.8.0"
 
 
 [libraries]
@@ -60,7 +61,7 @@ turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
 google-services = { group = "com.google.gms", name = "google-services", version.ref = "googleServices" }
-
+maps-utils = { group = "com.google.maps.android", name = "android-maps-utils", version.ref = "mapsUtils" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -15,6 +15,7 @@ class AlarmReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
         val prayerName = intent.getStringExtra("prayer_name") ?: "Prayer"
+        android.util.Log.d("AlarmReceiver", "onReceive: $prayerName")
         
         // Wake up CPU to ensure service starts
         val pm = context.getSystemService(Context.POWER_SERVICE) as PowerManager

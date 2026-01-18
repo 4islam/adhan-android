@@ -192,12 +192,12 @@ class PrayerTimesViewModel @Inject constructor(
 
     fun testAdhan(): Boolean {
         val now = Calendar.getInstance()
-        now.add(Calendar.MINUTE, 1)
+        now.add(Calendar.MINUTE, 2)
         val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
         val testTime = sdf.format(now.time)
         
-        val testPrayer = PrayerTimesCalculator.CombinedPrayerInfo("Test Adhan", testTime)
-        val success = alarmManager.scheduleAlarms(listOf(testPrayer))
+        val testPrayerTimestamp = now.timeInMillis
+        val success = alarmManager.scheduleExactAlarms(listOf("Test Adhan" to testPrayerTimestamp))
         
         if (success) {
             // Update UI to show we scheduled it
@@ -314,8 +314,70 @@ class PrayerTimesViewModel @Inject constructor(
                 updateNextPrayer(date)
             }
 
+
+            // Calculate timestamps for Today
+            val scheduleList = mutableListOf<Pair<String, Long>>()
+            val todayCal = Calendar.getInstance().apply { time = date }
+            
+            prayerList.forEach { info ->
+                val timeParts = info.time.split(":")
+                if (timeParts.size == 2) {
+                     val pCal = todayCal.clone() as Calendar
+                     pCal.set(Calendar.HOUR_OF_DAY, timeParts[0].toInt())
+                     pCal.set(Calendar.MINUTE, timeParts[1].toInt())
+                     pCal.set(Calendar.SECOND, 0)
+                     pCal.set(Calendar.MILLISECOND, 0)
+                     scheduleList.add(info.name to pCal.timeInMillis)
+                }
+            }
+            
+            // Calculate timestamps for Tomorrow
+            val tomorrowCal = Calendar.getInstance().apply { 
+                time = date
+                add(Calendar.DAY_OF_YEAR, 1)
+            }
+            val tomorrowDate = tomorrowCal.time
+            val tomorrowTimes = calculator.getCombinedPrayerTimes(tomorrowDate, lat, lng)
+            
+            // Tahajjud for Tomorrow
+             if (_uiState.value.isTahajjudEnabled) {
+                val fajrInfo = tomorrowTimes.find { it.name == "Fajr" }
+                if (fajrInfo != null) {
+                    val tahajjudTime = calculateTahajjudTime(fajrInfo.time, _uiState.value.tahajjudOffset)
+                    val tParts = tahajjudTime.split(":")
+                    if (tParts.size == 2) {
+                         val pCal = tomorrowCal.clone() as Calendar
+                         pCal.set(Calendar.HOUR_OF_DAY, tParts[0].toInt())
+                         pCal.set(Calendar.MINUTE, tParts[1].toInt())
+                         pCal.set(Calendar.SECOND, 0)
+                         pCal.set(Calendar.MILLISECOND, 0)
+                         scheduleList.add("Tahajjud" to pCal.timeInMillis)
+                    }
+                }
+            }
+            
+            tomorrowTimes.filter { it.name !in listOf("Sunrise", "Sunset", "Solar Noon") }.forEach { info ->
+                var name = info.name
+                val isTomorrowFri = tomorrowCal.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY
+                if ((name == "Dhuhr" || name == "Dhuhr/Asr") && isTomorrowFri) {
+                    name = "Jummah (or Dhuhr)"
+                }
+                
+                if (name in allowedPrayers) {
+                    val timeParts = info.time.split(":")
+                     if (timeParts.size == 2) {
+                         val pCal = tomorrowCal.clone() as Calendar
+                         pCal.set(Calendar.HOUR_OF_DAY, timeParts[0].toInt())
+                         pCal.set(Calendar.MINUTE, timeParts[1].toInt())
+                         pCal.set(Calendar.SECOND, 0)
+                         pCal.set(Calendar.MILLISECOND, 0)
+                         scheduleList.add(name to pCal.timeInMillis)
+                    }
+                }
+            }
+
             // Move scheduling to background
-            alarmManager.scheduleAlarms(prayerList)
+            alarmManager.scheduleExactAlarms(scheduleList)
         }
     }
 

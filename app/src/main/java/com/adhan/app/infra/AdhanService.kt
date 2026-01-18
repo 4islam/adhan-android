@@ -44,15 +44,28 @@ class AdhanService : Service() {
             setWakeMode(C.WAKE_MODE_LOCAL)
             addListener(object : Player.Listener {
                 override fun onPlaybackStateChanged(playbackState: Int) {
+                    val stateStr = when(playbackState) {
+                        Player.STATE_IDLE -> "IDLE"
+                        Player.STATE_BUFFERING -> "BUFFERING"
+                        Player.STATE_READY -> "READY"
+                        Player.STATE_ENDED -> "ENDED"
+                        else -> "UNKNOWN($playbackState)"
+                    }
+                    serviceScope.launch { logRepository.log("ExoPlayer State: $stateStr") }
+
                     if (playbackState == Player.STATE_ENDED) {
                         stopForeground(STOP_FOREGROUND_REMOVE)
                         stopSelf()
                     }
                 }
                 
+                override fun onIsPlayingChanged(isPlaying: Boolean) {
+                     serviceScope.launch { logRepository.log("ExoPlayer IsPlaying: $isPlaying") }
+                }
+
                 override fun onPlayerError(error: androidx.media3.common.PlaybackException) {
                      serviceScope.launch {
-                        logRepository.log("ExoPlayer error: ${error.message}", true)
+                        logRepository.log("ExoPlayer ERROR: ${error.message} (Code: ${error.errorCodeName})", true)
                     }
                 }
             })
@@ -73,12 +86,51 @@ class AdhanService : Service() {
         }
     }
 
+    private fun logSystemState(prayerName: String) {
+        try {
+            val audioManager = getSystemService(Context.AUDIO_SERVICE) as android.media.AudioManager
+            val alarmVol = audioManager.getStreamVolume(android.media.AudioManager.STREAM_ALARM)
+            val maxAlarmVol = audioManager.getStreamMaxVolume(android.media.AudioManager.STREAM_ALARM)
+            val musicVol = audioManager.getStreamVolume(android.media.AudioManager.STREAM_MUSIC)
+            val maxMusicVol = audioManager.getStreamMaxVolume(android.media.AudioManager.STREAM_MUSIC)
+            
+            val pm = getSystemService(Context.POWER_SERVICE) as android.os.PowerManager
+            val isIgnoringBatteryOptimizations = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                pm.isIgnoringBatteryOptimizations(packageName)
+            } else {
+                true // Pre-M doesn't have Doze in the same way
+            }
+            
+            val nm = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            val areNotificationsEnabled = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                nm.areNotificationsEnabled()
+            } else {
+                true
+            }
+
+            serviceScope.launch {
+                val sb = StringBuilder()
+                sb.append("DIAGNOSTICS for $prayerName:\n")
+                sb.append("  - Vol Alarm: $alarmVol/$maxAlarmVol\n")
+                sb.append("  - Vol Music: $musicVol/$maxMusicVol\n")
+                sb.append("  - Battery Opt Ignored: $isIgnoringBatteryOptimizations\n")
+                sb.append("  - Notifications Enabled: $areNotificationsEnabled")
+                logRepository.log(sb.toString())
+            }
+        } catch (e: Exception) {
+             serviceScope.launch { logRepository.log("Failed to log system state: ${e.message}", true) }
+        }
+    }
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val prayerName = intent?.getStringExtra("prayer_name") ?: "Prayer"
         
         serviceScope.launch {
             logRepository.log("AdhanService started for: $prayerName")
+            android.util.Log.d("AdhanService", "onStartCommand: $prayerName")
         }
+        
+        logSystemState(prayerName)
 
         startForeground(NOTIFICATION_ID, createNotification(prayerName))
         

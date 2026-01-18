@@ -305,14 +305,11 @@ fun SettingsScreen(
                         Button(
                             onClick = { 
                                 val success = viewModel.testAdhan()
-                                if (success) {
-                                    android.widget.Toast.makeText(context, "Test Adhan scheduled for 1 minute from now", android.widget.Toast.LENGTH_SHORT).show()
-                                } else {
-                                    android.widget.Toast.makeText(context, "Permission for exact alarms required", android.widget.Toast.LENGTH_LONG).show()
-                                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
-                                        val intent = android.content.Intent(android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
-                                        context.startActivity(intent)
-                                    }
+                                val msg = if (success) "Test Adhan scheduled in 2 min" else "Failed (Check permission)"
+                                android.widget.Toast.makeText(context, msg, android.widget.Toast.LENGTH_SHORT).show()
+                                if (!success && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+                                     val intent = android.content.Intent(android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
+                                     context.startActivity(intent)
                                 }
                             },
                             modifier = Modifier.fillMaxWidth(),
@@ -321,7 +318,23 @@ fun SettingsScreen(
                             ),
                             shape = RoundedCornerShape(8.dp)
                         ) {
-                            Text("Trigger Test Adhan (1 min delay)", color = Color.White)
+                            Text("Trigger Test Adhan (Background)", color = Color.White)
+                        }
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        Button(
+                            onClick = {
+                                viewModel.playAdhanNow()
+                                android.widget.Toast.makeText(context, "Playing Adhan (Foreground)...", android.widget.Toast.LENGTH_SHORT).show()
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(0xFF00E5FF).copy(alpha = 0.3f)
+                            ),
+                            shape = RoundedCornerShape(8.dp)
+                        ) {
+                            Text("Play Adhan Now (Foreground Test)", color = Color.White)
                         }
                         
                         Spacer(modifier = Modifier.height(16.dp))

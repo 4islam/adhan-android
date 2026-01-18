@@ -59,6 +59,18 @@ fun QiblaCompass(
         
         Spacer(modifier = Modifier.height(48.dp))
 
+        val haptic = androidx.compose.ui.platform.LocalHapticFeedback.current
+        
+        // Normalize rotation to -180..180 for easier alignment check
+        val normalizedRotation = (rotation % 360).let { if (it > 180) it - 360 else if (it < -180) it + 360 else it }
+        val isAligned = abs(normalizedRotation) < 5
+        
+        LaunchedEffect(isAligned) {
+            if (isAligned) {
+                haptic.performHapticFeedback(androidx.compose.ui.hapticfeedback.HapticFeedbackType.LongPress)
+            }
+        }
+
         Box(
             modifier = Modifier.size(280.dp),
             contentAlignment = Alignment.Center
@@ -69,9 +81,18 @@ fun QiblaCompass(
 
                 // Outer Ring
                 drawCircle(
-                    color = Color.White.copy(alpha = 0.2f),
+                    color = if (isAligned) Color.Green.copy(alpha = 0.3f) else Color.White.copy(alpha = 0.2f),
                     radius = radius,
                     center = center
+                )
+                
+                // Static Top Marker (Phone Heading)
+                drawLine(
+                    color = if (isAligned) Color.Green else Color.Red,
+                    start = Offset(center.x, center.y - radius),
+                    end = Offset(center.x, center.y - radius + 30f),
+                    strokeWidth = 8f,
+                    cap = androidx.compose.ui.graphics.StrokeCap.Round
                 )
 
                 // Navigation Needle
@@ -82,7 +103,7 @@ fun QiblaCompass(
                         lineTo(center.x + 20f, center.y)
                         close()
                     }
-                    drawPath(path, Color(0xFFC19A6B)) // Gold color for Kaaba direction
+                    drawPath(path, if (isAligned) Color.Green else Color(0xFFC19A6B))
 
                     val backPath = Path().apply {
                         moveTo(center.x, center.y + radius * 0.8f) // Back
@@ -100,13 +121,13 @@ fun QiblaCompass(
         Text(
             text = "%.1f°".format(qiblaDirection),
             style = MaterialTheme.typography.displaySmall,
-            color = Color.White,
+            color = if (isAligned) Color.Green else Color.White,
             fontWeight = FontWeight.Bold
         )
         Text(
-            text = "QIBLA DIRECTION",
+            text = if (isAligned) "ALIGNED" else "Rotate phone to match Qibla",
             style = MaterialTheme.typography.labelMedium,
-            color = Color.White.copy(alpha = 0.6f)
+            color = if (isAligned) Color.Green else Color.White.copy(alpha = 0.6f)
         )
     }
 }

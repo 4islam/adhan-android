@@ -210,6 +210,44 @@ class PrayerTimesViewModel @Inject constructor(
         return success
     }
 
+    private var foregroundPlayer: androidx.media3.exoplayer.ExoPlayer? = null
+
+    fun playAdhanNow() {
+        try {
+            foregroundPlayer?.release()
+            
+            foregroundPlayer = androidx.media3.exoplayer.ExoPlayer.Builder(application).build().apply {
+                val resourceName = "adhan_fajr" // Default to Fajr for test
+                val rawResourceId = application.resources.getIdentifier(resourceName, "raw", application.packageName)
+                
+                if (rawResourceId != 0) {
+                     val mediaItem = androidx.media3.common.MediaItem.fromUri("android.resource://${application.packageName}/$rawResourceId")
+                     setMediaItem(mediaItem)
+                     prepare()
+                     play()
+                     viewModelScope.launch { logRepository.log("FOREGROUND TEST: Playing $resourceName") }
+                     
+                     addListener(object : androidx.media3.common.Player.Listener {
+                         override fun onPlaybackStateChanged(playbackState: Int) {
+                             if (playbackState == androidx.media3.common.Player.STATE_ENDED) {
+                                 viewModelScope.launch { logRepository.log("FOREGROUND TEST: Playback Ended") }
+                                 release()
+                                 foregroundPlayer = null
+                             }
+                         }
+                         override fun onPlayerError(error: androidx.media3.common.PlaybackException) {
+                              viewModelScope.launch { logRepository.log("FOREGROUND TEST ERROR: ${error.message}", true) }
+                         }
+                     })
+                } else {
+                    viewModelScope.launch { logRepository.log("FOREGROUND TEST ERROR: Resource $resourceName not found", true) }
+                }
+            }
+        } catch (e: Exception) {
+            viewModelScope.launch { logRepository.log("FOREGROUND TEST EXCEPTION: ${e.message}", true) }
+        }
+    }
+
     fun updateHeading(heading: Float) {
         _uiState.value = _uiState.value.copy(deviceHeading = heading)
     }

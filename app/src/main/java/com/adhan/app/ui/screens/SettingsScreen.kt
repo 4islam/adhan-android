@@ -24,7 +24,8 @@ import com.adhan.app.ui.PrayerTimesViewModel
 @Composable
 fun SettingsScreen(
     viewModel: PrayerTimesViewModel,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onNavigateToLogs: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val calcMethods = mapOf(
@@ -321,6 +322,19 @@ fun SettingsScreen(
                             shape = RoundedCornerShape(8.dp)
                         ) {
                             Text("Trigger Test Adhan (1 min delay)", color = Color.White)
+                        }
+                        
+                        Spacer(modifier = Modifier.height(16.dp))
+                        
+                        Button(
+                            onClick = onNavigateToLogs,
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color.White.copy(alpha = 0.1f)
+                            ),
+                            shape = RoundedCornerShape(8.dp)
+                        ) {
+                            Text("View Debug Logs", color = Color.White)
                         }
                     }
                 }

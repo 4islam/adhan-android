@@ -53,7 +53,8 @@ fun MainNavigation(
         composable(NavScreen.Settings.route) {
             SettingsScreen(
                 viewModel = viewModel,
-                onBack = { navController.popBackStack() }
+                onBack = { navController.popBackStack() },
+                onNavigateToLogs = { navController.navigate(NavScreen.Logs.route) }
             )
         }
         composable(NavScreen.Logs.route) {

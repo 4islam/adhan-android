@@ -16,6 +16,7 @@ import com.adhan.app.R
 import javax.inject.Inject
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.cancel
 
 @AndroidEntryPoint
 class AdhanService : Service() {
@@ -144,8 +145,10 @@ class AdhanService : Service() {
     override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onDestroy() {
-        if (::serviceScope.isInitialized) {
+        try {
             serviceScope.cancel()
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
         player?.release()
         player = null

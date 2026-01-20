@@ -36,6 +36,7 @@ fun MainNavigation(
             InteractiveMap(
                 initialLat = uiState.latitude,
                 initialLng = uiState.longitude,
+                deviceHeading = uiState.deviceHeading,
                 onLocationOverride = { lat, lng, name ->
                     viewModel.overrideLocation(lat, lng, name)
                 },

@@ -33,6 +33,7 @@ import java.util.*
 fun InteractiveMap(
     initialLat: Double,
     initialLng: Double,
+    deviceHeading: Float,
     onLocationOverride: (Double, Double, String?) -> Unit,
     onBack: () -> Unit
 ) {
@@ -40,6 +41,11 @@ fun InteractiveMap(
     val userLocation = LatLng(initialLat, initialLng)
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
+    
+    // Calculate "Phone Heading" Line (Red line extending 500km)
+    val headingEndPoint = com.google.maps.android.SphericalUtil.computeOffset(userLocation, 500000.0, deviceHeading.toDouble())
+    
+    // ... existing state ...
     
     var searchQuery by remember { mutableStateOf("") }
     var currentMapType by remember { mutableStateOf(MapType.SATELLITE) }
@@ -111,6 +117,15 @@ fun InteractiveMap(
                 width = 8f,
                 geodesic = true
             )
+            
+            // Your Heading Line (Red)
+            Polyline(
+                points = listOf(userLocation, headingEndPoint),
+                color = Color.Red,
+                width = 8f,
+                geodesic = true
+            )
+
             Marker(
                 state = MarkerState(position = userLocation),
                 title = "Current Location"

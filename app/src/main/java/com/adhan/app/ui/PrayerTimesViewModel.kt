@@ -211,10 +211,13 @@ class PrayerTimesViewModel @Inject constructor(
     }
 
     private var foregroundPlayer: androidx.media3.exoplayer.ExoPlayer? = null
+    
+    private val _isAdhanPlaying = kotlinx.coroutines.flow.MutableStateFlow(false)
+    val isAdhanPlaying = _isAdhanPlaying.asStateFlow()
 
     fun playAdhanNow() {
         try {
-            foregroundPlayer?.release()
+            stopAdhan() // clear existing
             
             foregroundPlayer = androidx.media3.exoplayer.ExoPlayer.Builder(application).build().apply {
                 val resourceName = "adhan_fajr" // Default to Fajr for test
@@ -225,18 +228,19 @@ class PrayerTimesViewModel @Inject constructor(
                      setMediaItem(mediaItem)
                      prepare()
                      play()
+                     _isAdhanPlaying.value = true
                      viewModelScope.launch { logRepository.log("FOREGROUND TEST: Playing $resourceName") }
                      
                      addListener(object : androidx.media3.common.Player.Listener {
                          override fun onPlaybackStateChanged(playbackState: Int) {
                              if (playbackState == androidx.media3.common.Player.STATE_ENDED) {
                                  viewModelScope.launch { logRepository.log("FOREGROUND TEST: Playback Ended") }
-                                 release()
-                                 foregroundPlayer = null
+                                 stopAdhan()
                              }
                          }
                          override fun onPlayerError(error: androidx.media3.common.PlaybackException) {
                               viewModelScope.launch { logRepository.log("FOREGROUND TEST ERROR: ${error.message}", true) }
+                              stopAdhan()
                          }
                      })
                 } else {
@@ -245,7 +249,14 @@ class PrayerTimesViewModel @Inject constructor(
             }
         } catch (e: Exception) {
             viewModelScope.launch { logRepository.log("FOREGROUND TEST EXCEPTION: ${e.message}", true) }
+            stopAdhan()
         }
+    }
+    
+    fun stopAdhan() {
+        foregroundPlayer?.release()
+        foregroundPlayer = null
+        _isAdhanPlaying.value = false
     }
 
     fun updateHeading(heading: Float) {

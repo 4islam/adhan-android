@@ -323,18 +323,35 @@ fun SettingsScreen(
 
                         Spacer(modifier = Modifier.height(16.dp))
 
-                        Button(
-                            onClick = {
-                                viewModel.playAdhanNow()
-                                android.widget.Toast.makeText(context, "Playing Adhan (Foreground)...", android.widget.Toast.LENGTH_SHORT).show()
-                            },
-                            modifier = Modifier.fillMaxWidth(),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = Color(0xFF00E5FF).copy(alpha = 0.3f)
-                            ),
-                            shape = RoundedCornerShape(8.dp)
-                        ) {
-                            Text("Play Adhan Now (Foreground Test)", color = Color.White)
+                        val isPlaying by viewModel.isAdhanPlaying.collectAsState()
+                        
+                        if (isPlaying) {
+                            Button(
+                                onClick = {
+                                    viewModel.stopAdhan()
+                                },
+                                modifier = Modifier.fillMaxWidth(),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = Color.Red.copy(alpha = 0.8f)
+                                ),
+                                shape = RoundedCornerShape(8.dp)
+                            ) {
+                                Text("STOP ADHAN", color = Color.White, fontWeight = FontWeight.Bold)
+                            }
+                        } else {
+                            Button(
+                                onClick = {
+                                    viewModel.playAdhanNow()
+                                    android.widget.Toast.makeText(context, "Playing Adhan (Foreground)...", android.widget.Toast.LENGTH_SHORT).show()
+                                },
+                                modifier = Modifier.fillMaxWidth(),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = Color(0xFF00E5FF).copy(alpha = 0.3f)
+                                ),
+                                shape = RoundedCornerShape(8.dp)
+                            ) {
+                                Text("Play Adhan Now (Foreground Test)", color = Color.White)
+                            }
                         }
                         
                         Spacer(modifier = Modifier.height(16.dp))

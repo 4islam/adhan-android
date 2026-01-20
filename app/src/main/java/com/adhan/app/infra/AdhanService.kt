@@ -114,7 +114,23 @@ class AdhanService : Service() {
                 sb.append("  - Vol Alarm: $alarmVol/$maxAlarmVol\n")
                 sb.append("  - Vol Music: $musicVol/$maxMusicVol\n")
                 sb.append("  - Battery Opt Ignored: $isIgnoringBatteryOptimizations\n")
-                sb.append("  - Notifications Enabled: $areNotificationsEnabled")
+                sb.append("  - Notifications Enabled: $areNotificationsEnabled\n")
+                
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                    val devices = audioManager.getDevices(android.media.AudioManager.GET_DEVICES_OUTPUTS)
+                    sb.append("  - Audio Outputs (${devices.size}):\n")
+                    devices.forEach { dev ->
+                        val name = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) dev.address else "Unknown"
+                        val type = when(dev.type) {
+                            android.media.AudioDeviceInfo.TYPE_BUILTIN_SPEAKER -> "Speaker"
+                            android.media.AudioDeviceInfo.TYPE_BLUETOOTH_A2DP -> "BT A2DP"
+                            android.media.AudioDeviceInfo.TYPE_WIRED_HEADSET -> "Wired"
+                            else -> "Type(${dev.type})"
+                        }
+                        sb.append("    * $type [$name]\n")
+                    }
+                }
+                
                 logRepository.log(sb.toString())
             }
         } catch (e: Exception) {

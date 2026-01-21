@@ -28,9 +28,10 @@ class PrayerTimesViewModelTest {
     private val application = mockk<Application>(relaxed = true)
     private val prefs = mockk<SharedPreferences>(relaxed = true)
     private val prefsEditor = mockk<SharedPreferences.Editor>(relaxed = true)
+    private val logRepository = mockk<com.adhan.app.domain.LogRepository>(relaxed = true)
 
     private val locationFlow = MutableStateFlow(
-        LocationRepository.LocationData(51.5074, -0.1278, "London, UK", false)
+        LocationRepository.LocationData(51.5074, -0.1278, "London, UK", true, true)
     )
 
     @Before
@@ -40,6 +41,8 @@ class PrayerTimesViewModelTest {
         every { application.getSharedPreferences(any(), any()) } returns prefs
         every { prefs.edit() } returns prefsEditor
         every { repository.location } returns locationFlow
+        coEvery { logRepository.getLogs() } returns emptyList()
+        coEvery { logRepository.log(any(), any()) } just Runs
         
         // Mocking default settings
         every { prefs.getInt("calc_method", any()) } returns PrayerTimesCalculator.Ahmadiyya
@@ -47,7 +50,7 @@ class PrayerTimesViewModelTest {
         every { prefs.getBoolean("audio_enabled", any()) } returns true
         every { prefs.getBoolean("use_12_hour", any()) } returns true
 
-        viewModel = PrayerTimesViewModel(alarmManager, repository, application)
+        viewModel = PrayerTimesViewModel(alarmManager, repository, application, logRepository)
     }
 
     @After

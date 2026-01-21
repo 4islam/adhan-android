@@ -28,9 +28,10 @@ class LocationRepositoryTest {
         every { editor.putBoolean(any(), any()) } returns editor
         
         // Default values in prefs
-        every { prefs.getFloat("last_lat", any()) } returns 51.5074f
-        every { prefs.getFloat("last_lng", any()) } returns -0.1278f
-        every { prefs.getString("last_location_name", any()) } returns "London, UK"
+        every { prefs.contains("last_lat") } returns true
+        every { prefs.getFloat("last_lat", any()) } returns 48.8566f
+        every { prefs.getFloat("last_lng", any()) } returns 2.3522f
+        every { prefs.getString("last_location_name", any()) } returns "Paris, France"
         every { prefs.getBoolean("is_override_active", any()) } returns false
         
         repository = LocationRepository(context)
@@ -39,10 +40,11 @@ class LocationRepositoryTest {
     @Test
     fun `initial location is loaded from preferences`() = runTest {
         val location = repository.location.value
-        assertEquals(51.5074, location.lat, 0.0001)
-        assertEquals(-0.1278, location.lng, 0.0001)
-        assertEquals("London, UK", location.name)
+        assertEquals(48.8566, location.lat, 0.0001)
+        assertEquals(2.3522, location.lng, 0.0001)
+        assertEquals("Paris, France", location.name)
         assertEquals(false, location.isOverrideActive)
+        assertEquals(true, location.isSet)
     }
 
     @Test

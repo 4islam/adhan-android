@@ -34,6 +34,11 @@ class PrayerAlarmManager @Inject constructor(
         return true
     }
 
+    private val knownPrayerNames = listOf(
+        "Fajr", "Sunrise", "Dhuhr", "Dhuhr/Asr", "Asr", "Maghrib", "Maghrib/Isha", "Isha", 
+        "Tahajjud", "Jummah (or Dhuhr)", "Test Adhan"
+    )
+
     fun scheduleExactAlarms(alarms: List<Pair<String, Long>>): Boolean {
          if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
             if (!alarmManager.canScheduleExactAlarms()) {
@@ -43,6 +48,9 @@ class PrayerAlarmManager @Inject constructor(
                 return false
             }
         }
+        
+        // Cancel existing alarms to ensure no stale schedules
+        cancelAllAlarms()
         
         var scheduledCount = 0
         val now = System.currentTimeMillis()
@@ -58,6 +66,22 @@ class PrayerAlarmManager @Inject constructor(
              logRepository.log("Scheduled $scheduledCount future alarms (Exact) from list of ${alarms.size}.")
         }
         return true
+    }
+
+    private fun cancelAllAlarms() {
+        knownPrayerNames.forEach { name ->
+            val intent = Intent(context, AlarmReceiver::class.java).apply {
+                putExtra("prayer_name", name)
+            }
+            val pendingIntent = PendingIntent.getBroadcast(
+                context,
+                name.hashCode(),
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
+            alarmManager.cancel(pendingIntent)
+            pendingIntent.cancel()
+        }
     }
 
 

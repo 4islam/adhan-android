@@ -132,3 +132,499 @@ INFO         | Warning: skipping QEventPoint(id=2 ts=0 pos=0,0 scn=349.29,97.122
 INFO         | Warning: skipping QEventPoint(id=2 ts=0 pos=0,0 scn=815.159,-1157.02 gbl=815.159,-1157.02 Released ellipse=(1x1 ∡ 0) vel=0,0 press=-815.159,1157.02 last=-815.159,1157.02 Δ 815.159,-1157.02) : no target window (:0, )
 INFO         | Warning: skipping QEventPoint(id=3 ts=0 pos=0,0 scn=597.362,-1330.18 gbl=597.362,-1330.18 Released ellipse=(1x1 ∡ 0) vel=0,0 press=-597.362,1330.18 last=-597.362,1330.18 Δ 597.362,-1330.18) : no target window (:0, )
 INFO         | Warning: skipping QEventPoint(id=2 ts=0 pos=0,0 scn=669.145,-1050.12 gbl=669.145,-1050.12 Released ellipse=(1x1 ∡ 0) vel=0,0 press=-669.145,1050.12 last=-669.145,1050.12 Δ 669.145,-1050.12) : no target window (:0, )
+coreaudio_check_and_fixup_streamformat: core 0x948e02e88 input? 0 warning, unexpected format for stream. format id 0x6c70636d name kAudioFormatLinearPCM flags 0x9 (kAudioFormatFlagIsFloat | kAudioFormatFlagIsPacked | kLinearPCMFormatFlagsSampleFractionShift | kLinearPCMFormatFlagIsFloat | kLinearPCMFormatFlagIsPacked | kAppleLosslessFormatFlag_16BitSourceData | kAppleLosslessFormatFlag_24BitSourceData | ) channels per frame 8
+coreaudio_check_and_fixup_streamformat: core 0x948e02e88 input? 0 trying to fix up number of channels to 2
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code 1718449215
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code -1
+coreaudio_check_and_fixup_streamformat: core 0x948e02e88 input? 0 warning, unexpected format for stream. format id 0x6c70636d name kAudioFormatLinearPCM flags 0x9 (kAudioFormatFlagIsFloat | kAudioFormatFlagIsPacked | kLinearPCMFormatFlagsSampleFractionShift | kLinearPCMFormatFlagIsFloat | kLinearPCMFormatFlagIsPacked | kAppleLosslessFormatFlag_16BitSourceData | kAppleLosslessFormatFlag_24BitSourceData | ) channels per frame 8
+coreaudio_check_and_fixup_streamformat: core 0x948e02e88 input? 0 trying to fix up number of channels to 2
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code 1718449215
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code -1
+Failed to create voice `virtio-snd-speakers0'
+coreaudio_check_and_fixup_streamformat: core 0x948e02e88 input? 0 warning, unexpected format for stream. format id 0x6c70636d name kAudioFormatLinearPCM flags 0x9 (kAudioFormatFlagIsFloat | kAudioFormatFlagIsPacked | kLinearPCMFormatFlagsSampleFractionShift | kLinearPCMFormatFlagIsFloat | kLinearPCMFormatFlagIsPacked | kAppleLosslessFormatFlag_16BitSourceData | kAppleLosslessFormatFlag_24BitSourceData | ) channels per frame 8
+coreaudio_check_and_fixup_streamformat: core 0x948e02e88 input? 0 trying to fix up number of channels to 2
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code 1718449215
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code -1
+coreaudio_check_and_fixup_streamformat: core 0x948e02e88 input? 0 warning, unexpected format for stream. format id 0x6c70636d name kAudioFormatLinearPCM flags 0x9 (kAudioFormatFlagIsFloat | kAudioFormatFlagIsPacked | kLinearPCMFormatFlagsSampleFractionShift | kLinearPCMFormatFlagIsFloat | kLinearPCMFormatFlagIsPacked | kAppleLosslessFormatFlag_16BitSourceData | kAppleLosslessFormatFlag_24BitSourceData | ) channels per frame 8
+coreaudio_check_and_fixup_streamformat: core 0x948e02e88 input? 0 trying to fix up number of channels to 2
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code 1718449215
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code -1
+Failed to create voice `virtio-snd-speakers0'
+INFO         | Created VkInstance:0x9478d5800 for application:'' engine:''.
+INFO         | Destroyed VkInstance:0x9478d5800 for application:'' engine:''.
+coreaudio_check_and_fixup_streamformat: core 0x948e03e88 input? 0 warning, unexpected format for stream. format id 0x6c70636d name kAudioFormatLinearPCM flags 0x9 (kAudioFormatFlagIsFloat | kAudioFormatFlagIsPacked | kLinearPCMFormatFlagsSampleFractionShift | kLinearPCMFormatFlagIsFloat | kLinearPCMFormatFlagIsPacked | kAppleLosslessFormatFlag_16BitSourceData | kAppleLosslessFormatFlag_24BitSourceData | ) channels per frame 8
+coreaudio_check_and_fixup_streamformat: core 0x948e03e88 input? 0 trying to fix up number of channels to 2
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code 1718449215
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code -1
+coreaudio_check_and_fixup_streamformat: core 0x948e03e88 input? 0 warning, unexpected format for stream. format id 0x6c70636d name kAudioFormatLinearPCM flags 0x9 (kAudioFormatFlagIsFloat | kAudioFormatFlagIsPacked | kLinearPCMFormatFlagsSampleFractionShift | kLinearPCMFormatFlagIsFloat | kLinearPCMFormatFlagIsPacked | kAppleLosslessFormatFlag_16BitSourceData | kAppleLosslessFormatFlag_24BitSourceData | ) channels per frame 8
+coreaudio_check_and_fixup_streamformat: core 0x948e03e88 input? 0 trying to fix up number of channels to 2
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code 1718449215
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code -1
+Failed to create voice `virtio-snd-speakers0'
+coreaudio_check_and_fixup_streamformat: core 0x948e03e88 input? 0 warning, unexpected format for stream. format id 0x6c70636d name kAudioFormatLinearPCM flags 0x9 (kAudioFormatFlagIsFloat | kAudioFormatFlagIsPacked | kLinearPCMFormatFlagsSampleFractionShift | kLinearPCMFormatFlagIsFloat | kLinearPCMFormatFlagIsPacked | kAppleLosslessFormatFlag_16BitSourceData | kAppleLosslessFormatFlag_24BitSourceData | ) channels per frame 8
+coreaudio_check_and_fixup_streamformat: core 0x948e03e88 input? 0 trying to fix up number of channels to 2
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code 1718449215
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code -1
+coreaudio_check_and_fixup_streamformat: core 0x948e03e88 input? 0 warning, unexpected format for stream. format id 0x6c70636d name kAudioFormatLinearPCM flags 0x9 (kAudioFormatFlagIsFloat | kAudioFormatFlagIsPacked | kLinearPCMFormatFlagsSampleFractionShift | kLinearPCMFormatFlagIsFloat | kLinearPCMFormatFlagIsPacked | kAppleLosslessFormatFlag_16BitSourceData | kAppleLosslessFormatFlag_24BitSourceData | ) channels per frame 8
+coreaudio_check_and_fixup_streamformat: core 0x948e03e88 input? 0 trying to fix up number of channels to 2
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code 1718449215
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code -1
+Failed to create voice `virtio-snd-speakers0'
+coreaudio_check_and_fixup_streamformat: core 0x949d04e88 input? 0 warning, unexpected format for stream. format id 0x6c70636d name kAudioFormatLinearPCM flags 0x9 (kAudioFormatFlagIsFloat | kAudioFormatFlagIsPacked | kLinearPCMFormatFlagsSampleFractionShift | kLinearPCMFormatFlagIsFloat | kLinearPCMFormatFlagIsPacked | kAppleLosslessFormatFlag_16BitSourceData | kAppleLosslessFormatFlag_24BitSourceData | ) channels per frame 8
+coreaudio_check_and_fixup_streamformat: core 0x949d04e88 input? 0 trying to fix up number of channels to 2
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code 1718449215
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code -1
+coreaudio_check_and_fixup_streamformat: core 0x949d04e88 input? 0 warning, unexpected format for stream. format id 0x6c70636d name kAudioFormatLinearPCM flags 0x9 (kAudioFormatFlagIsFloat | kAudioFormatFlagIsPacked | kLinearPCMFormatFlagsSampleFractionShift | kLinearPCMFormatFlagIsFloat | kLinearPCMFormatFlagIsPacked | kAppleLosslessFormatFlag_16BitSourceData | kAppleLosslessFormatFlag_24BitSourceData | ) channels per frame 8
+coreaudio_check_and_fixup_streamformat: core 0x949d04e88 input? 0 trying to fix up number of channels to 2
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code 1718449215
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code -1
+Failed to create voice `virtio-snd-speakers0'
+coreaudio_check_and_fixup_streamformat: core 0x949d04e88 input? 0 warning, unexpected format for stream. format id 0x6c70636d name kAudioFormatLinearPCM flags 0x9 (kAudioFormatFlagIsFloat | kAudioFormatFlagIsPacked | kLinearPCMFormatFlagsSampleFractionShift | kLinearPCMFormatFlagIsFloat | kLinearPCMFormatFlagIsPacked | kAppleLosslessFormatFlag_16BitSourceData | kAppleLosslessFormatFlag_24BitSourceData | ) channels per frame 8
+coreaudio_check_and_fixup_streamformat: core 0x949d04e88 input? 0 trying to fix up number of channels to 2
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code 1718449215
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code -1
+coreaudio_check_and_fixup_streamformat: core 0x949d04e88 input? 0 warning, unexpected format for stream. format id 0x6c70636d name kAudioFormatLinearPCM flags 0x9 (kAudioFormatFlagIsFloat | kAudioFormatFlagIsPacked | kLinearPCMFormatFlagsSampleFractionShift | kLinearPCMFormatFlagIsFloat | kLinearPCMFormatFlagIsPacked | kAppleLosslessFormatFlag_16BitSourceData | kAppleLosslessFormatFlag_24BitSourceData | ) channels per frame 8
+coreaudio_check_and_fixup_streamformat: core 0x949d04e88 input? 0 trying to fix up number of channels to 2
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code 1718449215
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code -1
+Failed to create voice `virtio-snd-speakers0'
+coreaudio_check_and_fixup_streamformat: core 0x949d04688 input? 0 warning, unexpected format for stream. format id 0x6c70636d name kAudioFormatLinearPCM flags 0x9 (kAudioFormatFlagIsFloat | kAudioFormatFlagIsPacked | kLinearPCMFormatFlagsSampleFractionShift | kLinearPCMFormatFlagIsFloat | kLinearPCMFormatFlagIsPacked | kAppleLosslessFormatFlag_16BitSourceData | kAppleLosslessFormatFlag_24BitSourceData | ) channels per frame 8
+coreaudio_check_and_fixup_streamformat: core 0x949d04688 input? 0 trying to fix up number of channels to 2
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code 1718449215
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code -1
+coreaudio_check_and_fixup_streamformat: core 0x949d04688 input? 0 warning, unexpected format for stream. format id 0x6c70636d name kAudioFormatLinearPCM flags 0x9 (kAudioFormatFlagIsFloat | kAudioFormatFlagIsPacked | kLinearPCMFormatFlagsSampleFractionShift | kLinearPCMFormatFlagIsFloat | kLinearPCMFormatFlagIsPacked | kAppleLosslessFormatFlag_16BitSourceData | kAppleLosslessFormatFlag_24BitSourceData | ) channels per frame 8
+coreaudio_check_and_fixup_streamformat: core 0x949d04688 input? 0 trying to fix up number of channels to 2
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code 1718449215
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code -1
+Failed to create voice `virtio-snd-speakers0'
+coreaudio_check_and_fixup_streamformat: core 0x949d04688 input? 0 warning, unexpected format for stream. format id 0x6c70636d name kAudioFormatLinearPCM flags 0x9 (kAudioFormatFlagIsFloat | kAudioFormatFlagIsPacked | kLinearPCMFormatFlagsSampleFractionShift | kLinearPCMFormatFlagIsFloat | kLinearPCMFormatFlagIsPacked | kAppleLosslessFormatFlag_16BitSourceData | kAppleLosslessFormatFlag_24BitSourceData | ) channels per frame 8
+coreaudio_check_and_fixup_streamformat: core 0x949d04688 input? 0 trying to fix up number of channels to 2
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code 1718449215
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code -1
+coreaudio_check_and_fixup_streamformat: core 0x949d04688 input? 0 warning, unexpected format for stream. format id 0x6c70636d name kAudioFormatLinearPCM flags 0x9 (kAudioFormatFlagIsFloat | kAudioFormatFlagIsPacked | kLinearPCMFormatFlagsSampleFractionShift | kLinearPCMFormatFlagIsFloat | kLinearPCMFormatFlagIsPacked | kAppleLosslessFormatFlag_16BitSourceData | kAppleLosslessFormatFlag_24BitSourceData | ) channels per frame 8
+coreaudio_check_and_fixup_streamformat: core 0x949d04688 input? 0 trying to fix up number of channels to 2
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code 1718449215
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code -1
+Failed to create voice `virtio-snd-speakers0'
+coreaudio_check_and_fixup_streamformat: core 0x949d05888 input? 0 warning, unexpected format for stream. format id 0x6c70636d name kAudioFormatLinearPCM flags 0x9 (kAudioFormatFlagIsFloat | kAudioFormatFlagIsPacked | kLinearPCMFormatFlagsSampleFractionShift | kLinearPCMFormatFlagIsFloat | kLinearPCMFormatFlagIsPacked | kAppleLosslessFormatFlag_16BitSourceData | kAppleLosslessFormatFlag_24BitSourceData | ) channels per frame 8
+coreaudio_check_and_fixup_streamformat: core 0x949d05888 input? 0 trying to fix up number of channels to 2
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code 1718449215
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code -1
+coreaudio_check_and_fixup_streamformat: core 0x949d05888 input? 0 warning, unexpected format for stream. format id 0x6c70636d name kAudioFormatLinearPCM flags 0x9 (kAudioFormatFlagIsFloat | kAudioFormatFlagIsPacked | kLinearPCMFormatFlagsSampleFractionShift | kLinearPCMFormatFlagIsFloat | kLinearPCMFormatFlagIsPacked | kAppleLosslessFormatFlag_16BitSourceData | kAppleLosslessFormatFlag_24BitSourceData | ) channels per frame 8
+coreaudio_check_and_fixup_streamformat: core 0x949d05888 input? 0 trying to fix up number of channels to 2
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code 1718449215
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code -1
+Failed to create voice `virtio-snd-speakers0'
+coreaudio_check_and_fixup_streamformat: core 0x949d05888 input? 0 warning, unexpected format for stream. format id 0x6c70636d name kAudioFormatLinearPCM flags 0x9 (kAudioFormatFlagIsFloat | kAudioFormatFlagIsPacked | kLinearPCMFormatFlagsSampleFractionShift | kLinearPCMFormatFlagIsFloat | kLinearPCMFormatFlagIsPacked | kAppleLosslessFormatFlag_16BitSourceData | kAppleLosslessFormatFlag_24BitSourceData | ) channels per frame 8
+coreaudio_check_and_fixup_streamformat: core 0x949d05888 input? 0 trying to fix up number of channels to 2
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code 1718449215
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code -1
+coreaudio_check_and_fixup_streamformat: core 0x949d05888 input? 0 warning, unexpected format for stream. format id 0x6c70636d name kAudioFormatLinearPCM flags 0x9 (kAudioFormatFlagIsFloat | kAudioFormatFlagIsPacked | kLinearPCMFormatFlagsSampleFractionShift | kLinearPCMFormatFlagIsFloat | kLinearPCMFormatFlagIsPacked | kAppleLosslessFormatFlag_16BitSourceData | kAppleLosslessFormatFlag_24BitSourceData | ) channels per frame 8
+coreaudio_check_and_fixup_streamformat: core 0x949d05888 input? 0 trying to fix up number of channels to 2
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code 1718449215
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code -1
+Failed to create voice `virtio-snd-speakers0'
+coreaudio_check_and_fixup_streamformat: core 0x949d05a88 input? 0 warning, unexpected format for stream. format id 0x6c70636d name kAudioFormatLinearPCM flags 0x9 (kAudioFormatFlagIsFloat | kAudioFormatFlagIsPacked | kLinearPCMFormatFlagsSampleFractionShift | kLinearPCMFormatFlagIsFloat | kLinearPCMFormatFlagIsPacked | kAppleLosslessFormatFlag_16BitSourceData | kAppleLosslessFormatFlag_24BitSourceData | ) channels per frame 8
+coreaudio_check_and_fixup_streamformat: core 0x949d05a88 input? 0 trying to fix up number of channels to 2
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code 1718449215
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code -1
+coreaudio_check_and_fixup_streamformat: core 0x949d05a88 input? 0 warning, unexpected format for stream. format id 0x6c70636d name kAudioFormatLinearPCM flags 0x9 (kAudioFormatFlagIsFloat | kAudioFormatFlagIsPacked | kLinearPCMFormatFlagsSampleFractionShift | kLinearPCMFormatFlagIsFloat | kLinearPCMFormatFlagIsPacked | kAppleLosslessFormatFlag_16BitSourceData | kAppleLosslessFormatFlag_24BitSourceData | ) channels per frame 8
+coreaudio_check_and_fixup_streamformat: core 0x949d05a88 input? 0 trying to fix up number of channels to 2
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code 1718449215
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code -1
+Failed to create voice `virtio-snd-speakers0'
+coreaudio_check_and_fixup_streamformat: core 0x949d05a88 input? 0 warning, unexpected format for stream. format id 0x6c70636d name kAudioFormatLinearPCM flags 0x9 (kAudioFormatFlagIsFloat | kAudioFormatFlagIsPacked | kLinearPCMFormatFlagsSampleFractionShift | kLinearPCMFormatFlagIsFloat | kLinearPCMFormatFlagIsPacked | kAppleLosslessFormatFlag_16BitSourceData | kAppleLosslessFormatFlag_24BitSourceData | ) channels per frame 8
+coreaudio_check_and_fixup_streamformat: core 0x949d05a88 input? 0 trying to fix up number of channels to 2
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code 1718449215
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code -1
+coreaudio_check_and_fixup_streamformat: core 0x949d05a88 input? 0 warning, unexpected format for stream. format id 0x6c70636d name kAudioFormatLinearPCM flags 0x9 (kAudioFormatFlagIsFloat | kAudioFormatFlagIsPacked | kLinearPCMFormatFlagsSampleFractionShift | kLinearPCMFormatFlagIsFloat | kLinearPCMFormatFlagIsPacked | kAppleLosslessFormatFlag_16BitSourceData | kAppleLosslessFormatFlag_24BitSourceData | ) channels per frame 8
+coreaudio_check_and_fixup_streamformat: core 0x949d05a88 input? 0 trying to fix up number of channels to 2
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code 1718449215
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code -1
+Failed to create voice `virtio-snd-speakers0'
+coreaudio_check_and_fixup_streamformat: core 0x949d07088 input? 0 warning, unexpected format for stream. format id 0x6c70636d name kAudioFormatLinearPCM flags 0x9 (kAudioFormatFlagIsFloat | kAudioFormatFlagIsPacked | kLinearPCMFormatFlagsSampleFractionShift | kLinearPCMFormatFlagIsFloat | kLinearPCMFormatFlagIsPacked | kAppleLosslessFormatFlag_16BitSourceData | kAppleLosslessFormatFlag_24BitSourceData | ) channels per frame 8
+coreaudio_check_and_fixup_streamformat: core 0x949d07088 input? 0 trying to fix up number of channels to 2
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code 1718449215
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code -1
+coreaudio_check_and_fixup_streamformat: core 0x949d07088 input? 0 warning, unexpected format for stream. format id 0x6c70636d name kAudioFormatLinearPCM flags 0x9 (kAudioFormatFlagIsFloat | kAudioFormatFlagIsPacked | kLinearPCMFormatFlagsSampleFractionShift | kLinearPCMFormatFlagIsFloat | kLinearPCMFormatFlagIsPacked | kAppleLosslessFormatFlag_16BitSourceData | kAppleLosslessFormatFlag_24BitSourceData | ) channels per frame 8
+coreaudio_check_and_fixup_streamformat: core 0x949d07088 input? 0 trying to fix up number of channels to 2
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code 1718449215
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code -1
+Failed to create voice `virtio-snd-speakers0'
+coreaudio_check_and_fixup_streamformat: core 0x949d07088 input? 0 warning, unexpected format for stream. format id 0x6c70636d name kAudioFormatLinearPCM flags 0x9 (kAudioFormatFlagIsFloat | kAudioFormatFlagIsPacked | kLinearPCMFormatFlagsSampleFractionShift | kLinearPCMFormatFlagIsFloat | kLinearPCMFormatFlagIsPacked | kAppleLosslessFormatFlag_16BitSourceData | kAppleLosslessFormatFlag_24BitSourceData | ) channels per frame 8
+coreaudio_check_and_fixup_streamformat: core 0x949d07088 input? 0 trying to fix up number of channels to 2
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code 1718449215
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code -1
+coreaudio_check_and_fixup_streamformat: core 0x949d07088 input? 0 warning, unexpected format for stream. format id 0x6c70636d name kAudioFormatLinearPCM flags 0x9 (kAudioFormatFlagIsFloat | kAudioFormatFlagIsPacked | kLinearPCMFormatFlagsSampleFractionShift | kLinearPCMFormatFlagIsFloat | kLinearPCMFormatFlagIsPacked | kAppleLosslessFormatFlag_16BitSourceData | kAppleLosslessFormatFlag_24BitSourceData | ) channels per frame 8
+coreaudio_check_and_fixup_streamformat: core 0x949d07088 input? 0 trying to fix up number of channels to 2
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code 1718449215
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code -1
+Failed to create voice `virtio-snd-speakers0'
+ERROR        | bad color buffer handle 460
+coreaudio_check_and_fixup_streamformat: core 0x94845ce88 input? 0 warning, unexpected format for stream. format id 0x6c70636d name kAudioFormatLinearPCM flags 0x9 (kAudioFormatFlagIsFloat | kAudioFormatFlagIsPacked | kLinearPCMFormatFlagsSampleFractionShift | kLinearPCMFormatFlagIsFloat | kLinearPCMFormatFlagIsPacked | kAppleLosslessFormatFlag_16BitSourceData | kAppleLosslessFormatFlag_24BitSourceData | ) channels per frame 8
+coreaudio_check_and_fixup_streamformat: core 0x94845ce88 input? 0 trying to fix up number of channels to 2
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code 1718449215
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code -1
+coreaudio_check_and_fixup_streamformat: core 0x94845ce88 input? 0 warning, unexpected format for stream. format id 0x6c70636d name kAudioFormatLinearPCM flags 0x9 (kAudioFormatFlagIsFloat | kAudioFormatFlagIsPacked | kLinearPCMFormatFlagsSampleFractionShift | kLinearPCMFormatFlagIsFloat | kLinearPCMFormatFlagIsPacked | kAppleLosslessFormatFlag_16BitSourceData | kAppleLosslessFormatFlag_24BitSourceData | ) channels per frame 8
+coreaudio_check_and_fixup_streamformat: core 0x94845ce88 input? 0 trying to fix up number of channels to 2
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code 1718449215
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code -1
+Failed to create voice `virtio-snd-speakers0'
+coreaudio_check_and_fixup_streamformat: core 0x94845ce88 input? 0 warning, unexpected format for stream. format id 0x6c70636d name kAudioFormatLinearPCM flags 0x9 (kAudioFormatFlagIsFloat | kAudioFormatFlagIsPacked | kLinearPCMFormatFlagsSampleFractionShift | kLinearPCMFormatFlagIsFloat | kLinearPCMFormatFlagIsPacked | kAppleLosslessFormatFlag_16BitSourceData | kAppleLosslessFormatFlag_24BitSourceData | ) channels per frame 8
+coreaudio_check_and_fixup_streamformat: core 0x94845ce88 input? 0 trying to fix up number of channels to 2
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code 1718449215
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code -1
+coreaudio_check_and_fixup_streamformat: core 0x94845ce88 input? 0 warning, unexpected format for stream. format id 0x6c70636d name kAudioFormatLinearPCM flags 0x9 (kAudioFormatFlagIsFloat | kAudioFormatFlagIsPacked | kLinearPCMFormatFlagsSampleFractionShift | kLinearPCMFormatFlagIsFloat | kLinearPCMFormatFlagIsPacked | kAppleLosslessFormatFlag_16BitSourceData | kAppleLosslessFormatFlag_24BitSourceData | ) channels per frame 8
+coreaudio_check_and_fixup_streamformat: core 0x94845ce88 input? 0 trying to fix up number of channels to 2
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code 1718449215
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code -1
+Failed to create voice `virtio-snd-speakers0'
+coreaudio_check_and_fixup_streamformat: core 0x948e02688 input? 0 warning, unexpected format for stream. format id 0x6c70636d name kAudioFormatLinearPCM flags 0x9 (kAudioFormatFlagIsFloat | kAudioFormatFlagIsPacked | kLinearPCMFormatFlagsSampleFractionShift | kLinearPCMFormatFlagIsFloat | kLinearPCMFormatFlagIsPacked | kAppleLosslessFormatFlag_16BitSourceData | kAppleLosslessFormatFlag_24BitSourceData | ) channels per frame 8
+coreaudio_check_and_fixup_streamformat: core 0x948e02688 input? 0 trying to fix up number of channels to 2
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code 1718449215
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code -1
+coreaudio_check_and_fixup_streamformat: core 0x948e02688 input? 0 warning, unexpected format for stream. format id 0x6c70636d name kAudioFormatLinearPCM flags 0x9 (kAudioFormatFlagIsFloat | kAudioFormatFlagIsPacked | kLinearPCMFormatFlagsSampleFractionShift | kLinearPCMFormatFlagIsFloat | kLinearPCMFormatFlagIsPacked | kAppleLosslessFormatFlag_16BitSourceData | kAppleLosslessFormatFlag_24BitSourceData | ) channels per frame 8
+coreaudio_check_and_fixup_streamformat: core 0x948e02688 input? 0 trying to fix up number of channels to 2
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code 1718449215
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code -1
+Failed to create voice `virtio-snd-speakers0'
+coreaudio_check_and_fixup_streamformat: core 0x948e02688 input? 0 warning, unexpected format for stream. format id 0x6c70636d name kAudioFormatLinearPCM flags 0x9 (kAudioFormatFlagIsFloat | kAudioFormatFlagIsPacked | kLinearPCMFormatFlagsSampleFractionShift | kLinearPCMFormatFlagIsFloat | kLinearPCMFormatFlagIsPacked | kAppleLosslessFormatFlag_16BitSourceData | kAppleLosslessFormatFlag_24BitSourceData | ) channels per frame 8
+coreaudio_check_and_fixup_streamformat: core 0x948e02688 input? 0 trying to fix up number of channels to 2
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code 1718449215
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code -1
+coreaudio_check_and_fixup_streamformat: core 0x948e02688 input? 0 warning, unexpected format for stream. format id 0x6c70636d name kAudioFormatLinearPCM flags 0x9 (kAudioFormatFlagIsFloat | kAudioFormatFlagIsPacked | kLinearPCMFormatFlagsSampleFractionShift | kLinearPCMFormatFlagIsFloat | kLinearPCMFormatFlagIsPacked | kAppleLosslessFormatFlag_16BitSourceData | kAppleLosslessFormatFlag_24BitSourceData | ) channels per frame 8
+coreaudio_check_and_fixup_streamformat: core 0x948e02688 input? 0 trying to fix up number of channels to 2
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code 1718449215
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code -1
+Failed to create voice `virtio-snd-speakers0'
+INFO         | Created VkInstance:0x9478d8800 for application:'' engine:''.
+INFO         | Destroyed VkInstance:0x9478d8800 for application:'' engine:''.
+INFO         | Created VkInstance:0x9478d8800 for application:'Chromium' engine:''.
+../../third_party/SwiftShader/src/Vulkan/VkPhysicalDevice.cpp:649 WARNING: UNSUPPORTED: curExtension->sType: 1000338000
+../../third_party/SwiftShader/src/Vulkan/VkPhysicalDevice.cpp:649 WARNING: UNSUPPORTED: curExtension->sType: 1000437000
+../../third_party/SwiftShader/src/Vulkan/VkPhysicalDevice.cpp:649 WARNING: UNSUPPORTED: curExtension->sType: 1000338000
+../../third_party/SwiftShader/src/Vulkan/VkPhysicalDevice.cpp:649 WARNING: UNSUPPORTED: curExtension->sType: 1000437000
+../../third_party/SwiftShader/src/Vulkan/VkPhysicalDevice.cpp:649 WARNING: UNSUPPORTED: curExtension->sType: 1000338000
+../../third_party/SwiftShader/src/Vulkan/VkPhysicalDevice.cpp:649 WARNING: UNSUPPORTED: curExtension->sType: 1000437000
+../../third_party/SwiftShader/src/Vulkan/VkPhysicalDevice.cpp:649 WARNING: UNSUPPORTED: curExtension->sType: 1000338000
+../../third_party/SwiftShader/src/Vulkan/VkPhysicalDevice.cpp:649 WARNING: UNSUPPORTED: curExtension->sType: 1000437000
+INFO         | Destroyed VkInstance:0x9478d8800 for application:'Chromium' engine:''.
+coreaudio_check_and_fixup_streamformat: core 0x949d07288 input? 0 warning, unexpected format for stream. format id 0x6c70636d name kAudioFormatLinearPCM flags 0x9 (kAudioFormatFlagIsFloat | kAudioFormatFlagIsPacked | kLinearPCMFormatFlagsSampleFractionShift | kLinearPCMFormatFlagIsFloat | kLinearPCMFormatFlagIsPacked | kAppleLosslessFormatFlag_16BitSourceData | kAppleLosslessFormatFlag_24BitSourceData | ) channels per frame 8
+coreaudio_check_and_fixup_streamformat: core 0x949d07288 input? 0 trying to fix up number of channels to 2
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code 1718449215
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code -1
+coreaudio_check_and_fixup_streamformat: core 0x949d07288 input? 0 warning, unexpected format for stream. format id 0x6c70636d name kAudioFormatLinearPCM flags 0x9 (kAudioFormatFlagIsFloat | kAudioFormatFlagIsPacked | kLinearPCMFormatFlagsSampleFractionShift | kLinearPCMFormatFlagIsFloat | kLinearPCMFormatFlagIsPacked | kAppleLosslessFormatFlag_16BitSourceData | kAppleLosslessFormatFlag_24BitSourceData | ) channels per frame 8
+coreaudio_check_and_fixup_streamformat: core 0x949d07288 input? 0 trying to fix up number of channels to 2
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code 1718449215
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code -1
+Failed to create voice `virtio-snd-speakers0'
+coreaudio_check_and_fixup_streamformat: core 0x949d07288 input? 0 warning, unexpected format for stream. format id 0x6c70636d name kAudioFormatLinearPCM flags 0x9 (kAudioFormatFlagIsFloat | kAudioFormatFlagIsPacked | kLinearPCMFormatFlagsSampleFractionShift | kLinearPCMFormatFlagIsFloat | kLinearPCMFormatFlagIsPacked | kAppleLosslessFormatFlag_16BitSourceData | kAppleLosslessFormatFlag_24BitSourceData | ) channels per frame 8
+coreaudio_check_and_fixup_streamformat: core 0x949d07288 input? 0 trying to fix up number of channels to 2
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code 1718449215
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code -1
+coreaudio_check_and_fixup_streamformat: core 0x949d07288 input? 0 warning, unexpected format for stream. format id 0x6c70636d name kAudioFormatLinearPCM flags 0x9 (kAudioFormatFlagIsFloat | kAudioFormatFlagIsPacked | kLinearPCMFormatFlagsSampleFractionShift | kLinearPCMFormatFlagIsFloat | kLinearPCMFormatFlagIsPacked | kAppleLosslessFormatFlag_16BitSourceData | kAppleLosslessFormatFlag_24BitSourceData | ) channels per frame 8
+coreaudio_check_and_fixup_streamformat: core 0x949d07288 input? 0 trying to fix up number of channels to 2
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code 1718449215
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code -1
+Failed to create voice `virtio-snd-speakers0'
+coreaudio_check_and_fixup_streamformat: core 0x948e02e88 input? 0 warning, unexpected format for stream. format id 0x6c70636d name kAudioFormatLinearPCM flags 0x9 (kAudioFormatFlagIsFloat | kAudioFormatFlagIsPacked | kLinearPCMFormatFlagsSampleFractionShift | kLinearPCMFormatFlagIsFloat | kLinearPCMFormatFlagIsPacked | kAppleLosslessFormatFlag_16BitSourceData | kAppleLosslessFormatFlag_24BitSourceData | ) channels per frame 8
+coreaudio_check_and_fixup_streamformat: core 0x948e02e88 input? 0 trying to fix up number of channels to 2
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code 1718449215
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code -1
+coreaudio_check_and_fixup_streamformat: core 0x948e02e88 input? 0 warning, unexpected format for stream. format id 0x6c70636d name kAudioFormatLinearPCM flags 0x9 (kAudioFormatFlagIsFloat | kAudioFormatFlagIsPacked | kLinearPCMFormatFlagsSampleFractionShift | kLinearPCMFormatFlagIsFloat | kLinearPCMFormatFlagIsPacked | kAppleLosslessFormatFlag_16BitSourceData | kAppleLosslessFormatFlag_24BitSourceData | ) channels per frame 8
+coreaudio_check_and_fixup_streamformat: core 0x948e02e88 input? 0 trying to fix up number of channels to 2
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code 1718449215
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code -1
+Failed to create voice `virtio-snd-speakers0'
+coreaudio_check_and_fixup_streamformat: core 0x948e02e88 input? 0 warning, unexpected format for stream. format id 0x6c70636d name kAudioFormatLinearPCM flags 0x9 (kAudioFormatFlagIsFloat | kAudioFormatFlagIsPacked | kLinearPCMFormatFlagsSampleFractionShift | kLinearPCMFormatFlagIsFloat | kLinearPCMFormatFlagIsPacked | kAppleLosslessFormatFlag_16BitSourceData | kAppleLosslessFormatFlag_24BitSourceData | ) channels per frame 8
+coreaudio_check_and_fixup_streamformat: core 0x948e02e88 input? 0 trying to fix up number of channels to 2
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code 1718449215
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code -1
+coreaudio_check_and_fixup_streamformat: core 0x948e02e88 input? 0 warning, unexpected format for stream. format id 0x6c70636d name kAudioFormatLinearPCM flags 0x9 (kAudioFormatFlagIsFloat | kAudioFormatFlagIsPacked | kLinearPCMFormatFlagsSampleFractionShift | kLinearPCMFormatFlagIsFloat | kLinearPCMFormatFlagIsPacked | kAppleLosslessFormatFlag_16BitSourceData | kAppleLosslessFormatFlag_24BitSourceData | ) channels per frame 8
+coreaudio_check_and_fixup_streamformat: core 0x948e02e88 input? 0 trying to fix up number of channels to 2
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code 1718449215
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code -1
+Failed to create voice `virtio-snd-speakers0'
+coreaudio_check_and_fixup_streamformat: core 0x949d07888 input? 0 warning, unexpected format for stream. format id 0x6c70636d name kAudioFormatLinearPCM flags 0x9 (kAudioFormatFlagIsFloat | kAudioFormatFlagIsPacked | kLinearPCMFormatFlagsSampleFractionShift | kLinearPCMFormatFlagIsFloat | kLinearPCMFormatFlagIsPacked | kAppleLosslessFormatFlag_16BitSourceData | kAppleLosslessFormatFlag_24BitSourceData | ) channels per frame 8
+coreaudio_check_and_fixup_streamformat: core 0x949d07888 input? 0 trying to fix up number of channels to 2
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code 1718449215
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code -1
+coreaudio_check_and_fixup_streamformat: core 0x949d07888 input? 0 warning, unexpected format for stream. format id 0x6c70636d name kAudioFormatLinearPCM flags 0x9 (kAudioFormatFlagIsFloat | kAudioFormatFlagIsPacked | kLinearPCMFormatFlagsSampleFractionShift | kLinearPCMFormatFlagIsFloat | kLinearPCMFormatFlagIsPacked | kAppleLosslessFormatFlag_16BitSourceData | kAppleLosslessFormatFlag_24BitSourceData | ) channels per frame 8
+coreaudio_check_and_fixup_streamformat: core 0x949d07888 input? 0 trying to fix up number of channels to 2
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code 1718449215
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code -1
+Failed to create voice `virtio-snd-speakers0'
+coreaudio_check_and_fixup_streamformat: core 0x949d07888 input? 0 warning, unexpected format for stream. format id 0x6c70636d name kAudioFormatLinearPCM flags 0x9 (kAudioFormatFlagIsFloat | kAudioFormatFlagIsPacked | kLinearPCMFormatFlagsSampleFractionShift | kLinearPCMFormatFlagIsFloat | kLinearPCMFormatFlagIsPacked | kAppleLosslessFormatFlag_16BitSourceData | kAppleLosslessFormatFlag_24BitSourceData | ) channels per frame 8
+coreaudio_check_and_fixup_streamformat: core 0x949d07888 input? 0 trying to fix up number of channels to 2
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code 1718449215
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code -1
+coreaudio_check_and_fixup_streamformat: core 0x949d07888 input? 0 warning, unexpected format for stream. format id 0x6c70636d name kAudioFormatLinearPCM flags 0x9 (kAudioFormatFlagIsFloat | kAudioFormatFlagIsPacked | kLinearPCMFormatFlagsSampleFractionShift | kLinearPCMFormatFlagIsFloat | kLinearPCMFormatFlagIsPacked | kAppleLosslessFormatFlag_16BitSourceData | kAppleLosslessFormatFlag_24BitSourceData | ) channels per frame 8
+coreaudio_check_and_fixup_streamformat: core 0x949d07888 input? 0 trying to fix up number of channels to 2
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code 1718449215
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code -1
+Failed to create voice `virtio-snd-speakers0'
+coreaudio_check_and_fixup_streamformat: core 0x949d07288 input? 0 warning, unexpected format for stream. format id 0x6c70636d name kAudioFormatLinearPCM flags 0x9 (kAudioFormatFlagIsFloat | kAudioFormatFlagIsPacked | kLinearPCMFormatFlagsSampleFractionShift | kLinearPCMFormatFlagIsFloat | kLinearPCMFormatFlagIsPacked | kAppleLosslessFormatFlag_16BitSourceData | kAppleLosslessFormatFlag_24BitSourceData | ) channels per frame 8
+coreaudio_check_and_fixup_streamformat: core 0x949d07288 input? 0 trying to fix up number of channels to 2
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code 1718449215
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code -1
+coreaudio_check_and_fixup_streamformat: core 0x949d07288 input? 0 warning, unexpected format for stream. format id 0x6c70636d name kAudioFormatLinearPCM flags 0x9 (kAudioFormatFlagIsFloat | kAudioFormatFlagIsPacked | kLinearPCMFormatFlagsSampleFractionShift | kLinearPCMFormatFlagIsFloat | kLinearPCMFormatFlagIsPacked | kAppleLosslessFormatFlag_16BitSourceData | kAppleLosslessFormatFlag_24BitSourceData | ) channels per frame 8
+coreaudio_check_and_fixup_streamformat: core 0x949d07288 input? 0 trying to fix up number of channels to 2
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code 1718449215
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code -1
+Failed to create voice `virtio-snd-speakers0'
+coreaudio_check_and_fixup_streamformat: core 0x949d07288 input? 0 warning, unexpected format for stream. format id 0x6c70636d name kAudioFormatLinearPCM flags 0x9 (kAudioFormatFlagIsFloat | kAudioFormatFlagIsPacked | kLinearPCMFormatFlagsSampleFractionShift | kLinearPCMFormatFlagIsFloat | kLinearPCMFormatFlagIsPacked | kAppleLosslessFormatFlag_16BitSourceData | kAppleLosslessFormatFlag_24BitSourceData | ) channels per frame 8
+coreaudio_check_and_fixup_streamformat: core 0x949d07288 input? 0 trying to fix up number of channels to 2
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code 1718449215
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code -1
+coreaudio_check_and_fixup_streamformat: core 0x949d07288 input? 0 warning, unexpected format for stream. format id 0x6c70636d name kAudioFormatLinearPCM flags 0x9 (kAudioFormatFlagIsFloat | kAudioFormatFlagIsPacked | kLinearPCMFormatFlagsSampleFractionShift | kLinearPCMFormatFlagIsFloat | kLinearPCMFormatFlagIsPacked | kAppleLosslessFormatFlag_16BitSourceData | kAppleLosslessFormatFlag_24BitSourceData | ) channels per frame 8
+coreaudio_check_and_fixup_streamformat: core 0x949d07288 input? 0 trying to fix up number of channels to 2
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code 1718449215
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code -1
+Failed to create voice `virtio-snd-speakers0'
+coreaudio_check_and_fixup_streamformat: core 0x948e02a88 input? 0 warning, unexpected format for stream. format id 0x6c70636d name kAudioFormatLinearPCM flags 0x9 (kAudioFormatFlagIsFloat | kAudioFormatFlagIsPacked | kLinearPCMFormatFlagsSampleFractionShift | kLinearPCMFormatFlagIsFloat | kLinearPCMFormatFlagIsPacked | kAppleLosslessFormatFlag_16BitSourceData | kAppleLosslessFormatFlag_24BitSourceData | ) channels per frame 8
+coreaudio_check_and_fixup_streamformat: core 0x948e02a88 input? 0 trying to fix up number of channels to 2
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code 1718449215
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code -1
+coreaudio_check_and_fixup_streamformat: core 0x948e02a88 input? 0 warning, unexpected format for stream. format id 0x6c70636d name kAudioFormatLinearPCM flags 0x9 (kAudioFormatFlagIsFloat | kAudioFormatFlagIsPacked | kLinearPCMFormatFlagsSampleFractionShift | kLinearPCMFormatFlagIsFloat | kLinearPCMFormatFlagIsPacked | kAppleLosslessFormatFlag_16BitSourceData | kAppleLosslessFormatFlag_24BitSourceData | ) channels per frame 8
+coreaudio_check_and_fixup_streamformat: core 0x948e02a88 input? 0 trying to fix up number of channels to 2
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code 1718449215
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code -1
+Failed to create voice `virtio-snd-speakers0'
+coreaudio_check_and_fixup_streamformat: core 0x948e02a88 input? 0 warning, unexpected format for stream. format id 0x6c70636d name kAudioFormatLinearPCM flags 0x9 (kAudioFormatFlagIsFloat | kAudioFormatFlagIsPacked | kLinearPCMFormatFlagsSampleFractionShift | kLinearPCMFormatFlagIsFloat | kLinearPCMFormatFlagIsPacked | kAppleLosslessFormatFlag_16BitSourceData | kAppleLosslessFormatFlag_24BitSourceData | ) channels per frame 8
+coreaudio_check_and_fixup_streamformat: core 0x948e02a88 input? 0 trying to fix up number of channels to 2
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code 1718449215
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code -1
+coreaudio_check_and_fixup_streamformat: core 0x948e02a88 input? 0 warning, unexpected format for stream. format id 0x6c70636d name kAudioFormatLinearPCM flags 0x9 (kAudioFormatFlagIsFloat | kAudioFormatFlagIsPacked | kLinearPCMFormatFlagsSampleFractionShift | kLinearPCMFormatFlagIsFloat | kLinearPCMFormatFlagIsPacked | kAppleLosslessFormatFlag_16BitSourceData | kAppleLosslessFormatFlag_24BitSourceData | ) channels per frame 8
+coreaudio_check_and_fixup_streamformat: core 0x948e02a88 input? 0 trying to fix up number of channels to 2
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code 1718449215
+coreaudio: Could not initialize playback
+coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
+coreaudio: Reason: status code -1
+Failed to create voice `virtio-snd-speakers0'
+INFO         | Wait for emulator (pid 6920) 20 seconds to shutdown gracefully before kill;you can set environment variable ANDROID_EMULATOR_WAIT_TIME_BEFORE_KILL(in seconds) to change the default value (20 seconds)
+
+USER_WARNING | The emulator was unable to save default_boot and will now erase it
+INFO         | Deleting snapshot default_boot
+INFO         | Saving snapshot 'default_boot' using 54 ms

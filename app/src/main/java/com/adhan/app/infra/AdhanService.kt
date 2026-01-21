@@ -25,21 +25,21 @@ class AdhanService : Service() {
     lateinit var logRepository: com.adhan.app.domain.LogRepository
 
     private var player: ExoPlayer? = null
+    private var mediaSession: androidx.media3.session.MediaSession? = null
     private val NOTIFICATION_ID = 1001
-    private val CHANNEL_ID = "adhan_alerts"
+    private val CHANNEL_ID = "adhan_alerts_v2"
     private val serviceScope = kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.IO + kotlinx.coroutines.SupervisorJob())
 
     override fun onCreate() {
         super.onCreate()
-        
         createNotificationChannel()
 
         val audioAttributes = AudioAttributes.Builder()
-            .setUsage(C.USAGE_ALARM)
-            .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
+            .setUsage(C.USAGE_MEDIA)
+            .setContentType(C.AUDIO_CONTENT_TYPE_SPEECH)
             .build()
 
-        player = ExoPlayer.Builder(this).build().apply {
+        val simplePlayer = ExoPlayer.Builder(this).build().apply {
             setAudioAttributes(audioAttributes, true)
             setWakeMode(C.WAKE_MODE_LOCAL)
             addListener(object : Player.Listener {
@@ -51,7 +51,9 @@ class AdhanService : Service() {
                         Player.STATE_ENDED -> "ENDED"
                         else -> "UNKNOWN($playbackState)"
                     }
-                    serviceScope.launch { logRepository.log("ExoPlayer State: $stateStr") }
+                    val msg = "ExoPlayer State: $stateStr"
+                    android.util.Log.d("AdhanService", msg)
+                    serviceScope.launch { logRepository.log(msg) }
 
                     if (playbackState == Player.STATE_ENDED) {
                         stopForeground(STOP_FOREGROUND_REMOVE)
@@ -60,16 +62,21 @@ class AdhanService : Service() {
                 }
                 
                 override fun onIsPlayingChanged(isPlaying: Boolean) {
-                     serviceScope.launch { logRepository.log("ExoPlayer IsPlaying: $isPlaying") }
+                     val msg = "ExoPlayer IsPlaying: $isPlaying"
+                     android.util.Log.d("AdhanService", msg)
+                     serviceScope.launch { logRepository.log(msg) }
                 }
 
                 override fun onPlayerError(error: androidx.media3.common.PlaybackException) {
-                     serviceScope.launch {
-                        logRepository.log("ExoPlayer ERROR: ${error.message} (Code: ${error.errorCodeName})", true)
-                    }
+                     val msg = "ExoPlayer ERROR: ${error.message}"
+                     android.util.Log.e("AdhanService", msg)
+                     serviceScope.launch { logRepository.log(msg, true) }
                 }
             })
         }
+        player = simplePlayer
+        
+        mediaSession = androidx.media3.session.MediaSession.Builder(this, simplePlayer).build()
     }
 
     private fun createNotificationChannel() {
@@ -79,7 +86,7 @@ class AdhanService : Service() {
             val importance = NotificationManager.IMPORTANCE_HIGH
             val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
                 description = descriptionText
-                setSound(null, null) // Audio is handled by Service, not Notification
+                setSound(null, null)
             }
             val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)
@@ -94,118 +101,83 @@ class AdhanService : Service() {
             val musicVol = audioManager.getStreamVolume(android.media.AudioManager.STREAM_MUSIC)
             val maxMusicVol = audioManager.getStreamMaxVolume(android.media.AudioManager.STREAM_MUSIC)
             
-            val pm = getSystemService(Context.POWER_SERVICE) as android.os.PowerManager
-            val isIgnoringBatteryOptimizations = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-                pm.isIgnoringBatteryOptimizations(packageName)
-            } else {
-                true // Pre-M doesn't have Doze in the same way
-            }
-            
-            val nm = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            val areNotificationsEnabled = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                nm.areNotificationsEnabled()
-            } else {
-                true
-            }
-
-            serviceScope.launch {
-                val sb = StringBuilder()
-                sb.append("DIAGNOSTICS for $prayerName:\n")
-                sb.append("  - Vol Alarm: $alarmVol/$maxAlarmVol\n")
-                sb.append("  - Vol Music: $musicVol/$maxMusicVol\n")
-                sb.append("  - Battery Opt Ignored: $isIgnoringBatteryOptimizations\n")
-                sb.append("  - Notifications Enabled: $areNotificationsEnabled\n")
-                
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-                    val devices = audioManager.getDevices(android.media.AudioManager.GET_DEVICES_OUTPUTS)
-                    sb.append("  - Audio Outputs (${devices.size}):\n")
-                    devices.forEach { dev ->
-                        val name = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) dev.address else "Unknown"
-                        val type = when(dev.type) {
-                            android.media.AudioDeviceInfo.TYPE_BUILTIN_SPEAKER -> "Speaker"
-                            android.media.AudioDeviceInfo.TYPE_BLUETOOTH_A2DP -> "BT A2DP"
-                            android.media.AudioDeviceInfo.TYPE_WIRED_HEADSET -> "Wired"
-                            else -> "Type(${dev.type})"
-                        }
-                        sb.append("    * $type [$name]\n")
-                    }
-                }
-                
-                logRepository.log(sb.toString())
-            }
+            val msg = "DIAGNOSTICS: AlarmVol=$alarmVol/$maxAlarmVol, MusicVol=$musicVol/$maxMusicVol"
+            android.util.Log.d("AdhanService", msg)
+            serviceScope.launch { logRepository.log(msg) }
         } catch (e: Exception) {
-             serviceScope.launch { logRepository.log("Failed to log system state: ${e.message}", true) }
+             android.util.Log.e("AdhanService", "Log failed", e)
         }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val prayerName = intent?.getStringExtra("prayer_name") ?: "Prayer"
         
-        serviceScope.launch {
-            logRepository.log("AdhanService started for: $prayerName")
-            android.util.Log.d("AdhanService", "onStartCommand: $prayerName")
-        }
+        android.util.Log.d("AdhanService", "onStartCommand: $prayerName")
+        serviceScope.launch { logRepository.log("AdhanService started for: $prayerName") }
         
         logSystemState(prayerName)
 
+        // Ensure notification is posted immediately
         startForeground(NOTIFICATION_ID, createNotification(prayerName))
         
-        // Tahajjud doesn't have an adhan
         if (prayerName.equals("Tahajjud", ignoreCase = true)) {
             return START_NOT_STICKY
         }
 
-        // Load and play Adhan
         try {
             val prefs = getSharedPreferences("adhan_prefs", Context.MODE_PRIVATE)
             val customUri = prefs.getString("adhan_sound_$prayerName", null)
-
-            if (customUri != null) {
-                serviceScope.launch { logRepository.log("Attempting to play custom URI: $customUri") }
-                val mediaItem = MediaItem.fromUri(customUri)
-                player?.setMediaItem(mediaItem)
-                player?.prepare()
-                player?.play()
+            
+            val mediaItem: MediaItem? = if (customUri != null) {
+                android.util.Log.d("AdhanService", "Using custom URI: $customUri")
+                MediaItem.fromUri(customUri)
             } else {
-                val resourceName = if (prayerName.contains("Fajr", ignoreCase = true)) {
-                    "adhan_fajr"
-                } else {
-                    "adhan_regular"
-                }
-
+                val resourceName = if (prayerName.contains("Fajr", ignoreCase = true)) "adhan_fajr" else "adhan_regular"
                 val rawResourceId = resources.getIdentifier(resourceName, "raw", packageName)
                 if (rawResourceId != 0) {
-                    serviceScope.launch { logRepository.log("Playing built-in resource: $resourceName") }
-                    val mediaItem = MediaItem.fromUri("android.resource://$packageName/$rawResourceId")
-                    player?.setMediaItem(mediaItem)
-                    player?.prepare()
-                    player?.play()
+                    android.util.Log.d("AdhanService", "Using built-in: $resourceName")
+                    MediaItem.fromUri("android.resource://$packageName/$rawResourceId")
                 } else {
-                    val msg = "Audio file $resourceName not found"
-                    android.util.Log.e("AdhanService", msg)
-                    serviceScope.launch { logRepository.log(msg, true) }
+                    android.util.Log.e("AdhanService", "Resource $resourceName not found!")
+                    null
+                }
+            }
+
+            if (mediaItem != null) {
+                player?.let {
+                    if (it.playbackState == Player.STATE_IDLE || it.playbackState == Player.STATE_ENDED) {
+                        it.setMediaItem(mediaItem)
+                        it.prepare()
+                        it.play()
+                        android.util.Log.d("AdhanService", "Player started")
+                    }
                 }
             }
         } catch (e: Exception) {
-            val msg = "Error playing adhan: ${e.message}"
-            android.util.Log.e("AdhanService", msg, e)
-            serviceScope.launch { logRepository.log(msg, true) }
+            android.util.Log.e("AdhanService", "Error in onStartCommand", e)
         }
 
         return START_NOT_STICKY
     }
 
     private fun createNotification(prayerName: String): Notification {
-        val intent = Intent(this, MainActivity::class.java)
-        val pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+        // PendingIntents for actions would require a Receiver, but MediaSession handles media buttons automatically
+        // provided we use MediaStyle and connect the session.
+        
+        val mediaStyle = androidx.media.app.NotificationCompat.MediaStyle()
+            .setMediaSession(mediaSession?.sessionCompatToken) // Support lock screen controls?
+            .setShowActionsInCompactView(0) // Show Play/Pause
+
+        // Create a 'Stop' action intent if needed, but Media3 handles standard transport controls via Session
+        // For simplicity, we just use the MediaStyle decoration for now.
 
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle("Adhan: $prayerName")
-            .setContentText("It's time for $prayerName prayer.")
+            .setContentText("Tap to open")
             .setSmallIcon(R.mipmap.ic_launcher)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setCategory(NotificationCompat.CATEGORY_ALARM)
-            .setContentIntent(pendingIntent)
+            .setStyle(mediaStyle)
             .setOngoing(true)
             .build()
     }
@@ -213,13 +185,11 @@ class AdhanService : Service() {
     override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onDestroy() {
-        try {
-            serviceScope.cancel()
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+        mediaSession?.release()
+        mediaSession = null
         player?.release()
         player = null
+        serviceScope.cancel()
         super.onDestroy()
     }
 }

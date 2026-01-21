@@ -192,7 +192,7 @@ class PrayerTimesViewModel @Inject constructor(
 
     fun testAdhan(): Boolean {
         val now = Calendar.getInstance()
-        now.add(Calendar.MINUTE, 2)
+        now.add(Calendar.SECOND, 10)
         val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
         val testTime = sdf.format(now.time)
         

@@ -41,7 +41,7 @@ data class PrayerTimesState(
     val isAudioEnabled: Boolean = true,
     val isTahajjudEnabled: Boolean = false,
     val tahajjudOffset: Int = 60, // minutes before Fajr
-    val combiningThreshold: Int = 90, // minutes
+    val combiningThreshold: Int = 70, // minutes
     val use12HourFormat: Boolean = true,
     val adhanSounds: Map<String, String> = emptyMap(), // Maps prayer name to URI string
     val rawPrayerTimes: List<PrayerTimesCalculator.CombinedPrayerInfo> = emptyList(), // 24h for logic
@@ -49,7 +49,9 @@ data class PrayerTimesState(
     val nextPrayerDateLabel: String = "",
     val audioOutputDevices: List<String> = emptyList(),
     val selectedAudioRoute: String = "Default",
-    val fadeConfigs: Map<String, FadeConfig> = emptyMap()
+    val fadeConfigs: Map<String, FadeConfig> = emptyMap(),
+    val isShortNightCombiningEnabled: Boolean = true,
+    val shortNightThresholdHours: Int = 9 // Hours
 )
 
 @HiltViewModel
@@ -110,7 +112,7 @@ class PrayerTimesViewModel @Inject constructor(
         val isAudioEnabled = prefs.getBoolean("audio_enabled", true)
         val isTahajjudEnabled = prefs.getBoolean("tahajjud_enabled", false)
         val tahajjudOffset = prefs.getInt("tahajjud_offset", 60)
-        val combiningThreshold = prefs.getInt("combining_threshold", 90)
+        val combiningThreshold = prefs.getInt("combining_threshold", 70)
         val use12HourFormat = prefs.getBoolean("use_12_hour", true)
 
         val loadedSounds = mutableMapOf<String, String>()
@@ -132,6 +134,9 @@ class PrayerTimesViewModel @Inject constructor(
             val vol = prefs.getFloat("fade_vol_$prayer", defaultVol)
             fadeConfigs[prayer] = FadeConfig(dur, vol)
         }
+        
+        val shortNightEnabled = prefs.getBoolean("short_night_enabled", true)
+        val shortNightThreshold = prefs.getInt("short_night_threshold", 9)
 
         _uiState.value = _uiState.value.copy(
             calcMethod = calcMethod,
@@ -143,9 +148,23 @@ class PrayerTimesViewModel @Inject constructor(
             use12HourFormat = use12HourFormat,
             adhanSounds = loadedSounds,
             selectedAudioRoute = prefs.getString("selected_audio_route", "Default") ?: "Default",
-            fadeConfigs = fadeConfigs
+            fadeConfigs = fadeConfigs,
+            isShortNightCombiningEnabled = shortNightEnabled,
+            shortNightThresholdHours = shortNightThreshold
         )
         loadAudioDevices()
+    }
+    
+    fun setShortNightCombiningEnabled(enabled: Boolean) {
+        prefs.edit().putBoolean("short_night_enabled", enabled).apply()
+        _uiState.value = _uiState.value.copy(isShortNightCombiningEnabled = enabled)
+        updateTimes()
+    }
+
+    fun setShortNightThreshold(hours: Int) {
+        prefs.edit().putInt("short_night_threshold", hours).apply()
+        _uiState.value = _uiState.value.copy(shortNightThresholdHours = hours)
+        updateTimes()
     }
     
     fun setFadeConfig(prayer: String, duration: Int? = null, volume: Float? = null) {
@@ -374,8 +393,87 @@ class PrayerTimesViewModel @Inject constructor(
             val lat = state.latitude
             val lng = state.longitude
             
-            val allTimesMap = calculator.getCombinedPrayerTimes(date, lat, lng)
-        val moonTimes = calculator.getMoonTimes(date, lat, lng)
+            val allTimesMap = calculator.getCombinedPrayerTimes(date, lat, lng).toMutableList()
+            
+            // Short Night Combining Logic
+            if (state.isShortNightCombiningEnabled) {
+                val tomorrowCal = Calendar.getInstance().apply {
+                    time = date
+                    add(Calendar.DAY_OF_YEAR, 1)
+                }
+                val tomorrowTimes = calculator.getCombinedPrayerTimes(tomorrowCal.time, lat, lng)
+                val tomorrowFajr = tomorrowTimes.find { it.name == "Fajr" }
+                val todayIsha = allTimesMap.find { it.name == "Isha" }
+                val todayMaghrib = allTimesMap.find { it.name == "Maghrib" }
+
+                if (tomorrowFajr != null && todayIsha != null && todayMaghrib != null) {
+                    try {
+                        val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
+                        val ishaTime = sdf.parse(todayIsha.time)
+                        val fajrTime = sdf.parse(tomorrowFajr.time)
+                        
+                        if (ishaTime != null && fajrTime != null) {
+                            // Calculate hours between Today Isha and Tomorrow Fajr
+                            // Fajr time is next day, so add 24h worth of ms to its relative time
+                            val fajrMs = fajrTime.time + (24 * 60 * 60 * 1000)
+                            val ishaMs = ishaTime.time
+                            val diffHours = (fajrMs - ishaMs) / (1000.0 * 60 * 60)
+                            
+                            if (diffHours < state.shortNightThresholdHours) {
+                                // Combine Maghrib and Isha
+                                val combinedName = "Maghrib/Isha"
+                                val combinedTime = todayMaghrib.time
+                                
+                                val mIndex = allTimesMap.indexOfFirst { it.name == "Maghrib" }
+                                if (mIndex != -1) {
+                                    allTimesMap[mIndex] = todayMaghrib.copy(name = combinedName, time = combinedTime)
+                                }
+                                
+                                val iIndex = allTimesMap.indexOfFirst { it.name == "Isha" }
+                                if (iIndex != -1) {
+                                    allTimesMap[iIndex] = todayIsha.copy(name = combinedName, time = combinedTime)
+                                }
+                            }
+                        }
+                    } catch (e: Exception) {
+                        // Parse error, ignore
+                    }
+                }
+            }
+
+            // Short Asr Window Combining (Dhuhr + Asr if Asr->Maghrib < Threshold)
+            val todayDhuhr = allTimesMap.find { it.name == "Dhuhr" }
+            val todayAsr = allTimesMap.find { it.name == "Asr" }
+            val maghribForAsr = allTimesMap.find { it.name == "Maghrib" } // Maghrib might be renamed by Short Night, but time is same
+            
+            if (todayDhuhr != null && todayAsr != null && maghribForAsr != null) {
+                try {
+                     val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
+                     val asrDate = sdf.parse(todayAsr.time)
+                     val magDate = sdf.parse(maghribForAsr.time)
+                     
+                     if (asrDate != null && magDate != null) {
+                         val diffMs = magDate.time - asrDate.time
+                         val diffMinutes = diffMs / (1000 * 60)
+                         
+                         if (diffMinutes < state.combiningThreshold) {
+                              val combinedName = "Dhuhr/Asr"
+                              // Set both to Dhuhr time
+                              val combinedTime = todayDhuhr.time
+                              
+                              val dIndex = allTimesMap.indexOfFirst { it.name == "Dhuhr" }
+                              if (dIndex != -1) allTimesMap[dIndex] = todayDhuhr.copy(name = combinedName, time = combinedTime)
+                              
+                              val aIndex = allTimesMap.indexOfFirst { it.name == "Asr" }
+                              if (aIndex != -1) allTimesMap[aIndex] = todayAsr.copy(name = combinedName, time = combinedTime)
+                         }
+                     }
+                } catch (e: Exception) {
+                    // Ignore parse errors
+                }
+            }
+
+            val moonTimes = calculator.getMoonTimes(date, lat, lng)
         val hijri = HijriCalendar.fromDate(date)
         val hijriString = "${hijri.day} ${hijri.monthName} ${hijri.year} AH"
         val gregorianString = SimpleDateFormat("d MMMM yyyy", Locale.ENGLISH).format(date)

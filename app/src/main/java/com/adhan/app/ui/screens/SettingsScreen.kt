@@ -198,6 +198,53 @@ fun SettingsScreen(
                                 activeTrackColor = Color.White.copy(alpha = 0.7f)
                             )
                         )
+                        
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(1.dp)
+                                .background(Color.White.copy(alpha = 0.1f))
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                           Column(modifier = Modifier.weight(1f)) {
+                                Text("Short Night Check", color = Color.White)
+                                Text(
+                                    "Combine Maghrib & Isha if night is short",
+                                    color = Color.White.copy(alpha = 0.5f),
+                                    style = MaterialTheme.typography.labelSmall
+                                )
+                           }
+                           Switch(
+                                checked = uiState.isShortNightCombiningEnabled,
+                                onCheckedChange = { viewModel.setShortNightCombiningEnabled(it) }
+                           )
+                        }
+                        
+                        if (uiState.isShortNightCombiningEnabled) {
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text(
+                                text = "Is Night < ${uiState.shortNightThresholdHours} hours?",
+                                color = Color.White.copy(alpha = 0.7f),
+                                style = MaterialTheme.typography.labelMedium
+                            )
+                            Slider(
+                                value = uiState.shortNightThresholdHours.toFloat(),
+                                onValueChange = { viewModel.setShortNightThreshold(it.toInt()) },
+                                valueRange = 3f..9f,
+                                steps = 5, // 3,4,5,6,7,8,9
+                                colors = SliderDefaults.colors(
+                                    thumbColor = Color.White,
+                                    activeTrackColor = Color.White.copy(alpha = 0.7f)
+                                )
+                            )
+                        }
                     }
                 }
             }

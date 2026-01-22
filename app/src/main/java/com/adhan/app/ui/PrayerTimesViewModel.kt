@@ -41,7 +41,9 @@ data class PrayerTimesState(
     val adhanSounds: Map<String, String> = emptyMap(), // Maps prayer name to URI string
     val rawPrayerTimes: List<PrayerTimesCalculator.CombinedPrayerInfo> = emptyList(), // 24h for logic
     val isLocationSet: Boolean = true,
-    val nextPrayerDateLabel: String = ""
+    val nextPrayerDateLabel: String = "",
+    val audioOutputDevices: List<String> = emptyList(),
+    val selectedAudioRoute: String = "Default"
 )
 
 @HiltViewModel
@@ -117,8 +119,10 @@ class PrayerTimesViewModel @Inject constructor(
             tahajjudOffset = tahajjudOffset,
             combiningThreshold = combiningThreshold,
             use12HourFormat = use12HourFormat,
-            adhanSounds = loadedSounds
+            adhanSounds = loadedSounds,
+            selectedAudioRoute = prefs.getString("selected_audio_route", "Default") ?: "Default"
         )
+        loadAudioDevices()
     }
 
     fun setCalcMethod(method: Int) {
@@ -190,25 +194,7 @@ class PrayerTimesViewModel @Inject constructor(
         repository.updateLocation(lat, lng, finalName, true)
     }
 
-    fun testAdhan(): Boolean {
-        val now = Calendar.getInstance()
-        now.add(Calendar.SECOND, 10)
-        val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
-        val testTime = sdf.format(now.time)
-        
-        val testPrayerTimestamp = now.timeInMillis
-        val success = alarmManager.scheduleExactAlarms(listOf("Test Adhan" to testPrayerTimestamp))
-        
-        if (success) {
-            // Update UI to show we scheduled it
-            _uiState.value = _uiState.value.copy(
-                nextPrayerName = "Test Adhan",
-                nextPrayerTime = formatDisplayTime(testTime),
-                nextPrayerDateLabel = ""
-            )
-        }
-        return success
-    }
+
 
     private var foregroundPlayer: androidx.media3.exoplayer.ExoPlayer? = null
     
@@ -271,7 +257,6 @@ class PrayerTimesViewModel @Inject constructor(
             }
             application.startActivity(intent)
         } catch (e: Exception) {
-            // Fallback for older Android versions or if panel is not available
             val intent = android.content.Intent(android.provider.Settings.ACTION_BLUETOOTH_SETTINGS).apply {
                 addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
             }
@@ -279,7 +264,44 @@ class PrayerTimesViewModel @Inject constructor(
         }
     }
 
+    private fun loadAudioDevices() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            val audioManager = application.getSystemService(android.content.Context.AUDIO_SERVICE) as android.media.AudioManager
+            val devices = audioManager.getDevices(android.media.AudioManager.GET_DEVICES_OUTPUTS)
+            val deviceList = devices.map { device ->
+                "${device.productName} [${device.type}]"
+            }
+            _uiState.value = _uiState.value.copy(audioOutputDevices = deviceList)
+        }
+    }
+    
+    fun refreshAudioDevices() {
+        loadAudioDevices()
+    }
 
+    fun setSelectedAudioDevice(deviceString: String) {
+        _uiState.value = _uiState.value.copy(selectedAudioRoute = deviceString)
+        prefs.edit().putString("selected_audio_route", deviceString).apply()
+    }
+
+    fun testAdhan(delaySeconds: Int = 10): Boolean {
+        val now = Calendar.getInstance()
+        now.add(Calendar.SECOND, delaySeconds)
+        val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
+        val testTime = sdf.format(now.time)
+        
+        val testPrayerTimestamp = now.timeInMillis
+        val success = alarmManager.scheduleExactAlarms(listOf("Test Adhan" to testPrayerTimestamp))
+        
+        if (success) {
+            _uiState.value = _uiState.value.copy(
+                nextPrayerName = "Test Adhan (${delaySeconds}s)",
+                nextPrayerTime = formatDisplayTime(testTime),
+                nextPrayerDateLabel = ""
+            )
+        }
+        return success
+    }
     private fun updateTimes() {
         updateTimesJob?.cancel()
         updateTimesJob = viewModelScope.launch(Dispatchers.Default) {

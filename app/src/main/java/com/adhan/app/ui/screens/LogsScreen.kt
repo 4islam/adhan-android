@@ -33,33 +33,43 @@ fun LogsScreen(
     val logs by viewModel.logs.collectAsState()
     val clipboardManager = LocalClipboardManager.current
     val context = LocalContext.current
+    var showDetailed by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         viewModel.loadLogs()
+    }
+    
+    val displayedLogs = if (showDetailed) logs else logs.filter { 
+        !it.message.contains("ExoPlayer") && 
+        !it.message.contains("DIAGNOSTICS") && 
+        !it.message.contains("AUDIO ROUTES") 
     }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Debug Logs") },
+                title = { Text(if (showDetailed) "Debug Logs (Detailed)" else "Debug Logs (Simple)") },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 },
                 actions = {
+                    TextButton(onClick = { showDetailed = !showDetailed }) {
+                        Text(if (showDetailed) "SIMPLIFY" else "DETAILS", color = MaterialTheme.colorScheme.primary)
+                    }
                     IconButton(onClick = { viewModel.loadLogs() }) {
                         Icon(Icons.Default.Refresh, contentDescription = "Refresh")
                     }
                     IconButton(onClick = {
-                        val text = logs.joinToString("\n") { "${it.formattedTime}|${if(it.isError) "ERROR" else "INFO"}|${it.message}" }
+                        val text = displayedLogs.joinToString("\n") { "${it.formattedTime}|${if(it.isError) "ERROR" else "INFO"}|${it.message}" }
                         clipboardManager.setText(AnnotatedString(text))
                         android.widget.Toast.makeText(context, "Logs copied", android.widget.Toast.LENGTH_SHORT).show()
                     }) {
                         Icon(Icons.Default.ContentCopy, contentDescription = "Copy")
                     }
                     IconButton(onClick = {
-                        val text = logs.joinToString("\n") { "${it.formattedTime}|${if(it.isError) "ERROR" else "INFO"}|${it.message}" }
+                        val text = displayedLogs.joinToString("\n") { "${it.formattedTime}|${if(it.isError) "ERROR" else "INFO"}|${it.message}" }
                         val sendIntent = android.content.Intent().apply {
                             action = android.content.Intent.ACTION_SEND
                             putExtra(android.content.Intent.EXTRA_TEXT, text)
@@ -96,7 +106,7 @@ fun LogsScreen(
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                items(logs) { log ->
+                items(displayedLogs) { log ->
                     LogItem(log)
                 }
             }

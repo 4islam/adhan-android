@@ -9,7 +9,6 @@ import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
-import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import com.adhan.app.MainActivity
 import com.adhan.app.R
@@ -55,6 +54,10 @@ class AdhanService : Service() {
                     android.util.Log.d("AdhanService", msg)
                     serviceScope.launch { logRepository.log(msg) }
 
+                    if (playbackState == Player.STATE_READY) {
+                        logSystemState("Playback READY")
+                    }
+
                     if (playbackState == Player.STATE_ENDED) {
                         stopForeground(STOP_FOREGROUND_REMOVE)
                         stopSelf()
@@ -93,7 +96,7 @@ class AdhanService : Service() {
         }
     }
 
-    private fun logSystemState(prayerName: String) {
+    private fun logSystemState(tag: String) {
         try {
             val audioManager = getSystemService(Context.AUDIO_SERVICE) as android.media.AudioManager
             val alarmVol = audioManager.getStreamVolume(android.media.AudioManager.STREAM_ALARM)
@@ -101,9 +104,19 @@ class AdhanService : Service() {
             val musicVol = audioManager.getStreamVolume(android.media.AudioManager.STREAM_MUSIC)
             val maxMusicVol = audioManager.getStreamMaxVolume(android.media.AudioManager.STREAM_MUSIC)
             
-            val msg = "DIAGNOSTICS: AlarmVol=$alarmVol/$maxAlarmVol, MusicVol=$musicVol/$maxMusicVol"
+            val msg = "DIAGNOSTICS($tag): AlarmVol=$alarmVol/$maxAlarmVol, MusicVol=$musicVol/$maxMusicVol"
             android.util.Log.d("AdhanService", msg)
             serviceScope.launch { logRepository.log(msg) }
+            
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                val devices = audioManager.getDevices(android.media.AudioManager.GET_DEVICES_OUTPUTS)
+                val deviceLog = devices.joinToString(", ") { 
+                    "${it.productName}(Type:${it.type}, ID:${it.id})" 
+                }
+                val routeMsg = "AUDIO ROUTES($tag): $deviceLog"
+                android.util.Log.d("AdhanService", routeMsg)
+                serviceScope.launch { logRepository.log(routeMsg) }
+            }
         } catch (e: Exception) {
              android.util.Log.e("AdhanService", "Log failed", e)
         }
@@ -115,7 +128,7 @@ class AdhanService : Service() {
         android.util.Log.d("AdhanService", "onStartCommand: $prayerName")
         serviceScope.launch { logRepository.log("AdhanService started for: $prayerName") }
         
-        logSystemState(prayerName)
+        logSystemState("Start: $prayerName")
 
         // Ensure notification is posted immediately
         startForeground(NOTIFICATION_ID, createNotification(prayerName))
@@ -142,6 +155,24 @@ class AdhanService : Service() {
                     null
                 }
             }
+
+            // Apply Custom Audio Routing
+            val selectedRoute = prefs.getString("selected_audio_route", "Default")
+            if (selectedRoute != null && selectedRoute != "Default" && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                 val audioManager = getSystemService(Context.AUDIO_SERVICE) as android.media.AudioManager
+                 val devices = audioManager.getDevices(android.media.AudioManager.GET_DEVICES_OUTPUTS)
+                 val targetDevice = devices.find { "${it.productName} [${it.type}]" == selectedRoute }
+                 
+                 if (targetDevice != null) {
+                     android.util.Log.d("AdhanService", "Routing to requested device: $selectedRoute")
+                     serviceScope.launch { logRepository.log("Routing to: $selectedRoute") }
+                     player?.setPreferredAudioDevice(targetDevice)
+                 } else {
+                     android.util.Log.w("AdhanService", "Requested device not found: $selectedRoute")
+                     serviceScope.launch { logRepository.log("Routing Failed: Device '$selectedRoute' not found.", true) }
+                 }
+            }
+
 
             if (mediaItem != null) {
                 player?.let {

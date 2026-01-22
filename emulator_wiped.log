@@ -543,3 +543,7 @@ coreaudio: Could not initialize playback
 coreaudio: Could not create suitable audio conversion object for converting between 48000.000000 Hz (hw) and 44100.000000 Hz (sw)
 coreaudio: Reason: status code -1
 Failed to create voice `virtio-snd-speakers0'
+INFO         | Wait for emulator (pid 22182) 20 seconds to shutdown gracefully before kill;you can set environment variable ANDROID_EMULATOR_WAIT_TIME_BEFORE_KILL(in seconds) to change the default value (20 seconds)
+
+INFO         | Saving with gfxstream=1
+INFO         | Saving snapshot 'default_boot' using 1012 ms

@@ -235,15 +235,68 @@ fun SettingsScreen(
                             style = MaterialTheme.typography.labelSmall
                         )
                         Spacer(modifier = Modifier.height(12.dp))
+                        var audioExpanded by remember { mutableStateOf(false) }
+                        
+                        Box(modifier = Modifier.fillMaxWidth()) {
+                            ExposedDropdownMenuBox(
+                                expanded = audioExpanded,
+                                onExpandedChange = { audioExpanded = !audioExpanded }
+                            ) {
+                                OutlinedTextField(
+                                    value = uiState.selectedAudioRoute,
+                                    onValueChange = {},
+                                    readOnly = true,
+                                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = audioExpanded) },
+                                    colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(
+                                        focusedTextColor = Color.White,
+                                        unfocusedTextColor = Color.White,
+                                        focusedBorderColor = Color.White.copy(alpha = 0.5f),
+                                        unfocusedBorderColor = Color.White.copy(alpha = 0.3f),
+                                        focusedContainerColor = Color.Transparent,
+                                        unfocusedContainerColor = Color.Transparent
+                                    ),
+                                    modifier = Modifier.menuAnchor().fillMaxWidth()
+                                )
+
+                                ExposedDropdownMenu(
+                                    expanded = audioExpanded,
+                                    onDismissRequest = { audioExpanded = false }
+                                ) {
+                                    DropdownMenuItem(
+                                        text = { Text("Default (System Decision)") },
+                                        onClick = {
+                                            viewModel.setSelectedAudioDevice("Default")
+                                            audioExpanded = false
+                                        }
+                                    )
+                                    uiState.audioOutputDevices.forEach { device ->
+                                        DropdownMenuItem(
+                                            text = { Text(device) },
+                                            onClick = {
+                                                viewModel.setSelectedAudioDevice(device)
+                                                audioExpanded = false
+                                            }
+                                        )
+                                    }
+                                    DropdownMenuItem(
+                                        text = { Text("Refresh Device List", color = Color.Cyan) },
+                                        onClick = {
+                                            viewModel.refreshAudioDevices()
+                                        }
+                                    )
+                                }
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(8.dp))
                         Button(
                             onClick = { viewModel.openAudioOutputPicker() },
                             modifier = Modifier.fillMaxWidth(),
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = Color.White.copy(alpha = 0.2f)
+                                containerColor = Color.White.copy(alpha = 0.1f)
                             ),
                             shape = RoundedCornerShape(8.dp)
                         ) {
-                            Text("Select Audio Output", color = Color.White)
+                            Text("Open System Output Switcher", color = Color.White.copy(alpha = 0.7f))
                         }
                     }
                 }
@@ -318,7 +371,24 @@ fun SettingsScreen(
                             ),
                             shape = RoundedCornerShape(8.dp)
                         ) {
-                            Text("Trigger Test Adhan (Background)", color = Color.White)
+                            Text("Schedule Background Test (10s)", color = Color.White)
+                        }
+                        
+                        Spacer(modifier = Modifier.height(8.dp))
+                        
+                        Button(
+                            onClick = { 
+                                val success = viewModel.testAdhan(120)
+                                val msg = if (success) "Test Adhan scheduled in 2 min" else "Failed (Check permission)"
+                                android.widget.Toast.makeText(context, msg, android.widget.Toast.LENGTH_SHORT).show()
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(0xFF00E5FF).copy(alpha = 0.3f)
+                            ),
+                            shape = RoundedCornerShape(8.dp)
+                        ) {
+                            Text("Schedule Background Test (2 min)", color = Color.White)
                         }
 
                         Spacer(modifier = Modifier.height(16.dp))

@@ -268,10 +268,39 @@ class PrayerTimesViewModel @Inject constructor(
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
             val audioManager = application.getSystemService(android.content.Context.AUDIO_SERVICE) as android.media.AudioManager
             val devices = audioManager.getDevices(android.media.AudioManager.GET_DEVICES_OUTPUTS)
-            val deviceList = devices.map { device ->
-                "${device.productName} [${device.type}]"
-            }
+            val deviceList = devices
+                .filter { it.type != 18 } // Filter out TYPE_TELEPHONY (Internal Modem)
+                .map { device ->
+                    val typeName = getDeviceTypeName(device.type)
+                    "$typeName (${device.productName})"
+                }.distinct() // Remove duplicates if any
+            
             _uiState.value = _uiState.value.copy(audioOutputDevices = deviceList)
+        }
+    }
+    
+    private fun getDeviceTypeName(type: Int): String {
+        return when (type) {
+            android.media.AudioDeviceInfo.TYPE_BUILTIN_EARPIECE -> "Earpiece"
+            android.media.AudioDeviceInfo.TYPE_BUILTIN_SPEAKER -> "Speaker"
+            android.media.AudioDeviceInfo.TYPE_WIRED_HEADSET -> "Wired Headset"
+            android.media.AudioDeviceInfo.TYPE_WIRED_HEADPHONES -> "Wired Headphones"
+            android.media.AudioDeviceInfo.TYPE_BLUETOOTH_SCO -> "Bluetooth (Call)"
+            android.media.AudioDeviceInfo.TYPE_BLUETOOTH_A2DP -> "Bluetooth (Media)"
+            android.media.AudioDeviceInfo.TYPE_DOCK -> "Dock"
+            android.media.AudioDeviceInfo.TYPE_USB_ACCESSORY -> "USB Accessory"
+            android.media.AudioDeviceInfo.TYPE_USB_DEVICE -> "USB Device"
+            android.media.AudioDeviceInfo.TYPE_USB_HEADSET -> "USB Headset"
+            android.media.AudioDeviceInfo.TYPE_LINE_ANALOG -> "Line Out"
+            android.media.AudioDeviceInfo.TYPE_LINE_DIGITAL -> "Digital Out"
+            android.media.AudioDeviceInfo.TYPE_HDMI -> "HDMI"
+            android.media.AudioDeviceInfo.TYPE_HDMI_ARC -> "HDMI ARC"
+            android.media.AudioDeviceInfo.TYPE_AUX_LINE -> "Aux Line"
+            18 -> "Telephony"
+            23 -> "Hearing Aid"
+            24 -> "Bluetooth LE Speaker"
+            26 -> "Bluetooth LE Headset"
+            else -> "Device (Type $type)"
         }
     }
     

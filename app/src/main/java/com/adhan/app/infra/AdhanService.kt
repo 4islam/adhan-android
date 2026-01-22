@@ -122,6 +122,31 @@ class AdhanService : Service() {
         }
     }
 
+    private fun getDeviceTypeName(type: Int): String {
+        return when (type) {
+            android.media.AudioDeviceInfo.TYPE_BUILTIN_EARPIECE -> "Earpiece"
+            android.media.AudioDeviceInfo.TYPE_BUILTIN_SPEAKER -> "Speaker"
+            android.media.AudioDeviceInfo.TYPE_WIRED_HEADSET -> "Wired Headset"
+            android.media.AudioDeviceInfo.TYPE_WIRED_HEADPHONES -> "Wired Headphones"
+            android.media.AudioDeviceInfo.TYPE_BLUETOOTH_SCO -> "Bluetooth (Call)"
+            android.media.AudioDeviceInfo.TYPE_BLUETOOTH_A2DP -> "Bluetooth (Media)"
+            android.media.AudioDeviceInfo.TYPE_DOCK -> "Dock"
+            android.media.AudioDeviceInfo.TYPE_USB_ACCESSORY -> "USB Accessory"
+            android.media.AudioDeviceInfo.TYPE_USB_DEVICE -> "USB Device"
+            android.media.AudioDeviceInfo.TYPE_USB_HEADSET -> "USB Headset"
+            android.media.AudioDeviceInfo.TYPE_LINE_ANALOG -> "Line Out"
+            android.media.AudioDeviceInfo.TYPE_LINE_DIGITAL -> "Digital Out"
+            android.media.AudioDeviceInfo.TYPE_HDMI -> "HDMI"
+            android.media.AudioDeviceInfo.TYPE_HDMI_ARC -> "HDMI ARC"
+            android.media.AudioDeviceInfo.TYPE_AUX_LINE -> "Aux Line"
+            18 -> "Telephony" // TYPE_TELEPHONY
+            23 -> "Hearing Aid" // TYPE_HEARING_AID (API 28)
+            24 -> "Bluetooth LE Speaker" // TYPE_BLE_SPEAKER (API 31)
+            26 -> "Bluetooth LE Headset" // TYPE_BLE_HEADSET (API 31)
+            else -> "Device (Type $type)"
+        }
+    }
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val prayerName = intent?.getStringExtra("prayer_name") ?: "Prayer"
         
@@ -161,7 +186,11 @@ class AdhanService : Service() {
             if (selectedRoute != null && selectedRoute != "Default" && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
                  val audioManager = getSystemService(Context.AUDIO_SERVICE) as android.media.AudioManager
                  val devices = audioManager.getDevices(android.media.AudioManager.GET_DEVICES_OUTPUTS)
-                 val targetDevice = devices.find { "${it.productName} [${it.type}]" == selectedRoute }
+                 // Match using the same format as ViewModel
+                 val targetDevice = devices.find { 
+                     val typeName = getDeviceTypeName(it.type)
+                     "$typeName (${it.productName})" == selectedRoute 
+                 }
                  
                  if (targetDevice != null) {
                      android.util.Log.d("AdhanService", "Routing to requested device: $selectedRoute")

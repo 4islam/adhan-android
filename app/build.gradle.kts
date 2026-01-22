@@ -83,6 +83,8 @@ dependencies {
 
     // WorkManager
     implementation(libs.androidx.work.runtime.ktx)
+    implementation("androidx.hilt:hilt-work:1.0.0")
+    ksp("androidx.hilt:hilt-compiler:1.0.0")
 
     // Media3 (ExoPlayer)
     implementation(libs.androidx.media3.exoplayer)

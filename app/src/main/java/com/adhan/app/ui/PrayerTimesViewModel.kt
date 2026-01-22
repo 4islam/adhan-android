@@ -59,12 +59,14 @@ data class PrayerTimesState(
 
 @HiltViewModel
 class PrayerTimesViewModel @Inject constructor(
-    private val alarmManager: com.adhan.app.infra.PrayerAlarmManager,
+    private val alarmManager: com.adhan.app.infra.PrayerAlarmManager, // Still used for manual forceReschedule/test
     private val repository: com.adhan.app.domain.LocationRepository,
     private val application: android.app.Application,
     private val logRepository: com.adhan.app.domain.LogRepository,
     private val audioRouter: com.adhan.app.infra.AudioRouter,
-    private val audioFader: com.adhan.app.infra.AudioFader
+    private val audioFader: com.adhan.app.infra.AudioFader,
+    private val prayerScheduler: com.adhan.app.domain.PrayerScheduler,
+    private val userPrefs: com.adhan.app.domain.UserPreferencesRepository
 ) : ViewModel() {
     private val prefs = application.getSharedPreferences("adhan_prefs", android.content.Context.MODE_PRIVATE)
     private val _uiState = MutableStateFlow(PrayerTimesState())
@@ -110,12 +112,16 @@ class PrayerTimesViewModel @Inject constructor(
     }
 
     private fun loadSettings() {
-        val calcMethod = prefs.getInt("calc_method", PrayerTimesCalculator.Ahmadiyya)
-        val asrJuristic = prefs.getInt("asr_juristic", PrayerTimesCalculator.Shafii)
+        val calcMethod = userPrefs.getCalcMethod()
+        val asrJuristic = userPrefs.getAsrJuristic()
+        // ... (We could migrate all to userPrefs, but for minimal diff, we'll keep direct reading or hybrid for now)
+        // Actually, to prove robustness, let's keep VM reading directly or assume duplicated reads are fine for UI.
+        // But for Alarms, the Scheduler MUST read independently.
+
         val isAudioEnabled = prefs.getBoolean("audio_enabled", true)
-        val isTahajjudEnabled = prefs.getBoolean("tahajjud_enabled", false)
-        val tahajjudOffset = prefs.getInt("tahajjud_offset", 60)
-        val combiningThreshold = prefs.getInt("combining_threshold", 70)
+        val isTahajjudEnabled = userPrefs.isTahajjudEnabled()
+        val tahajjudOffset = userPrefs.getTahajjudOffset()
+        val combiningThreshold = userPrefs.getCombiningThreshold()
         val use12HourFormat = prefs.getBoolean("use_12_hour", true)
 
         val loadedSounds = mutableMapOf<String, String>()
@@ -124,27 +130,15 @@ class PrayerTimesViewModel @Inject constructor(
             if (uri != null) loadedSounds[prayer] = uri
         }
         
-        // Load Fade Configs
-        val fadeConfigs = mutableMapOf<String, FadeConfig>()
-        val prayers = listOf("Fajr", "Dhuhr", "Asr", "Maghrib", "Isha")
+        val fadeConfigs = userPrefs.getFadeConfigs()
         
-        prayers.forEach { prayer ->
-            val isFajr = prayer == "Fajr"
-            val defaultDur = if (isFajr) 5 else 0
-            val defaultVol = if (isFajr) 0f else 1.0f
-            
-            val dur = prefs.getInt("fade_duration_$prayer", defaultDur)
-            val vol = prefs.getFloat("fade_vol_$prayer", defaultVol)
-            fadeConfigs[prayer] = FadeConfig(dur, vol)
-        }
+        val shortNightEnabled = userPrefs.isShortNightEnabled()
+        val shortNightThreshold = userPrefs.getShortNightThreshold()
         
-        val shortNightEnabled = prefs.getBoolean("short_night_enabled", true)
-        val shortNightThreshold = prefs.getInt("short_night_threshold", 9)
+        val shortAsrEnabled = userPrefs.isShortAsrEnabled()
+        val shortAsrThreshold = userPrefs.getShortAsrThreshold()
         
-        val shortAsrEnabled = prefs.getBoolean("short_asr_enabled", true)
-        val shortAsrThreshold = prefs.getInt("short_asr_threshold", 90)
-        
-        val adhanVolume = prefs.getInt("adhan_volume", 80)
+        val adhanVolume = userPrefs.getAdhanVolume()
 
         _uiState.value = _uiState.value.copy(
             calcMethod = calcMethod,
@@ -582,69 +576,10 @@ class PrayerTimesViewModel @Inject constructor(
             }
 
 
-            // Calculate timestamps for Today
-            val scheduleList = mutableListOf<Pair<String, Long>>()
-            val todayCal = Calendar.getInstance().apply { time = date }
-            
-            prayerList.forEach { info ->
-                val timeParts = info.time.split(":")
-                if (timeParts.size == 2) {
-                     val pCal = todayCal.clone() as Calendar
-                     pCal.set(Calendar.HOUR_OF_DAY, timeParts[0].toInt())
-                     pCal.set(Calendar.MINUTE, timeParts[1].toInt())
-                     pCal.set(Calendar.SECOND, 0)
-                     pCal.set(Calendar.MILLISECOND, 0)
-                     scheduleList.add(info.name to pCal.timeInMillis)
-                }
-            }
-            
-            // Calculate timestamps for Tomorrow
-            val tomorrowCal = Calendar.getInstance().apply { 
-                time = date
-                add(Calendar.DAY_OF_YEAR, 1)
-            }
-            val tomorrowDate = tomorrowCal.time
-            val tomorrowTimes = calculator.getCombinedPrayerTimes(tomorrowDate, lat, lng)
-            
-            // Tahajjud for Tomorrow
-             if (_uiState.value.isTahajjudEnabled) {
-                val fajrInfo = tomorrowTimes.find { it.name == "Fajr" }
-                if (fajrInfo != null) {
-                    val tahajjudTime = calculateTahajjudTime(fajrInfo.time, _uiState.value.tahajjudOffset)
-                    val tParts = tahajjudTime.split(":")
-                    if (tParts.size == 2) {
-                         val pCal = tomorrowCal.clone() as Calendar
-                         pCal.set(Calendar.HOUR_OF_DAY, tParts[0].toInt())
-                         pCal.set(Calendar.MINUTE, tParts[1].toInt())
-                         pCal.set(Calendar.SECOND, 0)
-                         pCal.set(Calendar.MILLISECOND, 0)
-                         scheduleList.add("Tahajjud" to pCal.timeInMillis)
-                    }
-                }
-            }
-            
-            tomorrowTimes.filter { it.name !in listOf("Sunrise", "Sunset", "Solar Noon") }.forEach { info ->
-                var name = info.name
-                val isTomorrowFri = tomorrowCal.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY
-                if ((name == "Dhuhr" || name == "Dhuhr/Asr") && isTomorrowFri) {
-                    name = "Jummah (or Dhuhr)"
-                }
-                
-                if (name in allowedPrayers) {
-                    val timeParts = info.time.split(":")
-                     if (timeParts.size == 2) {
-                         val pCal = tomorrowCal.clone() as Calendar
-                         pCal.set(Calendar.HOUR_OF_DAY, timeParts[0].toInt())
-                         pCal.set(Calendar.MINUTE, timeParts[1].toInt())
-                         pCal.set(Calendar.SECOND, 0)
-                         pCal.set(Calendar.MILLISECOND, 0)
-                         scheduleList.add(name to pCal.timeInMillis)
-                    }
-                }
-            }
-
-            // Move scheduling to background
-            alarmManager.scheduleExactAlarms(scheduleList)
+            // Trigger Background Scheduler for Alarms
+            // UI state is updated above, logic is duplicated but decoupled.
+            // This ensures UI and Alarms are consistent but independent processes.
+            prayerScheduler.scheduleAlarmsForNext24Hours()
         }
     }
 

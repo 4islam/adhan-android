@@ -4,10 +4,36 @@ import android.app.Application
 import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
-class AdhanApplication : Application() {
+class AdhanApplication : Application(), androidx.work.Configuration.Provider {
+    
+    @javax.inject.Inject
+    lateinit var workerFactory: androidx.hilt.work.HiltWorkerFactory
+
+    override val workManagerConfiguration: androidx.work.Configuration
+        get() = androidx.work.Configuration.Builder()
+            .setWorkerFactory(workerFactory)
+            .build()
+
     override fun onCreate() {
         super.onCreate()
         createNotificationChannels()
+        scheduleDailyMaintenance()
+    }
+
+    private fun scheduleDailyMaintenance() {
+        val workRequest = androidx.work.PeriodicWorkRequestBuilder<com.adhan.app.infra.DailySchedulerWorker>(
+            12, java.util.concurrent.TimeUnit.HOURS
+        ).setConstraints(
+            androidx.work.Constraints.Builder()
+                .setRequiresBatteryNotLow(true)
+                .build()
+        ).build()
+
+        androidx.work.WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+            "DailyAdhanScheduler",
+            androidx.work.ExistingPeriodicWorkPolicy.UPDATE,
+            workRequest
+        )
     }
 
     private fun createNotificationChannels() {

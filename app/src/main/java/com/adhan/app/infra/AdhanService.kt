@@ -35,6 +35,7 @@ class AdhanService : Service() {
     private val NOTIFICATION_ID = 1001
     private val CHANNEL_ID = "adhan_alerts_v2"
     private val serviceScope = kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.IO + kotlinx.coroutines.SupervisorJob())
+    private var initialVolume: Int? = null
 
     override fun onCreate() {
         super.onCreate()
@@ -139,6 +140,28 @@ class AdhanService : Service() {
         
         logSystemState("Start: $prayerName")
 
+        // Volume Override Logic
+        try {
+            val prefs = getSharedPreferences("adhan_prefs", Context.MODE_PRIVATE)
+            val adhanVolumePercent = prefs.getInt("adhan_volume", 80)
+            val audioManager = getSystemService(Context.AUDIO_SERVICE) as android.media.AudioManager
+            val maxVol = audioManager.getStreamMaxVolume(android.media.AudioManager.STREAM_MUSIC)
+            val currentVol = audioManager.getStreamVolume(android.media.AudioManager.STREAM_MUSIC)
+            
+            // Only store initial volume if not already stored (avoid overwriting if service restarts or multiple calls)
+            if (initialVolume == null) {
+                initialVolume = currentVol
+            }
+            
+            val targetVol = (maxVol * (adhanVolumePercent / 100f)).toInt()
+            android.util.Log.d("AdhanService", "Setting Volume: Pct=$adhanVolumePercent, Target=$targetVol/$maxVol, Old=$currentVol")
+            serviceScope.launch { logRepository.log("Volume Override: Pct=$adhanVolumePercent, Target=$targetVol/$maxVol") }
+            
+            audioManager.setStreamVolume(android.media.AudioManager.STREAM_MUSIC, targetVol, 0)
+        } catch (e: Exception) {
+            android.util.Log.e("AdhanService", "Failed to set volume", e)
+        }
+
         // Ensure notification is posted immediately
         startForeground(NOTIFICATION_ID, createNotification(prayerName))
         
@@ -241,6 +264,17 @@ class AdhanService : Service() {
         player?.release()
         player = null
         serviceScope.cancel()
+        
+        // Restore Volume
+        initialVolume?.let { vol ->
+            try {
+                val audioManager = getSystemService(Context.AUDIO_SERVICE) as android.media.AudioManager
+                android.util.Log.d("AdhanService", "Restoring Volume to $vol")
+                audioManager.setStreamVolume(android.media.AudioManager.STREAM_MUSIC, vol, 0)
+            } catch (e: Exception) {
+                android.util.Log.e("AdhanService", "Failed to restore volume", e)
+            }
+        }
         super.onDestroy()
     }
 }

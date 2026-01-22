@@ -51,7 +51,10 @@ data class PrayerTimesState(
     val selectedAudioRoute: String = "Default",
     val fadeConfigs: Map<String, FadeConfig> = emptyMap(),
     val isShortNightCombiningEnabled: Boolean = true,
-    val shortNightThresholdHours: Int = 9 // Hours
+    val shortNightThresholdHours: Int = 9, // Hours
+    val isShortAsrCombiningEnabled: Boolean = true,
+    val shortAsrThresholdMinutes: Int = 90,
+    val adhanVolume: Int = 80 // Volume percentage 0-100
 )
 
 @HiltViewModel
@@ -137,6 +140,11 @@ class PrayerTimesViewModel @Inject constructor(
         
         val shortNightEnabled = prefs.getBoolean("short_night_enabled", true)
         val shortNightThreshold = prefs.getInt("short_night_threshold", 9)
+        
+        val shortAsrEnabled = prefs.getBoolean("short_asr_enabled", true)
+        val shortAsrThreshold = prefs.getInt("short_asr_threshold", 90)
+        
+        val adhanVolume = prefs.getInt("adhan_volume", 80)
 
         _uiState.value = _uiState.value.copy(
             calcMethod = calcMethod,
@@ -150,9 +158,29 @@ class PrayerTimesViewModel @Inject constructor(
             selectedAudioRoute = prefs.getString("selected_audio_route", "Default") ?: "Default",
             fadeConfigs = fadeConfigs,
             isShortNightCombiningEnabled = shortNightEnabled,
-            shortNightThresholdHours = shortNightThreshold
+            shortNightThresholdHours = shortNightThreshold,
+            isShortAsrCombiningEnabled = shortAsrEnabled,
+            shortAsrThresholdMinutes = shortAsrThreshold,
+            adhanVolume = adhanVolume
         )
         loadAudioDevices()
+    }
+
+    fun setShortAsrCombiningEnabled(enabled: Boolean) {
+        prefs.edit().putBoolean("short_asr_enabled", enabled).apply()
+        _uiState.value = _uiState.value.copy(isShortAsrCombiningEnabled = enabled)
+        updateTimes()
+    }
+
+    fun setShortAsrThreshold(minutes: Int) {
+        prefs.edit().putInt("short_asr_threshold", minutes).apply()
+        _uiState.value = _uiState.value.copy(shortAsrThresholdMinutes = minutes)
+        updateTimes()
+    }
+    
+    fun setAdhanVolume(volume: Int) {
+        prefs.edit().putInt("adhan_volume", volume).apply()
+        _uiState.value = _uiState.value.copy(adhanVolume = volume)
     }
     
     fun setShortNightCombiningEnabled(enabled: Boolean) {
@@ -380,6 +408,15 @@ class PrayerTimesViewModel @Inject constructor(
         }
         return success
     }
+
+    fun forceReschedule() {
+        viewModelScope.launch {
+            logRepository.log("MANUAL RESCHEDULE: User triggered alarm reset.")
+            alarmManager.cancelAllAlarms()
+            updateTimes()
+        }
+    }
+    
     private fun updateTimes() {
         updateTimesJob?.cancel()
         updateTimesJob = viewModelScope.launch(Dispatchers.Default) {
@@ -442,34 +479,36 @@ class PrayerTimesViewModel @Inject constructor(
             }
 
             // Short Asr Window Combining (Dhuhr + Asr if Asr->Maghrib < Threshold)
-            val todayDhuhr = allTimesMap.find { it.name == "Dhuhr" }
-            val todayAsr = allTimesMap.find { it.name == "Asr" }
-            val maghribForAsr = allTimesMap.find { it.name == "Maghrib" } // Maghrib might be renamed by Short Night, but time is same
-            
-            if (todayDhuhr != null && todayAsr != null && maghribForAsr != null) {
-                try {
-                     val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
-                     val asrDate = sdf.parse(todayAsr.time)
-                     val magDate = sdf.parse(maghribForAsr.time)
-                     
-                     if (asrDate != null && magDate != null) {
-                         val diffMs = magDate.time - asrDate.time
-                         val diffMinutes = diffMs / (1000 * 60)
+            if (state.isShortAsrCombiningEnabled) {
+                val todayDhuhr = allTimesMap.find { it.name == "Dhuhr" }
+                val todayAsr = allTimesMap.find { it.name == "Asr" }
+                val maghribForAsr = allTimesMap.find { it.name == "Maghrib" } // Maghrib might be renamed by Short Night, but time is same
+                
+                if (todayDhuhr != null && todayAsr != null && maghribForAsr != null) {
+                    try {
+                         val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
+                         val asrDate = sdf.parse(todayAsr.time)
+                         val magDate = sdf.parse(maghribForAsr.time)
                          
-                         if (diffMinutes < state.combiningThreshold) {
-                              val combinedName = "Dhuhr/Asr"
-                              // Set both to Dhuhr time
-                              val combinedTime = todayDhuhr.time
-                              
-                              val dIndex = allTimesMap.indexOfFirst { it.name == "Dhuhr" }
-                              if (dIndex != -1) allTimesMap[dIndex] = todayDhuhr.copy(name = combinedName, time = combinedTime)
-                              
-                              val aIndex = allTimesMap.indexOfFirst { it.name == "Asr" }
-                              if (aIndex != -1) allTimesMap[aIndex] = todayAsr.copy(name = combinedName, time = combinedTime)
+                         if (asrDate != null && magDate != null) {
+                             val diffMs = magDate.time - asrDate.time
+                             val diffMinutes = diffMs / (1000 * 60)
+                             
+                             if (diffMinutes < state.shortAsrThresholdMinutes) {
+                                  val combinedName = "Dhuhr/Asr"
+                                  // Set both to Dhuhr time
+                                  val combinedTime = todayDhuhr.time
+                                  
+                                  val dIndex = allTimesMap.indexOfFirst { it.name == "Dhuhr" }
+                                  if (dIndex != -1) allTimesMap[dIndex] = todayDhuhr.copy(name = combinedName, time = combinedTime)
+                                  
+                                  val aIndex = allTimesMap.indexOfFirst { it.name == "Asr" }
+                                  if (aIndex != -1) allTimesMap[aIndex] = todayAsr.copy(name = combinedName, time = combinedTime)
+                             }
                          }
-                     }
-                } catch (e: Exception) {
-                    // Ignore parse errors
+                    } catch (e: Exception) {
+                        // Ignore parse errors
+                    }
                 }
             }
 

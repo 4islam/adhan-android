@@ -68,7 +68,7 @@ class PrayerAlarmManager @Inject constructor(
         return true
     }
 
-    private fun cancelAllAlarms() {
+    fun cancelAllAlarms() {
         knownPrayerNames.forEach { name ->
             val intent = Intent(context, AlarmReceiver::class.java).apply {
                 putExtra("prayer_name", name)

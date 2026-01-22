@@ -238,7 +238,53 @@ fun SettingsScreen(
                                 value = uiState.shortNightThresholdHours.toFloat(),
                                 onValueChange = { viewModel.setShortNightThreshold(it.toInt()) },
                                 valueRange = 3f..9f,
-                                steps = 5, // 3,4,5,6,7,8,9
+                                steps = 5,
+                                colors = SliderDefaults.colors(
+                                    thumbColor = Color.White,
+                                    activeTrackColor = Color.White.copy(alpha = 0.7f)
+                                )
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(1.dp)
+                                .background(Color.White.copy(alpha = 0.1f))
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                           Column(modifier = Modifier.weight(1f)) {
+                                Text("Short Asr Window", color = Color.White)
+                                Text(
+                                    "Combine Dhuhr & Asr if Asr is close to Maghrib",
+                                    color = Color.White.copy(alpha = 0.5f),
+                                    style = MaterialTheme.typography.labelSmall
+                                )
+                           }
+                           Switch(
+                                checked = uiState.isShortAsrCombiningEnabled,
+                                onCheckedChange = { viewModel.setShortAsrCombiningEnabled(it) }
+                           )
+                        }
+                        
+                        if (uiState.isShortAsrCombiningEnabled) {
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text(
+                                text = "Asr within ${uiState.shortAsrThresholdMinutes}m of Maghrib",
+                                color = Color.White.copy(alpha = 0.7f),
+                                style = MaterialTheme.typography.labelMedium
+                            )
+                            Slider(
+                                value = uiState.shortAsrThresholdMinutes.toFloat(),
+                                onValueChange = { viewModel.setShortAsrThreshold(it.toInt()) },
+                                valueRange = 45f..120f,
                                 colors = SliderDefaults.colors(
                                     thumbColor = Color.White,
                                     activeTrackColor = Color.White.copy(alpha = 0.7f)
@@ -270,6 +316,33 @@ fun SettingsScreen(
             item {
                 SettingsSection("Audio Configuration") {
                     Column(modifier = Modifier.padding(8.dp)) {
+                        Text(
+                            text = "Adhan Volume: ${uiState.adhanVolume}%",
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = "Overrides system volume during Adhan playback.",
+                            color = Color.White.copy(alpha = 0.5f),
+                            style = MaterialTheme.typography.labelSmall
+                        )
+                        Slider(
+                            value = uiState.adhanVolume.toFloat(),
+                            onValueChange = { viewModel.setAdhanVolume(it.toInt()) },
+                            valueRange = 0f..100f,
+                            colors = SliderDefaults.colors(
+                                thumbColor = Color.White,
+                                activeTrackColor = Color.White.copy(alpha = 0.7f)
+                            )
+                        )
+                        
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Box(
+                            modifier = Modifier.fillMaxWidth().height(1.dp).background(Color.White.copy(alpha = 0.1f))
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+
                         Text(
                             text = "Audio Output Route",
                             color = Color.White,
@@ -527,6 +600,23 @@ fun SettingsScreen(
                             Text("Schedule Background Test (2 min)", color = Color.White)
                         }
 
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        Button(
+                            onClick = { 
+                                viewModel.forceReschedule()
+                                android.widget.Toast.makeText(context, "Alarms Reset & Rescheduled", android.widget.Toast.LENGTH_SHORT).show()
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(0xFFFF9800).copy(alpha = 0.3f)
+                            ),
+                            shape = RoundedCornerShape(8.dp)
+                        ) {
+                            Text("Reset & Reschedule Alarms", color = Color.White)
+                        }
+                        
                         Spacer(modifier = Modifier.height(16.dp))
 
                         val isPlaying by viewModel.isAdhanPlaying.collectAsState()

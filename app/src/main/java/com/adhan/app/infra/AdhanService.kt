@@ -27,6 +27,9 @@ class AdhanService : Service() {
     @Inject
     lateinit var audioRouter: com.adhan.app.infra.AudioRouter
 
+    @Inject
+    lateinit var audioFader: com.adhan.app.infra.AudioFader
+
     private var player: ExoPlayer? = null
     private var mediaSession: androidx.media3.session.MediaSession? = null
     private val NOTIFICATION_ID = 1001
@@ -147,6 +150,14 @@ class AdhanService : Service() {
             val prefs = getSharedPreferences("adhan_prefs", Context.MODE_PRIVATE)
             val customUri = prefs.getString("adhan_sound_$prayerName", null)
             
+            // Determine fade defaults based on prayer name
+            val isFajr = prayerName.contains("Fajr", ignoreCase = true)
+            val defaultDur = if (isFajr) 5 else 0
+            val defaultVol = if (isFajr) 0f else 1.0f
+            
+            val fadeDurationSeconds = prefs.getInt("fade_duration_$prayerName", defaultDur)
+            val fadeStartVolume = prefs.getFloat("fade_vol_$prayerName", defaultVol)
+            
             val mediaItem: MediaItem? = if (customUri != null) {
                 android.util.Log.d("AdhanService", "Using custom URI: $customUri")
                 MediaItem.fromUri(customUri)
@@ -179,7 +190,16 @@ class AdhanService : Service() {
                     if (it.playbackState == Player.STATE_IDLE || it.playbackState == Player.STATE_ENDED) {
                         it.setMediaItem(mediaItem)
                         it.prepare()
+                        it.volume = fadeStartVolume // Start at config volume
                         it.play()
+                        android.util.Log.d("AdhanService", "Player started, fading in...")
+                        
+                        serviceScope.launch {
+                            withContext(kotlinx.coroutines.Dispatchers.Main) {
+                                audioFader.startFadeIn(it, fadeDurationSeconds * 1000L, fadeStartVolume)
+                            }
+                        }
+                        
                         android.util.Log.d("AdhanService", "Player started")
                     }
                 }

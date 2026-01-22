@@ -129,3 +129,8 @@ INFO         | Increasing screen off timeout, logcat buffer size to 2M.
 ERROR        | adb protocol fault (couldn't read status length)
 ERROR        | adb protocol fault (couldn't read status length)
 ERROR        | adb protocol fault (couldn't read status length)
+INFO         | Warning: skipping QEventPoint(id=1 ts=0 pos=0,0 scn=167.507,400.916 gbl=167.507,400.916 Released ellipse=(1x1 ∡ 0) vel=0,0 press=-167.507,-400.916 last=-167.507,-400.916 Δ 167.507,400.916) : no target window (:0, )
+INFO         | Wait for emulator (pid 58405) 20 seconds to shutdown gracefully before kill;you can set environment variable ANDROID_EMULATOR_WAIT_TIME_BEFORE_KILL(in seconds) to change the default value (20 seconds)
+
+INFO         | Saving with gfxstream=1
+INFO         | Saving snapshot 'default_boot' using 950 ms

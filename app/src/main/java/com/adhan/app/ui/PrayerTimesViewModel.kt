@@ -17,6 +17,11 @@ import java.util.*
 import javax.inject.Inject
 import kotlinx.coroutines.Job
 
+data class FadeConfig(
+    val durationSeconds: Int = 0, 
+    val initialVolume: Float = 1.0f
+)
+
 data class PrayerTimesState(
     val prayerTimes: List<PrayerTimesCalculator.CombinedPrayerInfo> = emptyList(),
     val astronomicalEvents: List<PrayerTimesCalculator.CombinedPrayerInfo> = emptyList(),
@@ -43,7 +48,8 @@ data class PrayerTimesState(
     val isLocationSet: Boolean = true,
     val nextPrayerDateLabel: String = "",
     val audioOutputDevices: List<String> = emptyList(),
-    val selectedAudioRoute: String = "Default"
+    val selectedAudioRoute: String = "Default",
+    val fadeConfigs: Map<String, FadeConfig> = emptyMap()
 )
 
 @HiltViewModel
@@ -52,7 +58,8 @@ class PrayerTimesViewModel @Inject constructor(
     private val repository: com.adhan.app.domain.LocationRepository,
     private val application: android.app.Application,
     private val logRepository: com.adhan.app.domain.LogRepository,
-    private val audioRouter: com.adhan.app.infra.AudioRouter
+    private val audioRouter: com.adhan.app.infra.AudioRouter,
+    private val audioFader: com.adhan.app.infra.AudioFader
 ) : ViewModel() {
     private val prefs = application.getSharedPreferences("adhan_prefs", android.content.Context.MODE_PRIVATE)
     private val _uiState = MutableStateFlow(PrayerTimesState())
@@ -112,6 +119,20 @@ class PrayerTimesViewModel @Inject constructor(
             if (uri != null) loadedSounds[prayer] = uri
         }
         
+        // Load Fade Configs
+        val fadeConfigs = mutableMapOf<String, FadeConfig>()
+        val prayers = listOf("Fajr", "Dhuhr", "Asr", "Maghrib", "Isha")
+        
+        prayers.forEach { prayer ->
+            val isFajr = prayer == "Fajr"
+            val defaultDur = if (isFajr) 5 else 0
+            val defaultVol = if (isFajr) 0f else 1.0f
+            
+            val dur = prefs.getInt("fade_duration_$prayer", defaultDur)
+            val vol = prefs.getFloat("fade_vol_$prayer", defaultVol)
+            fadeConfigs[prayer] = FadeConfig(dur, vol)
+        }
+
         _uiState.value = _uiState.value.copy(
             calcMethod = calcMethod,
             asrJuristic = asrJuristic,
@@ -121,9 +142,27 @@ class PrayerTimesViewModel @Inject constructor(
             combiningThreshold = combiningThreshold,
             use12HourFormat = use12HourFormat,
             adhanSounds = loadedSounds,
-            selectedAudioRoute = prefs.getString("selected_audio_route", "Default") ?: "Default"
+            selectedAudioRoute = prefs.getString("selected_audio_route", "Default") ?: "Default",
+            fadeConfigs = fadeConfigs
         )
         loadAudioDevices()
+    }
+    
+    fun setFadeConfig(prayer: String, duration: Int? = null, volume: Float? = null) {
+        val currentMap = _uiState.value.fadeConfigs.toMutableMap()
+        val currentConfig = currentMap[prayer] ?: FadeConfig()
+        
+        val newDuration = duration?.coerceIn(0, 30) ?: currentConfig.durationSeconds
+        val newVol = volume?.coerceIn(0f, 1f) ?: currentConfig.initialVolume
+        
+        currentMap[prayer] = FadeConfig(newDuration, newVol)
+        
+        prefs.edit()
+            .putInt("fade_duration_$prayer", newDuration)
+            .putFloat("fade_vol_$prayer", newVol)
+            .apply()
+            
+        _uiState.value = _uiState.value.copy(fadeConfigs = currentMap)
     }
 
     fun setCalcMethod(method: Int) {
@@ -179,6 +218,8 @@ class PrayerTimesViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(adhanSounds = currentSounds)
     }
 
+
+
     private fun startClock() {
         viewModelScope.launch {
             while (true) {
@@ -211,14 +252,22 @@ class PrayerTimesViewModel @Inject constructor(
                 val rawResourceId = application.resources.getIdentifier(resourceName, "raw", application.packageName)
                 
                 if (rawResourceId != 0) {
+                     val config = _uiState.value.fadeConfigs["Fajr"] ?: FadeConfig(5, 0f)
+                     
                      val mediaItem = androidx.media3.common.MediaItem.fromUri("android.resource://${application.packageName}/$rawResourceId")
                      setMediaItem(mediaItem)
                      prepare()
+                     volume = config.initialVolume // Start at config volume
                      play()
                      _isAdhanPlaying.value = true
                      viewModelScope.launch { 
+                         // Log first
+                         logRepository.log("FOREGROUND TEST: Playing $resourceName")
+                         // Route Audio
                          audioRouter.routeAudioWithLogging(this@apply, _uiState.value.selectedAudioRoute)
-                         logRepository.log("FOREGROUND TEST: Playing $resourceName") 
+                         // Start Fade In
+                         val duration = config.durationSeconds * 1000L
+                         audioFader.startFadeIn(this@apply, duration, config.initialVolume)
                      }
                      
                      addListener(object : androidx.media3.common.Player.Listener {

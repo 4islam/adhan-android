@@ -303,6 +303,95 @@ fun SettingsScreen(
             }
 
             item {
+                SettingsSection("Audio Fading") {
+                    Column(modifier = Modifier.padding(8.dp)) {
+                        val prayers = listOf("Fajr", "Dhuhr", "Asr", "Maghrib", "Isha")
+                        var fadeExpanded by remember { mutableStateOf(false) }
+                        var selectedFadePrayer by remember { mutableStateOf("Fajr") }
+                        
+                        Text("Target Prayer", color = Color.White.copy(alpha = 0.7f), style = MaterialTheme.typography.labelMedium)
+                        Box(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
+                            ExposedDropdownMenuBox(
+                                expanded = fadeExpanded,
+                                onExpandedChange = { fadeExpanded = !fadeExpanded }
+                            ) {
+                                OutlinedTextField(
+                                    value = selectedFadePrayer,
+                                    onValueChange = {},
+                                    readOnly = true,
+                                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = fadeExpanded) },
+                                    colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(
+                                        focusedTextColor = Color.White,
+                                        unfocusedTextColor = Color.White,
+                                        focusedBorderColor = Color.White.copy(alpha = 0.5f),
+                                        unfocusedBorderColor = Color.White.copy(alpha = 0.3f),
+                                        focusedContainerColor = Color.Transparent,
+                                        unfocusedContainerColor = Color.Transparent
+                                    ),
+                                    modifier = Modifier.menuAnchor().fillMaxWidth()
+                                )
+
+                                ExposedDropdownMenu(
+                                    expanded = fadeExpanded,
+                                    onDismissRequest = { fadeExpanded = false }
+                                ) {
+                                    prayers.forEach { prayer ->
+                                        DropdownMenuItem(
+                                            text = { Text(prayer) },
+                                            onClick = {
+                                                selectedFadePrayer = prayer
+                                                fadeExpanded = false
+                                            }
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                        
+                        val config = uiState.fadeConfigs[selectedFadePrayer] ?: com.adhan.app.ui.FadeConfig(
+                            if(selectedFadePrayer=="Fajr") 5 else 0, 
+                            if(selectedFadePrayer=="Fajr") 0f else 1f
+                        )
+                        
+                        Spacer(modifier = Modifier.height(8.dp))
+                        
+                        val duration = config.durationSeconds
+                        Text(
+                            text = "Fade Duration: ${duration}s ${if(duration==0) "(Instant)" else ""}",
+                            color = Color.White
+                        )
+                        Slider(
+                            value = duration.toFloat(),
+                            onValueChange = { viewModel.setFadeConfig(selectedFadePrayer, duration = it.toInt()) },
+                            valueRange = 0f..30f,
+                            steps = 29,
+                            colors = SliderDefaults.colors(
+                                thumbColor = Color.White,
+                                activeTrackColor = Color.White.copy(alpha = 0.7f)
+                            )
+                        )
+                        
+                        Spacer(modifier = Modifier.height(16.dp))
+                        
+                        val startVol = config.initialVolume
+                        Text(
+                            text = "Initial Volume: ${(startVol * 100).toInt()}%",
+                            color = Color.White
+                        )
+                        Slider(
+                            value = startVol,
+                            onValueChange = { viewModel.setFadeConfig(selectedFadePrayer, volume = it) },
+                            valueRange = 0f..1f,
+                            colors = SliderDefaults.colors(
+                                thumbColor = Color.White,
+                                activeTrackColor = Color.White.copy(alpha = 0.7f)
+                            )
+                        )
+                    }
+                }
+            }
+
+            item {
                 SettingsSection("Adhan Sounds") {
                     prayers.forEach { prayer ->
                         Row(

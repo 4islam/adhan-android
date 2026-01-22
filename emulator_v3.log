@@ -126,3 +126,6 @@ INFO         | Activated packet streamer for bluetooth emulation
 WARNING      | adb command '/Users/nislam/Library/Android/sdk/platform-tools/adb -s emulator-5554 shell getprop sys.boot_completed ' failed: 'adb: device offline'
 INFO         | Boot completed in 12103 ms
 INFO         | Increasing screen off timeout, logcat buffer size to 2M.
+ERROR        | adb protocol fault (couldn't read status length)
+ERROR        | adb protocol fault (couldn't read status length)
+ERROR        | adb protocol fault (couldn't read status length)

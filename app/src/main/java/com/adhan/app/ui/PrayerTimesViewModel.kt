@@ -51,7 +51,8 @@ class PrayerTimesViewModel @Inject constructor(
     private val alarmManager: com.adhan.app.infra.PrayerAlarmManager,
     private val repository: com.adhan.app.domain.LocationRepository,
     private val application: android.app.Application,
-    private val logRepository: com.adhan.app.domain.LogRepository
+    private val logRepository: com.adhan.app.domain.LogRepository,
+    private val audioRouter: com.adhan.app.infra.AudioRouter
 ) : ViewModel() {
     private val prefs = application.getSharedPreferences("adhan_prefs", android.content.Context.MODE_PRIVATE)
     private val _uiState = MutableStateFlow(PrayerTimesState())
@@ -215,7 +216,10 @@ class PrayerTimesViewModel @Inject constructor(
                      prepare()
                      play()
                      _isAdhanPlaying.value = true
-                     viewModelScope.launch { logRepository.log("FOREGROUND TEST: Playing $resourceName") }
+                     viewModelScope.launch { 
+                         audioRouter.routeAudioWithLogging(this@apply, _uiState.value.selectedAudioRoute)
+                         logRepository.log("FOREGROUND TEST: Playing $resourceName") 
+                     }
                      
                      addListener(object : androidx.media3.common.Player.Listener {
                          override fun onPlaybackStateChanged(playbackState: Int) {
@@ -269,40 +273,17 @@ class PrayerTimesViewModel @Inject constructor(
             val audioManager = application.getSystemService(android.content.Context.AUDIO_SERVICE) as android.media.AudioManager
             val devices = audioManager.getDevices(android.media.AudioManager.GET_DEVICES_OUTPUTS)
             val deviceList = devices
-                .filter { it.type != 18 } // Filter out TYPE_TELEPHONY (Internal Modem)
+                .filter { it.type != 18 } // Filter out TYPE_TELEPHONY
                 .map { device ->
-                    val typeName = getDeviceTypeName(device.type)
+                    val typeName = audioRouter.getDeviceTypeName(device.type)
                     "$typeName (${device.productName})"
-                }.distinct() // Remove duplicates if any
+                }.distinct()
             
             _uiState.value = _uiState.value.copy(audioOutputDevices = deviceList)
         }
     }
     
-    private fun getDeviceTypeName(type: Int): String {
-        return when (type) {
-            android.media.AudioDeviceInfo.TYPE_BUILTIN_EARPIECE -> "Earpiece"
-            android.media.AudioDeviceInfo.TYPE_BUILTIN_SPEAKER -> "Speaker"
-            android.media.AudioDeviceInfo.TYPE_WIRED_HEADSET -> "Wired Headset"
-            android.media.AudioDeviceInfo.TYPE_WIRED_HEADPHONES -> "Wired Headphones"
-            android.media.AudioDeviceInfo.TYPE_BLUETOOTH_SCO -> "Bluetooth (Call)"
-            android.media.AudioDeviceInfo.TYPE_BLUETOOTH_A2DP -> "Bluetooth (Media)"
-            android.media.AudioDeviceInfo.TYPE_DOCK -> "Dock"
-            android.media.AudioDeviceInfo.TYPE_USB_ACCESSORY -> "USB Accessory"
-            android.media.AudioDeviceInfo.TYPE_USB_DEVICE -> "USB Device"
-            android.media.AudioDeviceInfo.TYPE_USB_HEADSET -> "USB Headset"
-            android.media.AudioDeviceInfo.TYPE_LINE_ANALOG -> "Line Out"
-            android.media.AudioDeviceInfo.TYPE_LINE_DIGITAL -> "Digital Out"
-            android.media.AudioDeviceInfo.TYPE_HDMI -> "HDMI"
-            android.media.AudioDeviceInfo.TYPE_HDMI_ARC -> "HDMI ARC"
-            android.media.AudioDeviceInfo.TYPE_AUX_LINE -> "Aux Line"
-            18 -> "Telephony"
-            23 -> "Hearing Aid"
-            24 -> "Bluetooth LE Speaker"
-            26 -> "Bluetooth LE Headset"
-            else -> "Device (Type $type)"
-        }
-    }
+
     
     fun refreshAudioDevices() {
         loadAudioDevices()

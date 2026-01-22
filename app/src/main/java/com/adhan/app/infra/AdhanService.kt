@@ -16,12 +16,16 @@ import javax.inject.Inject
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
 class AdhanService : Service() {
 
     @Inject
     lateinit var logRepository: com.adhan.app.domain.LogRepository
+
+    @Inject
+    lateinit var audioRouter: com.adhan.app.infra.AudioRouter
 
     private var player: ExoPlayer? = null
     private var mediaSession: androidx.media3.session.MediaSession? = null
@@ -122,30 +126,7 @@ class AdhanService : Service() {
         }
     }
 
-    private fun getDeviceTypeName(type: Int): String {
-        return when (type) {
-            android.media.AudioDeviceInfo.TYPE_BUILTIN_EARPIECE -> "Earpiece"
-            android.media.AudioDeviceInfo.TYPE_BUILTIN_SPEAKER -> "Speaker"
-            android.media.AudioDeviceInfo.TYPE_WIRED_HEADSET -> "Wired Headset"
-            android.media.AudioDeviceInfo.TYPE_WIRED_HEADPHONES -> "Wired Headphones"
-            android.media.AudioDeviceInfo.TYPE_BLUETOOTH_SCO -> "Bluetooth (Call)"
-            android.media.AudioDeviceInfo.TYPE_BLUETOOTH_A2DP -> "Bluetooth (Media)"
-            android.media.AudioDeviceInfo.TYPE_DOCK -> "Dock"
-            android.media.AudioDeviceInfo.TYPE_USB_ACCESSORY -> "USB Accessory"
-            android.media.AudioDeviceInfo.TYPE_USB_DEVICE -> "USB Device"
-            android.media.AudioDeviceInfo.TYPE_USB_HEADSET -> "USB Headset"
-            android.media.AudioDeviceInfo.TYPE_LINE_ANALOG -> "Line Out"
-            android.media.AudioDeviceInfo.TYPE_LINE_DIGITAL -> "Digital Out"
-            android.media.AudioDeviceInfo.TYPE_HDMI -> "HDMI"
-            android.media.AudioDeviceInfo.TYPE_HDMI_ARC -> "HDMI ARC"
-            android.media.AudioDeviceInfo.TYPE_AUX_LINE -> "Aux Line"
-            18 -> "Telephony" // TYPE_TELEPHONY
-            23 -> "Hearing Aid" // TYPE_HEARING_AID (API 28)
-            24 -> "Bluetooth LE Speaker" // TYPE_BLE_SPEAKER (API 31)
-            26 -> "Bluetooth LE Headset" // TYPE_BLE_HEADSET (API 31)
-            else -> "Device (Type $type)"
-        }
-    }
+
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val prayerName = intent?.getStringExtra("prayer_name") ?: "Prayer"
@@ -184,21 +165,11 @@ class AdhanService : Service() {
             // Apply Custom Audio Routing
             val selectedRoute = prefs.getString("selected_audio_route", "Default")
             if (selectedRoute != null && selectedRoute != "Default" && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-                 val audioManager = getSystemService(Context.AUDIO_SERVICE) as android.media.AudioManager
-                 val devices = audioManager.getDevices(android.media.AudioManager.GET_DEVICES_OUTPUTS)
-                 // Match using the same format as ViewModel
-                 val targetDevice = devices.find { 
-                     val typeName = getDeviceTypeName(it.type)
-                     "$typeName (${it.productName})" == selectedRoute 
-                 }
-                 
-                 if (targetDevice != null) {
-                     android.util.Log.d("AdhanService", "Routing to requested device: $selectedRoute")
-                     serviceScope.launch { logRepository.log("Routing to: $selectedRoute") }
-                     player?.setPreferredAudioDevice(targetDevice)
-                 } else {
-                     android.util.Log.w("AdhanService", "Requested device not found: $selectedRoute")
-                     serviceScope.launch { logRepository.log("Routing Failed: Device '$selectedRoute' not found.", true) }
+                 // Use AudioRouter, ensure we run on Main for Player access
+                 serviceScope.launch {
+                     withContext(kotlinx.coroutines.Dispatchers.Main) {
+                         audioRouter.routeAudioWithLogging(player!!, selectedRoute)
+                     }
                  }
             }
 

@@ -24,7 +24,7 @@ class UserPreferencesRepository @Inject constructor(
     
     fun isTahajjudAudioEnabled(): Boolean = prefs.getBoolean("tahajjud_audio_enabled", false)
     
-    fun isTahajjudVibrationEnabled(): Boolean = prefs.getBoolean("tahajjud_vibration_enabled", false)
+    fun isTahajjudVibrationEnabled(): Boolean = prefs.getBoolean("tahajjud_vibration_enabled", true)
     
     fun getTahajjudSoundUri(): String? = prefs.getString("tahajjud_sound_uri", null)
     

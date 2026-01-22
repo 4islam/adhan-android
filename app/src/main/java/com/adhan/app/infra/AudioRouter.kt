@@ -15,10 +15,13 @@ open class AudioRouter @Inject constructor(
     private val logRepository: com.adhan.app.domain.LogRepository
 ) {
 
-    fun routeAudio(player: ExoPlayer, selectedRouteName: String?) {
-        if (selectedRouteName == null || selectedRouteName == "Default" || getSdkInt() < Build.VERSION_CODES.M) {
-            return
+    fun routeAudio(player: ExoPlayer, selectedRouteName: String?): Boolean {
+        if (selectedRouteName == null || selectedRouteName == "Default") {
+            player.setPreferredAudioDevice(null)
+            return false
         }
+        
+        if (getSdkInt() < Build.VERSION_CODES.M) return false
 
         try {
             val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
@@ -32,18 +35,15 @@ open class AudioRouter @Inject constructor(
 
             if (targetDevice != null) {
                 android.util.Log.d("AudioRouter", "Routing to requested device: $selectedRouteName")
-                // We use a scope or just fire and forget if logRepository allows. 
-                // Since this is synchronous, better to launch if logRepository is suspend.
-                // Assuming caller handles scope if needed, or we implement scope.
-                // But logRepository.log is suspend. We can't call it easily here without scope.
-                // For now, let's just log to Logcat and assume caller handles complex logging or we make this suspend.
-                // Let's make it suspend.
                 player.setPreferredAudioDevice(targetDevice)
+                return true
             } else {
                 android.util.Log.w("AudioRouter", "Requested device not found: $selectedRouteName")
+                return false
             }
         } catch (e: Exception) {
             android.util.Log.e("AudioRouter", "Routing failed", e)
+            return false
         }
     }
 

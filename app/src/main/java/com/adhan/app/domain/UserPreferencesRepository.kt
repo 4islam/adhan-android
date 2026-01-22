@@ -22,6 +22,12 @@ class UserPreferencesRepository @Inject constructor(
     
     fun getTahajjudOffset(): Int = prefs.getInt("tahajjud_offset", 60)
     
+    fun isTahajjudAudioEnabled(): Boolean = prefs.getBoolean("tahajjud_audio_enabled", false)
+    
+    fun isTahajjudVibrationEnabled(): Boolean = prefs.getBoolean("tahajjud_vibration_enabled", false)
+    
+    fun getTahajjudSoundUri(): String? = prefs.getString("tahajjud_sound_uri", null)
+    
     fun getCombiningThreshold(): Int = prefs.getInt("combining_threshold", 70)
     
     fun isShortNightEnabled(): Boolean = prefs.getBoolean("short_night_enabled", true)

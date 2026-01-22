@@ -140,6 +140,48 @@ class AdhanService : Service() {
         
         logSystemState("Start: $prayerName")
 
+        val prefs = getSharedPreferences("adhan_prefs", Context.MODE_PRIVATE)
+        
+        // Tahajjud Special Handling
+        if (prayerName.equals("Tahajjud", ignoreCase = true)) {
+            val isAudioEnabled = prefs.getBoolean("tahajjud_audio_enabled", false)
+            val isVibrationEnabled = prefs.getBoolean("tahajjud_vibration_enabled", false)
+            
+            // Vibration Logic
+            if (isVibrationEnabled) {
+                val vibrator = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+                     val vibratorManager = getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as android.os.VibratorManager
+                     vibratorManager.defaultVibrator
+                } else {
+                     getSystemService(Context.VIBRATOR_SERVICE) as android.os.Vibrator
+                }
+                
+                if (vibrator.hasVibrator()) {
+                     // Gentle pulsing pattern for Tahajjud
+                     val timings = longArrayOf(0, 500, 500, 500, 500)
+                     val amplitudes = intArrayOf(0, 50, 0, 100, 0)
+                     
+                     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                          vibrator.vibrate(android.os.VibrationEffect.createWaveform(timings, amplitudes, -1))
+                     } else {
+                          vibrator.vibrate(timings, -1)
+                     }
+                }
+                serviceScope.launch { logRepository.log("Tahajjud: Vibrated.") }
+            }
+
+            if (!isAudioEnabled) {
+                // Return early, silent notification only (unless vibration happened, but we stop service regardless of active vibration?)
+                // Vibration is fire-and-forget usually if non-repeating.
+                android.util.Log.d("AdhanService", "Tahajjud audio disabled.")
+                serviceScope.launch { logRepository.log("Tahajjud audio disabled.") }
+                startForeground(NOTIFICATION_ID, createNotification(prayerName))
+                stopSelf() 
+                return START_NOT_STICKY
+            }
+            // If enabled, proceed to playback logic below
+        }
+
         // Volume Override Logic
         try {
             val prefs = getSharedPreferences("adhan_prefs", Context.MODE_PRIVATE)
@@ -165,34 +207,48 @@ class AdhanService : Service() {
         // Ensure notification is posted immediately
         startForeground(NOTIFICATION_ID, createNotification(prayerName))
         
-        if (prayerName.equals("Tahajjud", ignoreCase = true)) {
-            return START_NOT_STICKY
-        }
-
+        // Determine URI and Fade settings based on prayer
         try {
             val prefs = getSharedPreferences("adhan_prefs", Context.MODE_PRIVATE)
-            val customUri = prefs.getString("adhan_sound_$prayerName", null)
-            
-            // Determine fade defaults based on prayer name
-            val isFajr = prayerName.contains("Fajr", ignoreCase = true)
-            val defaultDur = if (isFajr) 5 else 0
-            val defaultVol = if (isFajr) 0f else 1.0f
-            
-            val fadeDurationSeconds = prefs.getInt("fade_duration_$prayerName", defaultDur)
-            val fadeStartVolume = prefs.getFloat("fade_vol_$prayerName", defaultVol)
+        var customUri: String? = null
+        
+        if (prayerName.equals("Tahajjud", ignoreCase = true)) {
+            customUri = prefs.getString("tahajjud_sound_uri", null)
+            // If custom is null, we will fall back to Fajr logic below or handle explicitly
+        } else {
+            customUri = prefs.getString("adhan_sound_$prayerName", null)
+        }
+        
+        // Determine fade defaults based on prayer name
+        val isFajrOrTahajjud = prayerName.contains("Fajr", ignoreCase = true) || prayerName.equals("Tahajjud", ignoreCase = true)
+        val defaultDur = if (isFajrOrTahajjud) 5 else 0
+        val defaultVol = if (isFajrOrTahajjud) 0f else 1.0f
+        
+        val fadeDurationSeconds = prefs.getInt("fade_duration_$prayerName", defaultDur)
+        val fadeStartVolume = prefs.getFloat("fade_vol_$prayerName", defaultVol)
             
             val mediaItem: MediaItem? = if (customUri != null) {
                 android.util.Log.d("AdhanService", "Using custom URI: $customUri")
-                MediaItem.fromUri(customUri)
+                MediaItem.fromUri(android.net.Uri.parse(customUri))
             } else {
-                val resourceName = if (prayerName.contains("Fajr", ignoreCase = true)) "adhan_fajr" else "adhan_regular"
-                val rawResourceId = resources.getIdentifier(resourceName, "raw", packageName)
-                if (rawResourceId != 0) {
-                    android.util.Log.d("AdhanService", "Using built-in: $resourceName")
-                    MediaItem.fromUri("android.resource://$packageName/$rawResourceId")
+                // Default Resources
+                if (prayerName.equals("Tahajjud", ignoreCase = true)) {
+                     // Force System Notification Sound for Tahajjud defaults
+                     val defaultUri = android.media.RingtoneManager.getDefaultUri(android.media.RingtoneManager.TYPE_NOTIFICATION)
+                     // If defaultUri is null (some devices?), fallback to alarm
+                     val finalUri = defaultUri ?: android.media.RingtoneManager.getDefaultUri(android.media.RingtoneManager.TYPE_ALARM)
+                     android.util.Log.d("AdhanService", "Using System Notification for Tahajjud: $finalUri")
+                     MediaItem.fromUri(finalUri)
                 } else {
-                    android.util.Log.e("AdhanService", "Resource $resourceName not found!")
-                    null
+                    val resourceName = if (prayerName.contains("Fajr", ignoreCase = true)) "adhan_fajr" else "adhan_regular"
+                    val rawResourceId = resources.getIdentifier(resourceName, "raw", packageName)
+                    if (rawResourceId != 0) {
+                        android.util.Log.d("AdhanService", "Using built-in: $resourceName")
+                        MediaItem.fromUri("android.resource://$packageName/$rawResourceId")
+                    } else {
+                        android.util.Log.e("AdhanService", "Resource $resourceName not found!")
+                        null
+                    }
                 }
             }
 

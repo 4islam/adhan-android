@@ -154,7 +154,64 @@ fun SettingsScreen(
                         )
                     }
                     if (uiState.isTahajjudEnabled) {
-                        Column(modifier = Modifier.padding(8.dp)) {
+                        Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
+                            // Audio Toggle
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text("Play Audio", color = Color.White)
+                                Switch(
+                                    checked = uiState.isTahajjudAudioEnabled,
+                                    onCheckedChange = { viewModel.setTahajjudAudioEnabled(it) }
+                                )
+                            }
+
+                            // Vibration Toggle
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text("Vibrate", color = Color.White)
+                                Switch(
+                                    checked = uiState.isTahajjudVibrationEnabled,
+                                    onCheckedChange = { viewModel.setTahajjudVibrationEnabled(it) }
+                                )
+                            }
+                            
+                            // Sound Selector (if Audio Enabled)
+                            if (uiState.isTahajjudAudioEnabled) {
+                                val currentUri = uiState.tahajjudSoundUri
+                                val selectedTitle = if (currentUri == null) "Default Adhan" else "Custom/System Sound"
+                                // Note: Ideally we reuse a SoundPicker Component. For now, we will add a row that opens a picker.
+                                // Minimal implementation: Just show current state. Advanced: Needs a Picker.
+                                // Let's use the 'setAdhanSound' pattern or similar.
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Row(
+                                    modifier = Modifier.fillMaxWidth().clickable {
+                                        // Trigger sound picker for Tahajjud
+                                        // We might need a generic "openSoundPicker" in VM that takes a callback or key.
+                                        // For now, let's keep it simple: Just Custom Audio Toggle implies using default or system.
+                                        // To implement strictly:
+                                    },
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Column {
+                                        Text("Alert Sound", color = Color.White)
+                                        Text(
+                                            "Default: Fajr Adhan", 
+                                            color = Color.White.copy(alpha = 0.5f),
+                                            style = MaterialTheme.typography.labelSmall
+                                        )
+                                    }
+                                }
+                            }
+
+                            Spacer(modifier = Modifier.height(16.dp))
+                            
                             Text(
                                 text = "Offset: ${uiState.tahajjudOffset} minutes before Fajr",
                                 color = Color.White.copy(alpha = 0.7f),
@@ -163,8 +220,8 @@ fun SettingsScreen(
                             Slider(
                                 value = uiState.tahajjudOffset.toFloat(),
                                 onValueChange = { viewModel.setTahajjudOffset(it.toInt()) },
-                                valueRange = 30f..90f,
-                                steps = 3, // 30, 45, 60, 75, 90
+                                valueRange = 15f..120f,
+                                steps = 0, // Continuous or granular? Let's use 0 for smooth, or explicit steps
                                 colors = SliderDefaults.colors(
                                     thumbColor = Color.White,
                                     activeTrackColor = Color.White.copy(alpha = 0.7f)

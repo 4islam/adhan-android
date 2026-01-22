@@ -40,6 +40,9 @@ data class PrayerTimesState(
     val asrJuristic: Int = PrayerTimesCalculator.Shafii,
     val isAudioEnabled: Boolean = true,
     val isTahajjudEnabled: Boolean = false,
+    val isTahajjudAudioEnabled: Boolean = false,
+    val isTahajjudVibrationEnabled: Boolean = false,
+    val tahajjudSoundUri: String? = null,
     val tahajjudOffset: Int = 60, // minutes before Fajr
     val combiningThreshold: Int = 70, // minutes
     val use12HourFormat: Boolean = true,
@@ -120,6 +123,9 @@ class PrayerTimesViewModel @Inject constructor(
 
         val isAudioEnabled = prefs.getBoolean("audio_enabled", true)
         val isTahajjudEnabled = userPrefs.isTahajjudEnabled()
+        val isTahajjudAudioEnabled = userPrefs.isTahajjudAudioEnabled()
+        val isTahajjudVibrationEnabled = userPrefs.isTahajjudVibrationEnabled()
+        val tahajjudSoundUri = userPrefs.getTahajjudSoundUri()
         val tahajjudOffset = userPrefs.getTahajjudOffset()
         val combiningThreshold = userPrefs.getCombiningThreshold()
         val use12HourFormat = prefs.getBoolean("use_12_hour", true)
@@ -145,6 +151,9 @@ class PrayerTimesViewModel @Inject constructor(
             asrJuristic = asrJuristic,
             isAudioEnabled = isAudioEnabled,
             isTahajjudEnabled = isTahajjudEnabled,
+            isTahajjudAudioEnabled = isTahajjudAudioEnabled,
+            isTahajjudVibrationEnabled = isTahajjudVibrationEnabled,
+            tahajjudSoundUri = tahajjudSoundUri,
             tahajjudOffset = tahajjudOffset,
             combiningThreshold = combiningThreshold,
             use12HourFormat = use12HourFormat,
@@ -234,6 +243,25 @@ class PrayerTimesViewModel @Inject constructor(
         prefs.edit().putInt("tahajjud_offset", offset).apply()
         updateTimes()
     }
+    
+    fun setTahajjudAudioEnabled(enabled: Boolean) {
+        _uiState.value = _uiState.value.copy(isTahajjudAudioEnabled = enabled)
+        prefs.edit().putBoolean("tahajjud_audio_enabled", enabled).apply()
+    }
+    
+    fun setTahajjudVibrationEnabled(enabled: Boolean) {
+        _uiState.value = _uiState.value.copy(isTahajjudVibrationEnabled = enabled)
+        prefs.edit().putBoolean("tahajjud_vibration_enabled", enabled).apply()
+    }
+    
+    fun setTahajjudSoundUri(uri: String?) {
+        _uiState.value = _uiState.value.copy(tahajjudSoundUri = uri)
+        if (uri == null) {
+            prefs.edit().remove("tahajjud_sound_uri").apply()
+        } else {
+            prefs.edit().putString("tahajjud_sound_uri", uri).apply()
+        }
+    }
 
     fun setCombiningThreshold(threshold: Int) {
         _uiState.value = _uiState.value.copy(combiningThreshold = threshold)
@@ -297,15 +325,25 @@ class PrayerTimesViewModel @Inject constructor(
                      
                      val mediaItem = androidx.media3.common.MediaItem.fromUri("android.resource://${application.packageName}/$rawResourceId")
                      setMediaItem(mediaItem)
+                     
+                     // Route Audio BEFORE preparing/playing to avoid race conditions
+                     val routeName = _uiState.value.selectedAudioRoute
+                     val routed = audioRouter.routeAudio(this@apply, routeName)
+                     
                      prepare()
                      volume = config.initialVolume // Start at config volume
+                     
                      play()
                      _isAdhanPlaying.value = true
+                     
                      viewModelScope.launch { 
-                         // Log first
-                         logRepository.log("FOREGROUND TEST: Playing $resourceName")
-                         // Route Audio
-                         audioRouter.routeAudioWithLogging(this@apply, _uiState.value.selectedAudioRoute)
+                         // Log actions
+                         if (routed) {
+                             logRepository.log("FOREGROUND TEST: Playing $resourceName on $routeName")
+                         } else {
+                             logRepository.log("FOREGROUND TEST: Playing $resourceName (Default/Fallback)")
+                         }
+                         
                          // Start Fade In
                          val duration = config.durationSeconds * 1000L
                          audioFader.startFadeIn(this@apply, duration, config.initialVolume)

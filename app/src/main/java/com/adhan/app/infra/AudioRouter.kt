@@ -15,6 +15,12 @@ open class AudioRouter @Inject constructor(
     private val logRepository: com.adhan.app.domain.LogRepository
 ) {
 
+    fun getAvailableDevices(): List<AudioDeviceInfo> {
+        if (getSdkInt() < Build.VERSION_CODES.M) return emptyList()
+        val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        return audioManager.getDevices(AudioManager.GET_DEVICES_OUTPUTS).toList()
+    }
+
     fun routeAudio(player: ExoPlayer, selectedRouteName: String?): Boolean {
         if (selectedRouteName == null || selectedRouteName == "Default") {
             player.setPreferredAudioDevice(null)

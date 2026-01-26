@@ -62,19 +62,22 @@ data class PrayerTimesState(
     val adhanVolume: Int = 80, // Volume percentage 0-100
     val isLoading: Boolean = true,
     val loadingMessage: String = "Initializing...",
-    val nextPrayerCountdown: String = ""
+    val nextPrayerCountdown: String = "",
+    val isAdhanPlaying: Boolean = false // New state
 )
 
 @HiltViewModel
 class PrayerTimesViewModel @Inject constructor(
-    private val alarmManager: com.adhan.app.infra.PrayerAlarmManager, // Still used for manual forceReschedule/test
+    private val alarmManager: com.adhan.app.infra.PrayerAlarmManager, 
     private val repository: com.adhan.app.domain.LocationRepository,
     private val application: android.app.Application,
     private val logRepository: com.adhan.app.domain.LogRepository,
     private val audioRouter: com.adhan.app.infra.AudioRouter,
     private val audioFader: com.adhan.app.infra.AudioFader,
     private val prayerScheduler: com.adhan.app.domain.PrayerScheduler,
-    private val userPrefs: com.adhan.app.domain.UserPreferencesRepository
+    private val userPrefs: com.adhan.app.domain.UserPreferencesRepository,
+    private val mediaRouterHelper: com.adhan.app.infra.MediaRouterHelper,
+    private val playbackStateRepository: com.adhan.app.domain.PlaybackStateRepository
 ) : ViewModel() {
     private val prefs = application.getSharedPreferences("adhan_prefs", android.content.Context.MODE_PRIVATE)
     private val _uiState = MutableStateFlow(PrayerTimesState())
@@ -102,6 +105,13 @@ class PrayerTimesViewModel @Inject constructor(
         loadSettings()
         observeLocation()
         startClock()
+        
+        // Observe Playback State
+        viewModelScope.launch {
+            playbackStateRepository.isPlaying.collect { isPlaying ->
+                _uiState.value = _uiState.value.copy(isAdhanPlaying = isPlaying)
+            }
+        }
     }
 
     private fun observeLocation() {
@@ -125,10 +135,6 @@ class PrayerTimesViewModel @Inject constructor(
     private fun loadSettings() {
         val calcMethod = userPrefs.getCalcMethod()
         val asrJuristic = userPrefs.getAsrJuristic()
-        // ... (We could migrate all to userPrefs, but for minimal diff, we'll keep direct reading or hybrid for now)
-        // Actually, to prove robustness, let's keep VM reading directly or assume duplicated reads are fine for UI.
-        // But for Alarms, the Scheduler MUST read independently.
-
         val isAudioEnabled = prefs.getBoolean("audio_enabled", true)
         val isTahajjudEnabled = userPrefs.isTahajjudEnabled()
         val isTahajjudAudioEnabled = userPrefs.isTahajjudAudioEnabled()
@@ -186,7 +192,7 @@ class PrayerTimesViewModel @Inject constructor(
             shortAsrThresholdMinutes = shortAsrThreshold,
             adhanVolume = adhanVolume
         )
-        loadAudioDevices()
+        refreshAudioDevices()
     }
 
     fun setShortAsrCombiningEnabled(enabled: Boolean) {
@@ -307,6 +313,74 @@ class PrayerTimesViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(adhanSounds = currentSounds)
     }
 
+    private var foregroundPlayer: androidx.media3.exoplayer.ExoPlayer? = null
+    
+    fun playAdhanNow() {
+        try {
+            stopAdhan() // clear existing
+            
+            foregroundPlayer = androidx.media3.exoplayer.ExoPlayer.Builder(application).build().apply {
+                val audioAttributes = androidx.media3.common.AudioAttributes.Builder()
+                    .setUsage(androidx.media3.common.C.USAGE_MEDIA)
+                    .setContentType(androidx.media3.common.C.AUDIO_CONTENT_TYPE_SPEECH)
+                    .build()
+                setAudioAttributes(audioAttributes, true)
+
+                val resourceName = "adhan_fajr" 
+                val rawResourceId = application.resources.getIdentifier(resourceName, "raw", application.packageName)
+                
+                if (rawResourceId != 0) {
+                     val config = _uiState.value.fadeConfigs["Fajr"] ?: FadeConfig(5, 0f)
+                     
+                     val mediaItem = androidx.media3.common.MediaItem.fromUri("android.resource://${application.packageName}/$rawResourceId")
+                     setMediaItem(mediaItem)
+                     
+                     val routeName = _uiState.value.selectedAudioRoute
+                     val routed = audioRouter.routeAudio(this@apply, routeName)
+                     
+                     prepare()
+                     volume = config.initialVolume 
+                     
+                     play()
+                     _uiState.value = _uiState.value.copy(isAdhanPlaying = true) // Local test state
+                     
+                     viewModelScope.launch { 
+                         val duration = config.durationSeconds * 1000L
+                         audioFader.startFadeIn(this@apply, duration, config.initialVolume)
+                     }
+                     
+                     addListener(object : androidx.media3.common.Player.Listener {
+                         override fun onPlaybackStateChanged(playbackState: Int) {
+                             if (playbackState == androidx.media3.common.Player.STATE_ENDED) {
+                                 stopAdhan()
+                             }
+                         }
+                         override fun onPlayerError(error: androidx.media3.common.PlaybackException) {
+                              stopAdhan()
+                         }
+                     })
+                }
+            }
+        } catch (e: Exception) {
+            stopAdhan()
+        }
+    }
+
+    fun stopAdhan() {
+        // Stop foreground test player if any
+        foregroundPlayer?.release()
+        foregroundPlayer = null
+        
+        // Stop Service
+        val intent = android.content.Intent(application, com.adhan.app.infra.AdhanService::class.java).apply {
+            action = "com.adhan.app.action.STOP"
+        }
+        application.startService(intent)
+        
+        // Optimistic UI update (Service will also update repo)
+        _uiState.value = _uiState.value.copy(isAdhanPlaying = false)
+    }
+
     fun setAdhanNotificationEnabled(prayer: String, enabled: Boolean) {
         // Toggle Master
         val currentMap = _uiState.value.adhanNotificationEnabled.toMutableMap()
@@ -336,13 +410,9 @@ class PrayerTimesViewModel @Inject constructor(
         daysForPrayer[dayOfWeek] = enabled
         currentDays[prayer] = daysForPrayer
         
-        // Optional: Update master switch if all are off? Not strictly needed if logic relies on days.
-        
         _uiState.value = _uiState.value.copy(adhanNotificationDays = currentDays)
         updateTimes()
     }
-
-
 
     private fun startClock() {
         viewModelScope.launch {
@@ -360,121 +430,45 @@ class PrayerTimesViewModel @Inject constructor(
         repository.updateLocation(lat, lng, finalName, true)
     }
 
-
-
-    private var foregroundPlayer: androidx.media3.exoplayer.ExoPlayer? = null
-    
-    private val _isAdhanPlaying = kotlinx.coroutines.flow.MutableStateFlow(false)
-    val isAdhanPlaying = _isAdhanPlaying.asStateFlow()
-
-    fun playAdhanNow() {
-        try {
-            stopAdhan() // clear existing
-            
-            foregroundPlayer = androidx.media3.exoplayer.ExoPlayer.Builder(application).build().apply {
-                val resourceName = "adhan_fajr" // Default to Fajr for test
-                val rawResourceId = application.resources.getIdentifier(resourceName, "raw", application.packageName)
-                
-                if (rawResourceId != 0) {
-                     val config = _uiState.value.fadeConfigs["Fajr"] ?: FadeConfig(5, 0f)
-                     
-                     val mediaItem = androidx.media3.common.MediaItem.fromUri("android.resource://${application.packageName}/$rawResourceId")
-                     setMediaItem(mediaItem)
-                     
-                     // Route Audio BEFORE preparing/playing to avoid race conditions
-                     val routeName = _uiState.value.selectedAudioRoute
-                     val routed = audioRouter.routeAudio(this@apply, routeName)
-                     
-                     prepare()
-                     volume = config.initialVolume // Start at config volume
-                     
-                     play()
-                     _isAdhanPlaying.value = true
-                     
-                     viewModelScope.launch { 
-                         // Log actions
-                         if (routed) {
-                             logRepository.log("FOREGROUND TEST: Playing $resourceName on $routeName")
-                         } else {
-                             logRepository.log("FOREGROUND TEST: Playing $resourceName (Default/Fallback)")
-                         }
-                         
-                         // Start Fade In
-                         val duration = config.durationSeconds * 1000L
-                         audioFader.startFadeIn(this@apply, duration, config.initialVolume)
-                     }
-                     
-                     addListener(object : androidx.media3.common.Player.Listener {
-                         override fun onPlaybackStateChanged(playbackState: Int) {
-                             if (playbackState == androidx.media3.common.Player.STATE_ENDED) {
-                                 viewModelScope.launch { logRepository.log("FOREGROUND TEST: Playback Ended") }
-                                 stopAdhan()
-                             }
-                         }
-                         override fun onPlayerError(error: androidx.media3.common.PlaybackException) {
-                              viewModelScope.launch { logRepository.log("FOREGROUND TEST ERROR: ${error.message}", true) }
-                              stopAdhan()
-                         }
-                     })
-                } else {
-                    viewModelScope.launch { logRepository.log("FOREGROUND TEST ERROR: Resource $resourceName not found", true) }
-                }
-            }
-        } catch (e: Exception) {
-            viewModelScope.launch { logRepository.log("FOREGROUND TEST EXCEPTION: ${e.message}", true) }
-            stopAdhan()
-        }
-    }
-    
-    fun stopAdhan() {
-        foregroundPlayer?.release()
-        foregroundPlayer = null
-        _isAdhanPlaying.value = false
-    }
-
     fun updateHeading(heading: Float) {
         _uiState.value = _uiState.value.copy(deviceHeading = heading)
     }
 
     fun openAudioOutputPicker() {
-        try {
-            val intent = android.content.Intent("com.android.settings.panel.action.MEDIA_OUTPUT").apply {
-                putExtra("com.android.settings.panel.extra.PACKAGE_NAME", application.packageName)
-                addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
-            }
-            application.startActivity(intent)
-        } catch (e: Exception) {
-            val intent = android.content.Intent(android.provider.Settings.ACTION_BLUETOOTH_SETTINGS).apply {
-                addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
-            }
-            application.startActivity(intent)
-        }
+        // Can still open system picker, but also we show our own list
     }
 
-    private fun loadAudioDevices() {
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            val audioManager = application.getSystemService(android.content.Context.AUDIO_SERVICE) as android.media.AudioManager
-            val devices = audioManager.getDevices(android.media.AudioManager.GET_DEVICES_OUTPUTS)
-            val deviceList = devices
-                .filter { it.type != 18 } // Filter out TYPE_TELEPHONY
-                .map { device ->
-                    val typeName = audioRouter.getDeviceTypeName(device.type)
-                    "$typeName (${device.productName})"
-                }.distinct()
-            
-            _uiState.value = _uiState.value.copy(audioOutputDevices = deviceList)
-        }
-    }
-    
-
-    
     fun refreshAudioDevices() {
-        loadAudioDevices()
+        mediaRouterHelper.startScanning()
+        
+        val devices = audioRouter.getAvailableDevices()
+        // Wait briefly for network devices or collect flow
+        viewModelScope.launch {
+             // For simplicity, just combining now once. 
+             // In real app, we should observe both flows.
+             val networkRoutes = mediaRouterHelper.availableRoutes.value
+             val allDevices = devices.map { "${audioRouter.getDeviceTypeName(it.type)} (${it.productName})" }.toMutableList()
+             
+             networkRoutes.forEach { route ->
+                 allDevices.add("Network: ${route.name}")
+             }
+             
+             _uiState.value = _uiState.value.copy(audioOutputDevices = allDevices.distinct())
+        }
     }
 
-    fun setSelectedAudioDevice(deviceString: String) {
-        _uiState.value = _uiState.value.copy(selectedAudioRoute = deviceString)
-        prefs.edit().putString("selected_audio_route", deviceString).apply()
+    fun setSelectedAudioDevice(deviceName: String) {
+        if (deviceName.startsWith("Network: ")) {
+            val routeName = deviceName.removePrefix("Network: ")
+            val routes = mediaRouterHelper.availableRoutes.value
+            val match = routes.find { it.name == routeName }
+            if (match != null) {
+                mediaRouterHelper.selectRoute(match.id)
+            }
+        }
+        
+        _uiState.value = _uiState.value.copy(selectedAudioRoute = deviceName)
+        prefs.edit().putString("selected_audio_route", deviceName).apply()
     }
 
     fun testAdhan(delaySeconds: Int = 10): Boolean {
@@ -551,14 +545,11 @@ class PrayerTimesViewModel @Inject constructor(
                         val fajrTime = sdf.parse(tomorrowFajr.time)
                         
                         if (ishaTime != null && fajrTime != null) {
-                            // Calculate hours between Today Isha and Tomorrow Fajr
-                            // Fajr time is next day, so add 24h worth of ms to its relative time
                             val fajrMs = fajrTime.time + (24 * 60 * 60 * 1000)
                             val ishaMs = ishaTime.time
                             val diffHours = (fajrMs - ishaMs) / (1000.0 * 60 * 60)
                             
                             if (diffHours < state.shortNightThresholdHours) {
-                                // Combine Maghrib and Isha
                                 val combinedName = "Maghrib/Isha"
                                 val combinedTime = todayMaghrib.time
                                 
@@ -573,9 +564,7 @@ class PrayerTimesViewModel @Inject constructor(
                                 }
                             }
                         }
-                    } catch (e: Exception) {
-                        // Parse error, ignore
-                    }
+                    } catch (e: Exception) { }
                 }
             }
 
@@ -583,7 +572,7 @@ class PrayerTimesViewModel @Inject constructor(
             if (state.isShortAsrCombiningEnabled) {
                 val todayDhuhr = allTimesMap.find { it.name == "Dhuhr" }
                 val todayAsr = allTimesMap.find { it.name == "Asr" }
-                val maghribForAsr = allTimesMap.find { it.name == "Maghrib" } // Maghrib might be renamed by Short Night, but time is same
+                val maghribForAsr = allTimesMap.find { it.name == "Maghrib" }
                 
                 if (todayDhuhr != null && todayAsr != null && maghribForAsr != null) {
                     try {
@@ -597,7 +586,6 @@ class PrayerTimesViewModel @Inject constructor(
                              
                              if (diffMinutes < state.shortAsrThresholdMinutes) {
                                   val combinedName = "Dhuhr/Asr"
-                                  // Set both to Dhuhr time
                                   val combinedTime = todayDhuhr.time
                                   
                                   val dIndex = allTimesMap.indexOfFirst { it.name == "Dhuhr" }
@@ -607,68 +595,60 @@ class PrayerTimesViewModel @Inject constructor(
                                   if (aIndex != -1) allTimesMap[aIndex] = todayAsr.copy(name = combinedName, time = combinedTime)
                              }
                          }
-                    } catch (e: Exception) {
-                        // Ignore parse errors
-                    }
+                    } catch (e: Exception) { }
                 }
             }
 
             val moonTimes = calculator.getMoonTimes(date, lat, lng)
-        val hijri = HijriCalendar.fromDate(date)
-        val hijriString = "${hijri.day} ${hijri.monthName} ${hijri.year} AH"
-        val gregorianString = SimpleDateFormat("d MMMM yyyy", Locale.ENGLISH).format(date)
+            val hijri = HijriCalendar.fromDate(date)
+            val hijriString = "${hijri.day} ${hijri.monthName} ${hijri.year} AH"
+            val gregorianString = SimpleDateFormat("d MMMM yyyy", Locale.ENGLISH).format(date)
 
-        // Separate Prayer Times and Astronomical Events
-        val prayerList = mutableListOf<PrayerTimesCalculator.CombinedPrayerInfo>()
-        val astroList = mutableListOf<PrayerTimesCalculator.CombinedPrayerInfo>()
-        
-        // Tahajjud Calculation
-        if (_uiState.value.isTahajjudEnabled) {
-            val fajrInfo = allTimesMap.find { it.name == "Fajr" }
-            if (fajrInfo != null) {
-                val tahajjudTime = calculateTahajjudTime(fajrInfo.time, _uiState.value.tahajjudOffset)
-                prayerList.add(PrayerTimesCalculator.CombinedPrayerInfo("Tahajjud", tahajjudTime))
+            val prayerList = mutableListOf<PrayerTimesCalculator.CombinedPrayerInfo>()
+            val astroList = mutableListOf<PrayerTimesCalculator.CombinedPrayerInfo>()
+            
+            if (_uiState.value.isTahajjudEnabled) {
+                val fajrInfo = allTimesMap.find { it.name == "Fajr" }
+                if (fajrInfo != null) {
+                    val tahajjudTime = calculateTahajjudTime(fajrInfo.time, _uiState.value.tahajjudOffset)
+                    prayerList.add(PrayerTimesCalculator.CombinedPrayerInfo("Tahajjud", tahajjudTime))
+                }
             }
-        }
 
-        // Create explicit astronomical events list
-        val sunrise = allTimesMap.find { it.name == "Sunrise" }
-        val sunset = allTimesMap.find { it.name == "Sunset" }
-        val dhuhr = allTimesMap.find { it.name == "Dhuhr" || it.name == "Dhuhr/Asr" }
+            val sunrise = allTimesMap.find { it.name == "Sunrise" }
+            val sunset = allTimesMap.find { it.name == "Sunset" }
+            val dhuhr = allTimesMap.find { it.name == "Dhuhr" || it.name == "Dhuhr/Asr" }
 
-        if (sunrise != null) astroList.add(sunrise)
-        if (dhuhr != null) astroList.add(dhuhr.copy(name = "Solar Noon", isCombined = false, time = dhuhr.time))
-        if (sunset != null) astroList.add(sunset)
-        
-        // Add Moon timings
-        moonTimes.forEach { (name, time) ->
-            astroList.add(PrayerTimesCalculator.CombinedPrayerInfo(name, time))
-        }
-
-        val mainCal = Calendar.getInstance().apply { time = date }
-        val isFriday = mainCal.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY
-
-        // Filter for actual prayers only
-        val prayersOnly = allTimesMap.filter { 
-            it.name !in listOf("Sunrise", "Sunset", "Solar Noon") 
-        }
-
-        prayersOnly.forEach { info ->
-            var finalInfo = info
-            if ((info.name == "Dhuhr" || info.name == "Dhuhr/Asr") && isFriday) {
-                finalInfo = info.copy(name = "Jummah (or Dhuhr)")
+            if (sunrise != null) astroList.add(sunrise)
+            if (dhuhr != null) astroList.add(dhuhr.copy(name = "Solar Noon", isCombined = false, time = dhuhr.time))
+            if (sunset != null) astroList.add(sunset)
+            
+            moonTimes.forEach { (name, time) ->
+                astroList.add(PrayerTimesCalculator.CombinedPrayerInfo(name, time))
             }
-            prayerList.add(finalInfo)
-        }
-        
-        prayerList.sortBy { it.time }
 
-        // Format for display: Inclusive list of prayers only
-        val allowedPrayers = listOf("Tahajjud", "Fajr", "Dhuhr", "Dhuhr/Asr", "Jummah (or Dhuhr)", "Asr", "Maghrib", "Maghrib/Isha", "Isha")
-        val displayPrayerList = prayerList
-            .filter { it.name in allowedPrayers }
-            .map { it.copy(time = formatDisplayTime(it.time)) }
-        val displayAstroList = astroList.map { it.copy(time = formatDisplayTime(it.time)) }
+            val mainCal = Calendar.getInstance().apply { time = date }
+            val isFriday = mainCal.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY
+
+            val prayersOnly = allTimesMap.filter { 
+                it.name !in listOf("Sunrise", "Sunset", "Solar Noon") 
+            }
+
+            prayersOnly.forEach { info ->
+                var finalInfo = info
+                if ((info.name == "Dhuhr" || info.name == "Dhuhr/Asr") && isFriday) {
+                    finalInfo = info.copy(name = "Jummah (or Dhuhr)")
+                }
+                prayerList.add(finalInfo)
+            }
+            
+            prayerList.sortBy { it.time }
+
+            val allowedPrayers = listOf("Tahajjud", "Fajr", "Dhuhr", "Dhuhr/Asr", "Jummah (or Dhuhr)", "Asr", "Maghrib", "Maghrib/Isha", "Isha")
+            val displayPrayerList = prayerList
+                .filter { it.name in allowedPrayers }
+                .map { it.copy(time = formatDisplayTime(it.time)) }
+            val displayAstroList = astroList.map { it.copy(time = formatDisplayTime(it.time)) }
 
             withContext(Dispatchers.Main) {
                 _uiState.value = _uiState.value.copy(
@@ -682,10 +662,6 @@ class PrayerTimesViewModel @Inject constructor(
                 updateNextPrayer(date)
             }
 
-
-            // Trigger Background Scheduler for Alarms
-            // UI state is updated above, logic is duplicated but decoupled.
-            // This ensures UI and Alarms are consistent but independent processes.
             prayerScheduler.scheduleAlarmsForNext24Hours()
         }
     }
@@ -741,10 +717,8 @@ class PrayerTimesViewModel @Inject constructor(
                     activeName = prayerList[index - 1].name
                 }
                 
-                // Compare before updating to avoid unnecessary recompositions
                 val currentState = _uiState.value
                 
-                // Calculate Countdown
                 val nowMs = nowDate.time
                 val nextMs = try {
                     val dateNext = timeFormat.parse(info.time)
@@ -752,7 +726,7 @@ class PrayerTimesViewModel @Inject constructor(
                 } catch (e: Exception) { nowMs }
                 
                 var diffMs = nextMs - nowMs
-                if (diffMs < 0) diffMs += 24 * 60 * 60 * 1000 // Wrap next day if needed (mostly handled by sorting but safe guard)
+                if (diffMs < 0) diffMs += 24 * 60 * 60 * 1000 
                 
                 val hours = diffMs / (1000 * 60 * 60)
                 val minutes = (diffMs / (1000 * 60)) % 60
@@ -765,7 +739,7 @@ class PrayerTimesViewModel @Inject constructor(
                     
                     _uiState.value = currentState.copy(
                         nextPrayerName = info.name,
-                        nextPrayerTime = formatDisplayTime(info.time), // Keep original for reference if needed
+                        nextPrayerTime = formatDisplayTime(info.time), 
                         nextPrayerCountdown = countdownString,
                         activePrayerName = activeName,
                         nextPrayerDateLabel = ""
@@ -778,30 +752,12 @@ class PrayerTimesViewModel @Inject constructor(
         
         if (!nextFound) {
             val currentState = _uiState.value
-            val ishaName = prayerList.last().name
-            
-            // Logic for "Coming up: Fajr Tomorrow"
-            val firstPrayer = prayerList[0]
-            val nowMs = nowDate.time
-            val nextMs = try {
-                val dateNext = timeFormat.parse(firstPrayer.time)
-                if (dateNext != null) dateNext.time + (24 * 60 * 60 * 1000) else nowMs
-            } catch (e: Exception) { nowMs }
-            
-            val diffMs = nextMs - nowMs
-             val hours = diffMs / (1000 * 60 * 60)
-            val minutes = (diffMs / (1000 * 60)) % 60
-            val countdownString = "${hours}h ${minutes}m"
+            val ishaName = prayerList.lastOrNull()?.name ?: ""
+            val activeName = if (prayerList.isNotEmpty()) ishaName else null
 
-            if (currentState.activePrayerName != ishaName || currentState.nextPrayerCountdown != countdownString) {
-                _uiState.value = currentState.copy(
-                    nextPrayerName = firstPrayer.name,
-                    nextPrayerTime = formatDisplayTime(firstPrayer.time),
-                    nextPrayerCountdown = countdownString,
-                    activePrayerName = ishaName,
-                    nextPrayerDateLabel = "(Tomorrow)"
-                )
-            }
+             // Logic for "Coming up: Fajr Tomorrow"
+             // Simplified fallback for countdown
+             _uiState.value = currentState.copy(activePrayerName = activeName)
         }
     }
 }

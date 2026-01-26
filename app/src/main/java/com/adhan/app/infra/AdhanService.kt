@@ -30,6 +30,9 @@ class AdhanService : Service() {
     @Inject
     lateinit var audioFader: com.adhan.app.infra.AudioFader
 
+    @Inject
+    lateinit var playbackStateRepository: com.adhan.app.domain.PlaybackStateRepository
+
     private var player: ExoPlayer? = null
     private var mediaSession: androidx.media3.session.MediaSession? = null
     private val NOTIFICATION_ID = 1001
@@ -76,6 +79,7 @@ class AdhanService : Service() {
                      val msg = "ExoPlayer IsPlaying: $isPlaying"
                      android.util.Log.d("AdhanService", msg)
                      serviceScope.launch { logRepository.log(msg) }
+                     serviceScope.launch { playbackStateRepository.setPlaying(isPlaying) }
                 }
 
                 override fun onPlayerError(error: androidx.media3.common.PlaybackException) {
@@ -134,6 +138,15 @@ class AdhanService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val prayerName = intent?.getStringExtra("prayer_name") ?: "Prayer"
+        
+        if (intent?.action == "com.adhan.app.action.STOP") {
+            android.util.Log.d("AdhanService", "Received STOP command")
+            serviceScope.launch { logRepository.log("AdhanService: Received STOP command") }
+            player?.stop()
+            stopForeground(STOP_FOREGROUND_REMOVE)
+            stopSelf()
+            return START_NOT_STICKY
+        }
         
         android.util.Log.d("AdhanService", "onStartCommand: $prayerName")
         serviceScope.launch { logRepository.log("AdhanService started for: $prayerName") }

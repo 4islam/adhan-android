@@ -6,6 +6,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material.icons.filled.Stop
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.material3.Icon
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.*
@@ -76,7 +80,7 @@ fun DashboardScreen(viewModel: PrayerTimesViewModel) {
                     val isActive = info.name == uiState.activePrayerName
                     val isTahajjud = info.name.contains("Tahajjud")
                     
-                    // --- Phase 14: 3D Spherical Logic ---
+                    // --- 3D Spherical Logic for List Items ---
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -119,6 +123,10 @@ fun DashboardScreen(viewModel: PrayerTimesViewModel) {
                     }
                     Spacer(modifier = Modifier.height(12.dp))
                 }
+                
+                item {
+                    Spacer(modifier = Modifier.height(12.dp))
+                }
             }
 
             // 3. Fixed Astro Panel at bottom
@@ -141,6 +149,25 @@ fun DashboardScreen(viewModel: PrayerTimesViewModel) {
                     moonrise = moonrise,
                     moonset = moonset
                 )
+            }
+            
+            // Stop Adhan Button
+            if (uiState.isAdhanPlaying) {
+                ExtendedFloatingActionButton(
+                    onClick = { viewModel.stopAdhan() },
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(bottom = 32.dp),
+                    containerColor = MaterialTheme.colorScheme.error,
+                    contentColor = Color.White
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Stop,
+                        contentDescription = "Stop Adhan"
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Stop Adhan")
+                }
             }
         }
     }

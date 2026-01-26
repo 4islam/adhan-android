@@ -23,6 +23,7 @@ googleLocationServices = "21.0.1"
 mockk = "1.13.8"
 turbine = "1.0.0"
 kotlinxCoroutinesTest = "1.7.3"
+mediarouter = "1.6.0"
 googleServices = "4.4.0"
 firebaseAppDistribution = "4.0.0"
 firebaseBom = "32.7.0"
@@ -64,6 +65,7 @@ firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.r
 google-services = { group = "com.google.gms", name = "google-services", version.ref = "googleServices" }
 maps-utils = { group = "com.google.maps.android", name = "android-maps-utils", version.ref = "mapsUtils" }
 androidx-media = { group = "androidx.media", name = "media", version.ref = "media" }
+androidx-mediarouter = { group = "androidx.mediarouter", name = "mediarouter", version.ref = "mediarouter" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

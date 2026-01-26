@@ -15,8 +15,8 @@ android {
         applicationId = "com.adhan.app"
         minSdk = 26
         targetSdk = 34
-        versionCode = 55
-        versionName = "2.25.5"
+        versionCode = 56
+        versionName = "2.25.6"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -100,6 +100,7 @@ dependencies {
     implementation(libs.play.services.location)
     implementation(libs.maps.utils)
     implementation(libs.androidx.media)
+    implementation(libs.androidx.mediarouter)
 
     // Test
     testImplementation(libs.junit)

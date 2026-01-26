@@ -773,7 +773,7 @@ fun SettingsScreen(
                                 
                                 Spacer(modifier = Modifier.height(16.dp))
         
-                                val isPlaying by viewModel.isAdhanPlaying.collectAsState()
+                                val isPlaying = uiState.isAdhanPlaying
                                 
                                 if (isPlaying) {
                                     Button(

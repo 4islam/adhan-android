@@ -219,23 +219,25 @@ class AdhanService : Service() {
         // Ensure notification is posted immediately
         startForeground(NOTIFICATION_ID, createNotification(prayerName))
         
+        val testRoute = intent?.getStringExtra("test_audio_route")
+        
         serviceScope.launch {
             // Delay slightly to allow MediaRouter to discover devices if needed
             // This is a tradeoff: delayed playback vs correct routing. 
             // 2 seconds should be enough for cached routes or quick discovery
-             if (prefs.getString("selected_audio_route", "Default")?.startsWith("Network:") == true) {
+             if (prefs.getString("selected_audio_route", "Default")?.startsWith("Network:") == true || testRoute?.startsWith("Network:") == true) {
                  kotlinx.coroutines.delay(1500) 
              }
              
              withContext(kotlinx.coroutines.Dispatchers.Main) {
-                playAdhan(prayerName, prefs)
+                playAdhan(prayerName, prefs, testRoute)
              }
         }
         
         return START_NOT_STICKY
     }
 
-    private suspend fun playAdhan(prayerName: String, prefs: android.content.SharedPreferences) {
+    private suspend fun playAdhan(prayerName: String, prefs: android.content.SharedPreferences, explicitRoute: String? = null) {
         try {
             var customUri: String? = null
             
@@ -271,7 +273,7 @@ class AdhanService : Service() {
             }
 
             // Apply Custom Audio Routing
-            // Apply Custom Audio Routing
+            // 0. Explicit Test Route (Highest Priority)
             // 1. Check for Prayer+Day Helper
             val calendar = java.util.Calendar.getInstance()
             calendar.time = java.util.Date()
@@ -280,7 +282,7 @@ class AdhanService : Service() {
             val specificRouteKey = "audio_route_${prayerName}_$dayOfWeek"
             val specificRoute = prefs.getString(specificRouteKey, null)
             
-            val selectedRoute = specificRoute ?: prefs.getString("selected_audio_route", "Default")
+            val selectedRoute = explicitRoute ?: specificRoute ?: prefs.getString("selected_audio_route", "Default")
             
             if (selectedRoute != null && selectedRoute != "Default") {
                  android.util.Log.d("AdhanService", "Routing Decision: Specific=$specificRoute, Global=${prefs.getString("selected_audio_route", "Default")}, Final=$selectedRoute")

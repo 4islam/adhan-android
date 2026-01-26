@@ -68,6 +68,20 @@ class PrayerAlarmManager @Inject constructor(
         return true
     }
 
+    fun scheduleTestAlarm(name: String, time: Long, route: String?): Boolean {
+         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            if (!alarmManager.canScheduleExactAlarms()) {
+                return false
+            }
+        }
+        
+        // Single One-off alarm
+        val extras = if (route != null) mapOf("test_audio_route" to route) else emptyMap()
+        scheduleAlarm(name, time, extras)
+        
+        return true
+    }
+
     fun cancelAllAlarms() {
         knownPrayerNames.forEach { name ->
             val intent = Intent(context, AlarmReceiver::class.java).apply {
@@ -85,9 +99,10 @@ class PrayerAlarmManager @Inject constructor(
     }
 
 
-    private fun scheduleAlarm(prayerName: String, timeInMillis: Long) {
+    private fun scheduleAlarm(prayerName: String, timeInMillis: Long, extras: Map<String, String> = emptyMap()) {
         val intent = Intent(context, AlarmReceiver::class.java).apply {
             putExtra("prayer_name", prayerName)
+            extras.forEach { (key, value) -> putExtra(key, value) }
         }
         
         val pendingIntent = PendingIntent.getBroadcast(
@@ -105,7 +120,7 @@ class PrayerAlarmManager @Inject constructor(
         
         val dateStr = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date(timeInMillis))
         kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.IO).launch {
-             logRepository.log("Scheduled $prayerName at $dateStr")
+             logRepository.log("Scheduled $prayerName at $dateStr with extras: $extras")
         }
     }
 

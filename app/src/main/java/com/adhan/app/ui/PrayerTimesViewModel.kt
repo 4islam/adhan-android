@@ -63,7 +63,15 @@ data class PrayerTimesState(
     val isLoading: Boolean = true,
     val loadingMessage: String = "Initializing...",
     val nextPrayerCountdown: String = "",
-    val isAdhanPlaying: Boolean = false // New state
+    val isShortAsrCombiningEnabled: Boolean = true,
+    val shortAsrThresholdMinutes: Int = 90,
+    val adhanVolume: Int = 80, // Volume percentage 0-100
+    val isLoading: Boolean = true,
+    val loadingMessage: String = "Initializing...",
+    val nextPrayerCountdown: String = "",
+    val isAdhanPlaying: Boolean = false,
+    val highLatitudeRule: Int = PrayerTimesCalculator.AngleBased,
+    val manualOffsets: Map<String, Int> = emptyMap() // Prayer Name -> Minutes
 )
 
 @HiltViewModel
@@ -168,7 +176,17 @@ class PrayerTimesViewModel @Inject constructor(
         val shortAsrEnabled = userPrefs.isShortAsrEnabled()
         val shortAsrThreshold = userPrefs.getShortAsrThreshold()
         
+        val shortAsrEnabled = userPrefs.isShortAsrEnabled()
+        val shortAsrThreshold = userPrefs.getShortAsrThreshold()
+        
         val adhanVolume = userPrefs.getAdhanVolume()
+        
+        val highLatitudeRule = prefs.getInt("high_latitude_rule", PrayerTimesCalculator.AngleBased)
+        
+        val offsets = mutableMapOf<String, Int>()
+        listOf("Fajr", "Sunrise", "Dhuhr", "Asr", "Maghrib", "Isha").forEach { prayer ->
+            offsets[prayer] = prefs.getInt("offset_$prayer", 0)
+        }
 
         _uiState.value = _uiState.value.copy(
             calcMethod = calcMethod,
@@ -190,7 +208,11 @@ class PrayerTimesViewModel @Inject constructor(
             shortNightThresholdHours = shortNightThreshold,
             isShortAsrCombiningEnabled = shortAsrEnabled,
             shortAsrThresholdMinutes = shortAsrThreshold,
-            adhanVolume = adhanVolume
+            isShortAsrCombiningEnabled = shortAsrEnabled,
+            shortAsrThresholdMinutes = shortAsrThreshold,
+            adhanVolume = adhanVolume,
+            highLatitudeRule = highLatitudeRule,
+            manualOffsets = offsets
         )
         refreshAudioDevices()
     }
@@ -313,57 +335,35 @@ class PrayerTimesViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(adhanSounds = currentSounds)
     }
 
+    fun setHighLatitudeRule(rule: Int) {
+        prefs.edit().putInt("high_latitude_rule", rule).apply()
+        _uiState.value = _uiState.value.copy(highLatitudeRule = rule)
+        updateTimes()
+    }
+    
+    fun setManualOffset(prayer: String, minutes: Int) {
+        prefs.edit().putInt("offset_$prayer", minutes).apply()
+        val current = _uiState.value.manualOffsets.toMutableMap()
+        current[prayer] = minutes
+        _uiState.value = _uiState.value.copy(manualOffsets = current)
+        updateTimes()
+    }
+
     private var foregroundPlayer: androidx.media3.exoplayer.ExoPlayer? = null
     
-    fun playAdhanNow() {
-        try {
-            stopAdhan() // clear existing
-            
-            foregroundPlayer = androidx.media3.exoplayer.ExoPlayer.Builder(application).build().apply {
-                val audioAttributes = androidx.media3.common.AudioAttributes.Builder()
-                    .setUsage(androidx.media3.common.C.USAGE_MEDIA)
-                    .setContentType(androidx.media3.common.C.AUDIO_CONTENT_TYPE_SPEECH)
-                    .build()
-                setAudioAttributes(audioAttributes, true)
-
-                val resourceName = "adhan_fajr" 
-                val rawResourceId = application.resources.getIdentifier(resourceName, "raw", application.packageName)
-                
-                if (rawResourceId != 0) {
-                     val config = _uiState.value.fadeConfigs["Fajr"] ?: FadeConfig(5, 0f)
-                     
-                     val mediaItem = androidx.media3.common.MediaItem.fromUri("android.resource://${application.packageName}/$rawResourceId")
-                     setMediaItem(mediaItem)
-                     
-                     val routeName = _uiState.value.selectedAudioRoute
-                     val routed = audioRouter.routeAudio(this@apply, routeName)
-                     
-                     prepare()
-                     volume = config.initialVolume 
-                     
-                     play()
-                     _uiState.value = _uiState.value.copy(isAdhanPlaying = true) // Local test state
-                     
-                     viewModelScope.launch { 
-                         val duration = config.durationSeconds * 1000L
-                         audioFader.startFadeIn(this@apply, duration, config.initialVolume)
-                     }
-                     
-                     addListener(object : androidx.media3.common.Player.Listener {
-                         override fun onPlaybackStateChanged(playbackState: Int) {
-                             if (playbackState == androidx.media3.common.Player.STATE_ENDED) {
-                                 stopAdhan()
-                             }
-                         }
-                         override fun onPlayerError(error: androidx.media3.common.PlaybackException) {
-                              stopAdhan()
-                         }
-                     })
-                }
+    fun playAdhanNow(testRoute: String? = null) {
+        val intent = android.content.Intent(application, com.adhan.app.infra.AdhanService::class.java).apply {
+            putExtra("prayer_name", "Test Adhan (Foreground)")
+            if (testRoute != null && testRoute != "Global Default") {
+                putExtra("test_audio_route", testRoute)
             }
-        } catch (e: Exception) {
-            stopAdhan()
         }
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            application.startForegroundService(intent)
+        } else {
+            application.startService(intent)
+        }
+        _uiState.value = _uiState.value.copy(isAdhanPlaying = true)
     }
 
     fun stopAdhan() {
@@ -422,6 +422,23 @@ class PrayerTimesViewModel @Inject constructor(
         // but since it's a dialog fetch, maybe less critical? 
         // Better to have it in uiState if we want to show icons etc on the bubble).
         // For now, minimal implementation: just save.
+    }
+    
+    fun applyConfigToAllDays(prayer: String, enabled: Boolean, route: String) {
+        val finalRoute = if (route == "Global Default") null else route
+        
+        val currentDays = _uiState.value.adhanNotificationDays.toMutableMap()
+        val daysForPrayer = currentDays[prayer]?.toMutableMap() ?: mutableMapOf()
+        
+        for (day in java.util.Calendar.SUNDAY..java.util.Calendar.SATURDAY) {
+            userPrefs.setAdhanDayEnabled(prayer, day, enabled)
+            userPrefs.setAudioRoute(prayer, day, finalRoute)
+            daysForPrayer[day] = enabled
+        }
+        
+        currentDays[prayer] = daysForPrayer
+        _uiState.value = _uiState.value.copy(adhanNotificationDays = currentDays)
+        updateTimes()
     }
     
     fun getDayAudioRoute(prayer: String, dayOfWeek: Int): String? {
@@ -485,14 +502,16 @@ class PrayerTimesViewModel @Inject constructor(
         prefs.edit().putString("selected_audio_route", deviceName).apply()
     }
 
-    fun testAdhan(delaySeconds: Int = 10): Boolean {
+    fun testAdhan(delaySeconds: Int = 10, testRoute: String? = null): Boolean {
         val now = Calendar.getInstance()
         now.add(Calendar.SECOND, delaySeconds)
         val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
         val testTime = sdf.format(now.time)
         
         val testPrayerTimestamp = now.timeInMillis
-        val success = alarmManager.scheduleExactAlarms(listOf("Test Adhan" to testPrayerTimestamp))
+        val finalRoute = if (testRoute == "Global Default") null else testRoute
+
+        val success = alarmManager.scheduleTestAlarm("Test Adhan", testPrayerTimestamp, finalRoute)
         
         if (success) {
             _uiState.value = _uiState.value.copy(
@@ -520,25 +539,34 @@ class PrayerTimesViewModel @Inject constructor(
             calculator.setCalcMethod(state.calcMethod)
             calculator.setAsrMethod(state.asrJuristic)
             calculator.setCombiningThreshold(state.combiningThreshold)
+            calculator.setHighLatsMethod(state.highLatitudeRule)
             
             val date = state.currentTime
             val lat = state.latitude
             val lng = state.longitude
             
-            val allTimesMap = calculator.getCombinedPrayerTimes(date, lat, lng).toMutableList()
+            val baseTimes = calculator.getCombinedPrayerTimes(date, lat, lng).toMutableList()
+            val allTimesMap = mutableListOf<PrayerTimesCalculator.CombinedPrayerInfo>()
             
-            // Dhuhr Offset: Add 10 minutes to Solar Noon/Dhuhr start
-            val dIndex = allTimesMap.indexOfFirst { it.name == "Dhuhr" }
-            if (dIndex != -1) {
-                try {
-                    val dhuhr = allTimesMap[dIndex]
-                    val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
-                    val dDate = sdf.parse(dhuhr.time)
-                    if (dDate != null) {
-                        val newTime = dDate.time + (10 * 60 * 1000)
-                        allTimesMap[dIndex] = dhuhr.copy(time = sdf.format(Date(newTime)))
-                    }
-                } catch (e: Exception) { /* ignore */ }
+            // Apply Manual Offsets
+            val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
+            
+            baseTimes.forEach { info ->
+                var finalTime = info.time
+                val offset = state.manualOffsets[info.name] ?: 0
+                val fixedDhuhrOffset = if (info.name == "Dhuhr") 10 else 0 // Keep existing Dhuhr fix
+                val totalOffset = offset + fixedDhuhrOffset
+                
+                if (totalOffset != 0 && finalTime != PrayerTimesCalculator.InvalidTime) {
+                    try {
+                        val d = sdf.parse(finalTime)
+                        if (d != null) {
+                            val newTime = d.time + (totalOffset * 60 * 1000)
+                            finalTime = sdf.format(Date(newTime))
+                        }
+                    } catch (e: Exception) { }
+                }
+                allTimesMap.add(info.copy(time = finalTime))
             }
             
             // Short Night Combining Logic

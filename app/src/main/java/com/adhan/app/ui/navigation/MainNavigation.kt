@@ -55,12 +55,18 @@ fun MainNavigation(
             SettingsScreen(
                 viewModel = viewModel,
                 onBack = { navController.popBackStack() },
-                onNavigateToLogs = { navController.navigate(NavScreen.Logs.route) }
+                onNavigateToLogs = { navController.navigate(NavScreen.Logs.route) },
+                onNavigateToGuide = { navController.navigate(NavScreen.UserGuide.route) }
             )
         }
         composable(NavScreen.Logs.route) {
             com.adhan.app.ui.screens.LogsScreen(
                 viewModel = viewModel,
+                onBack = { navController.popBackStack() }
+            )
+        }
+        composable(NavScreen.UserGuide.route) {
+            com.adhan.app.ui.screens.UserGuideScreen(
                 onBack = { navController.popBackStack() }
             )
         }

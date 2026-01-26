@@ -35,6 +35,10 @@ class AlarmReceiver : BroadcastReceiver() {
         
         val serviceIntent = Intent(context, AdhanService::class.java).apply {
             putExtra("prayer_name", prayerName)
+            // Forward any other extras (e.g. test_audio_route)
+            intent.extras?.let { bundle ->
+                putExtras(bundle)
+            }
         }
         
         try {

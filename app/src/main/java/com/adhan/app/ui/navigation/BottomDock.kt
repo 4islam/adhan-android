@@ -30,6 +30,7 @@ sealed class NavScreen(val route: String, val icon: ImageVector, val label: Stri
     object Qibla : NavScreen("qibla", Icons.Filled.CompassCalibration, "Qibla")
     object Settings : NavScreen("settings", Icons.Filled.Settings, "Settings")
     object Logs : NavScreen("logs", Icons.Filled.List, "Debug Logs")
+    object UserGuide : NavScreen("user_guide", Icons.Filled.List, "User Guide")
 }
 
 @Composable

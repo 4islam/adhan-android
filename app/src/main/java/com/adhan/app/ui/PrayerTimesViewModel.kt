@@ -63,12 +63,6 @@ data class PrayerTimesState(
     val isLoading: Boolean = true,
     val loadingMessage: String = "Initializing...",
     val nextPrayerCountdown: String = "",
-    val isShortAsrCombiningEnabled: Boolean = true,
-    val shortAsrThresholdMinutes: Int = 90,
-    val adhanVolume: Int = 80, // Volume percentage 0-100
-    val isLoading: Boolean = true,
-    val loadingMessage: String = "Initializing...",
-    val nextPrayerCountdown: String = "",
     val isAdhanPlaying: Boolean = false,
     val highLatitudeRule: Int = PrayerTimesCalculator.AngleBased,
     val manualOffsets: Map<String, Int> = emptyMap() // Prayer Name -> Minutes
@@ -176,8 +170,7 @@ class PrayerTimesViewModel @Inject constructor(
         val shortAsrEnabled = userPrefs.isShortAsrEnabled()
         val shortAsrThreshold = userPrefs.getShortAsrThreshold()
         
-        val shortAsrEnabled = userPrefs.isShortAsrEnabled()
-        val shortAsrThreshold = userPrefs.getShortAsrThreshold()
+
         
         val adhanVolume = userPrefs.getAdhanVolume()
         
@@ -208,8 +201,7 @@ class PrayerTimesViewModel @Inject constructor(
             shortNightThresholdHours = shortNightThreshold,
             isShortAsrCombiningEnabled = shortAsrEnabled,
             shortAsrThresholdMinutes = shortAsrThreshold,
-            isShortAsrCombiningEnabled = shortAsrEnabled,
-            shortAsrThresholdMinutes = shortAsrThreshold,
+
             adhanVolume = adhanVolume,
             highLatitudeRule = highLatitudeRule,
             manualOffsets = offsets

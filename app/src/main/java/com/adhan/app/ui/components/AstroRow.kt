@@ -28,55 +28,71 @@ fun AstroRow(
     moonrise: String,
     moonset: String
 ) {
-    Row(
+    Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 8.dp)
-            .clip(RoundedCornerShape(12.dp))
-            .background(Color.White.copy(alpha = 0.1f))
-            .padding(vertical = 6.dp, horizontal = 4.dp),
-        horizontalArrangement = Arrangement.SpaceEvenly,
-        verticalAlignment = Alignment.CenterVertically
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .clip(RoundedCornerShape(16.dp))
+            .background(Color.Black.copy(alpha = 0.3f)) // Slightly darker background for contrast
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        AstroItemCompact("Rise", sunrise, Icons.Default.Brightness5, Color(0xFFFFB74D))
-        AstroItemCompact("Noon", solarNoon, Icons.Default.WbSunny, Color(0xFFFFB74D))
-        AstroItemCompact("Set", sunset, Icons.Default.Brightness5, Color(0xFFFFB74D))
-        
-        // Subtle Vertical Divider
-        Box(modifier = Modifier.width(1.dp).height(20.dp).background(Color.White.copy(alpha = 0.1f)))
-        
-        AstroItemCompact("Moon ↑", moonrise, Icons.Default.NightsStay, Color(0xFF80DEEA))
-        AstroItemCompact("Moon ↓", moonset, Icons.Default.NightsStay, Color(0xFF80DEEA))
+        // Sun Row
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            AstroItemLarge("Sunrise", sunrise, Icons.Default.Brightness5, Color(0xFFFFB74D))
+            AstroItemLarge("Noon", solarNoon, Icons.Default.WbSunny, Color(0xFFFFE082))
+            AstroItemLarge("Sunset", sunset, Icons.Default.Brightness5, Color(0xFFFFB74D))
+        }
+
+        // Divider
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(1.dp)
+                .background(Color.White.copy(alpha = 0.1f))
+        )
+
+        // Moon Row
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceAround, // Center these two
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            AstroItemLarge("Moonrise", moonrise, Icons.Default.NightsStay, Color(0xFF80DEEA))
+            AstroItemLarge("Moonset", moonset, Icons.Default.NightsStay, Color(0xFF4DD0E1)) // Slightly darker moon color
+        }
     }
 }
 
 @Composable
-private fun AstroItemCompact(label: String, time: String, icon: ImageVector, iconColor: Color) {
+private fun AstroItemLarge(label: String, time: String, icon: ImageVector, iconColor: Color) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(4.dp)
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Icon(
             imageVector = icon,
             contentDescription = label,
             tint = iconColor,
-            modifier = Modifier.size(14.dp)
+            modifier = Modifier.size(24.dp) // Larger Icon
         )
         Column(horizontalAlignment = Alignment.Start) {
             Text(
                 text = label,
-                style = MaterialTheme.typography.labelSmall,
-                color = Color.White.copy(alpha = 0.6f),
-                fontSize = 8.sp,
-                lineHeight = 8.sp
+                style = MaterialTheme.typography.labelMedium,
+                color = Color.White.copy(alpha = 0.7f),
+                fontSize = 11.sp
             )
             Text(
                 text = time,
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodyLarge,
                 color = Color.White,
                 fontWeight = FontWeight.Bold,
-                fontSize = 10.sp,
-                lineHeight = 10.sp
+                fontSize = 16.sp // Larger Time
             )
         }
     }

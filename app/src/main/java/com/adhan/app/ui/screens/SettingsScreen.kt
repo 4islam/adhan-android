@@ -8,7 +8,9 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -144,7 +146,7 @@ fun MainSettingsList(
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(16.dp),
+        contentPadding = PaddingValues(top = 16.dp, start = 16.dp, end = 16.dp, bottom = 80.dp),
         verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
         item {
@@ -225,7 +227,7 @@ fun TimeFormatChip(text: String, isSelected: Boolean, onClick: () -> Unit) {
 
 @Composable
 fun SoundsAudioSettings(viewModel: PrayerTimesViewModel, uiState: com.adhan.app.ui.PrayerTimesState) {
-    LazyColumn(contentPadding = PaddingValues(16.dp)) {
+    LazyColumn(contentPadding = PaddingValues(top = 16.dp, start = 16.dp, end = 16.dp, bottom = 80.dp)) {
         item {
             SettingsGroupCard {
                 // Master Switch
@@ -356,7 +358,7 @@ private var selectedPrayerForSound = "Fajr"
 
 @Composable
 fun NotificationTogglesSettings(viewModel: PrayerTimesViewModel, uiState: com.adhan.app.ui.PrayerTimesState) {
-    LazyColumn(contentPadding = PaddingValues(16.dp)) {
+    LazyColumn(contentPadding = PaddingValues(top = 16.dp, start = 16.dp, end = 16.dp, bottom = 80.dp)) {
         item {
             GuideText("Tap bubbles to toggle days. Long press S/M... for day-specific audio routing.")
             Spacer(modifier = Modifier.height(16.dp))
@@ -415,7 +417,7 @@ fun NotificationTogglesSettings(viewModel: PrayerTimesViewModel, uiState: com.ad
                                     .size(36.dp)
                                     .clip(CircleShape)
                                     .background(if (isEnabled) baseColor.copy(alpha = 0.2f) else Color.White.copy(alpha = 0.05f))
-                                    .combinedClickable(
+                                    .simpleCombinedClickable(
                                         onClick = { 
                                             // Simple Toggle
                                             viewModel.setAdhanDayEnabled(prayer, dayId, !isEnabled)
@@ -444,7 +446,7 @@ fun NotificationTogglesSettings(viewModel: PrayerTimesViewModel, uiState: com.ad
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun Modifier.combinedClickable(
+fun Modifier.simpleCombinedClickable(
     onClick: () -> Unit,
     onLongClick: (() -> Unit)? = null,
     onDoubleClick: (() -> Unit)? = null
@@ -452,9 +454,7 @@ fun Modifier.combinedClickable(
     enabled = true,
     onClick = onClick,
     onLongClick = onLongClick,
-    onDoubleClick = onDoubleClick,
-    interactionSource = null, 
-    indication = androidx.compose.foundation.LocalIndication.current
+    onDoubleClick = onDoubleClick
 )
 
 @Composable
@@ -542,7 +542,7 @@ fun DayConfigurationDialog(
 
 @Composable
 fun TahajjudFeaturesSettings(viewModel: PrayerTimesViewModel, uiState: com.adhan.app.ui.PrayerTimesState) {
-    LazyColumn(contentPadding = PaddingValues(16.dp)) {
+    LazyColumn(contentPadding = PaddingValues(top = 16.dp, start = 16.dp, end = 16.dp, bottom = 80.dp)) {
         item {
             SettingsGroupTitle("TAHAJJUD")
             SettingsGroupCard {
@@ -633,7 +633,7 @@ fun CalculationMethodsSettings(viewModel: PrayerTimesViewModel, uiState: com.adh
         "None" to PrayerTimesCalculator.None
     )
 
-    LazyColumn(contentPadding = PaddingValues(16.dp)) {
+    LazyColumn(contentPadding = PaddingValues(top = 16.dp, start = 16.dp, end = 16.dp, bottom = 80.dp)) {
         item {
             SettingsGroupTitle("CALCULATION METHOD")
             SettingsGroupCard {
@@ -714,7 +714,7 @@ fun CalculationMethodsSettings(viewModel: PrayerTimesViewModel, uiState: com.adh
 @Composable
 fun TestingToolsSettings(viewModel: PrayerTimesViewModel, uiState: com.adhan.app.ui.PrayerTimesState, onNavigateToLogs: () -> Unit) {
      val context = androidx.compose.ui.platform.LocalContext.current
-     LazyColumn(contentPadding = PaddingValues(16.dp)) {
+     LazyColumn(contentPadding = PaddingValues(top = 16.dp, start = 16.dp, end = 16.dp, bottom = 80.dp)) {
          item {
              SettingsGroupTitle("TARGET")
              SettingsGroupCard {
@@ -790,7 +790,7 @@ fun SettingsGroupCard(content: @Composable () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(12.dp))
-            .background(Color(0xFF2D2D2D)) // Dark card background
+            .background(Color.White.copy(alpha = 0.1f)) // Translucent background
     ) {
         content()
     }

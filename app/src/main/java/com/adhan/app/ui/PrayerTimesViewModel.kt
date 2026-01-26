@@ -48,6 +48,7 @@ data class PrayerTimesState(
     val use12HourFormat: Boolean = true,
     val adhanSounds: Map<String, String> = emptyMap(), // Maps prayer name to URI string
     val adhanNotificationEnabled: Map<String, Boolean> = emptyMap(),
+    val adhanNotificationDays: Map<String, Map<Int, Boolean>> = emptyMap(), // Prayer -> (DayOfWeek -> Enabled)
     val rawPrayerTimes: List<PrayerTimesCalculator.CombinedPrayerInfo> = emptyList(), // 24h for logic
     val isLocationSet: Boolean = true,
     val nextPrayerDateLabel: String = "",
@@ -139,10 +140,18 @@ class PrayerTimesViewModel @Inject constructor(
 
         val loadedSounds = mutableMapOf<String, String>()
         val loadedNotifications = mutableMapOf<String, Boolean>()
+        val loadedDays = mutableMapOf<String, MutableMap<Int, Boolean>>()
+        
         listOf("Fajr", "Dhuhr", "Asr", "Maghrib", "Isha").forEach { prayer ->
             val uri = prefs.getString("adhan_sound_$prayer", null)
             if (uri != null) loadedSounds[prayer] = uri
             loadedNotifications[prayer] = userPrefs.isAdhanEnabled(prayer)
+            
+            val daysMap = mutableMapOf<Int, Boolean>()
+            for (day in java.util.Calendar.SUNDAY..java.util.Calendar.SATURDAY) {
+                daysMap[day] = userPrefs.isAdhanEnabled(prayer, day)
+            }
+            loadedDays[prayer] = daysMap
         }
         
         val fadeConfigs = userPrefs.getFadeConfigs()
@@ -168,6 +177,7 @@ class PrayerTimesViewModel @Inject constructor(
             use12HourFormat = use12HourFormat,
             adhanSounds = loadedSounds,
             adhanNotificationEnabled = loadedNotifications,
+            adhanNotificationDays = loadedDays,
             selectedAudioRoute = prefs.getString("selected_audio_route", "Default") ?: "Default",
             fadeConfigs = fadeConfigs,
             isShortNightCombiningEnabled = shortNightEnabled,
@@ -298,11 +308,38 @@ class PrayerTimesViewModel @Inject constructor(
     }
 
     fun setAdhanNotificationEnabled(prayer: String, enabled: Boolean) {
+        // Toggle Master
         val currentMap = _uiState.value.adhanNotificationEnabled.toMutableMap()
         currentMap[prayer] = enabled
         userPrefs.setAdhanEnabled(prayer, enabled)
-        _uiState.value = _uiState.value.copy(adhanNotificationEnabled = currentMap)
+        
+        // Update Days Map to reflect "Select All" / "Select None" logic
+        val currentDays = _uiState.value.adhanNotificationDays.toMutableMap()
+        val daysForPrayer = currentDays[prayer]?.toMutableMap() ?: mutableMapOf()
+        for (day in java.util.Calendar.SUNDAY..java.util.Calendar.SATURDAY) {
+            daysForPrayer[day] = enabled
+        }
+        currentDays[prayer] = daysForPrayer
+        
+        _uiState.value = _uiState.value.copy(
+            adhanNotificationEnabled = currentMap,
+            adhanNotificationDays = currentDays
+        )
         updateTimes() // Re-schedule alarms
+    }
+
+    fun setAdhanDayEnabled(prayer: String, dayOfWeek: Int, enabled: Boolean) {
+        userPrefs.setAdhanDayEnabled(prayer, dayOfWeek, enabled)
+        
+        val currentDays = _uiState.value.adhanNotificationDays.toMutableMap()
+        val daysForPrayer = currentDays[prayer]?.toMutableMap() ?: mutableMapOf()
+        daysForPrayer[dayOfWeek] = enabled
+        currentDays[prayer] = daysForPrayer
+        
+        // Optional: Update master switch if all are off? Not strictly needed if logic relies on days.
+        
+        _uiState.value = _uiState.value.copy(adhanNotificationDays = currentDays)
+        updateTimes()
     }
 
 

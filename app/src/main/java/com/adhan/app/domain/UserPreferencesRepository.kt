@@ -56,9 +56,29 @@ class UserPreferencesRepository @Inject constructor(
         return fadeConfigs
     }
     
-    fun isAdhanEnabled(prayer: String): Boolean = prefs.getBoolean("adhan_enabled_$prayer", true)
+    fun isAdhanEnabled(prayer: String, dayOfWeek: Int = -1): Boolean {
+        if (dayOfWeek != -1) {
+            return prefs.getBoolean("adhan_enabled_${prayer}_$dayOfWeek", true)
+        }
+        // Legacy/Master fallback (or assume true if we migrated completely)
+        // For robustness, if NO day is specified (legacy call), we return true ?? 
+        // Actually, let's keep the master key as well? Or just return "Always true" and let the scheduler ask for strict days.
+        // Scheduler will now ALWAYS pass a day. ViewModel might check "is ANY day enabled?"
+        return prefs.getBoolean("adhan_enabled_$prayer", true)
+    }
     
     fun setAdhanEnabled(prayer: String, enabled: Boolean) {
+        // Master switch (optional use)
         prefs.edit().putBoolean("adhan_enabled_$prayer", enabled).apply()
+        // Also toggle ALL days?
+        val editor = prefs.edit()
+        for (i in java.util.Calendar.SUNDAY..java.util.Calendar.SATURDAY) {
+            editor.putBoolean("adhan_enabled_${prayer}_$i", enabled)
+        }
+        editor.apply()
+    }
+    
+    fun setAdhanDayEnabled(prayer: String, dayOfWeek: Int, enabled: Boolean) {
+        prefs.edit().putBoolean("adhan_enabled_${prayer}_$dayOfWeek", enabled).apply()
     }
 }

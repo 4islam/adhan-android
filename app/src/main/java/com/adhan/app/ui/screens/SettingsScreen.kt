@@ -24,7 +24,10 @@ import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import com.adhan.app.domain.models.PrayerTimesCalculator
 import com.adhan.app.ui.PrayerTimesViewModel
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.draw.clip
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.size
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -352,6 +355,49 @@ fun SettingsScreen(
                                         }
                                     }
                                 }
+                                
+                                // Day Selector Row
+                                val daysMap = uiState.adhanNotificationDays[prayer] ?: emptyMap()
+                                Row(
+                                    modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 4.dp),
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    val days = listOf(
+                                        java.util.Calendar.SUNDAY to "S",
+                                        java.util.Calendar.MONDAY to "M",
+                                        java.util.Calendar.TUESDAY to "T",
+                                        java.util.Calendar.WEDNESDAY to "W",
+                                        java.util.Calendar.THURSDAY to "T",
+                                        java.util.Calendar.FRIDAY to "F",
+                                        java.util.Calendar.SATURDAY to "S"
+                                    )
+                                    
+                                    days.forEach { (dayId, label) ->
+                                        val isEnabled = daysMap[dayId] ?: true
+                                        val isFriday = dayId == java.util.Calendar.FRIDAY
+                                        val activeColor = if (isFriday) Color(0xFF00E5FF) else Color.White
+                                        
+                                        Box(
+                                            modifier = Modifier
+                                                .size(32.dp)
+                                                .clip(CircleShape)
+                                                .background(if (isEnabled) activeColor.copy(alpha = 0.2f) else Color.White.copy(alpha = 0.05f))
+                                                .clickable { 
+                                                    viewModel.setAdhanDayEnabled(prayer, dayId, !isEnabled)
+                                                },
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            Text(
+                                                text = label, 
+                                                color = if (isEnabled) activeColor else Color.White.copy(alpha = 0.3f),
+                                                style = MaterialTheme.typography.labelSmall,
+                                                fontWeight = FontWeight.Bold
+                                            )
+                                        }
+                                    }
+                                }
+                                Spacer(modifier = Modifier.height(12.dp))
+                                Box(modifier = Modifier.fillMaxWidth().height(1.dp).background(Color.White.copy(alpha = 0.05f)))
                             }
                         }
                     }

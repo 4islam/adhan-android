@@ -117,23 +117,29 @@ class PrayerScheduler @Inject constructor(
             // Check if notification is enabled for this prayer (handles combined names too if we map them or strict check)
             // Current simplified check:
             // "Fajr", "Dhuhr", "Asr", "Maghrib", "Isha" are keys.
-            // Combined names "Dhuhr/Asr", "Maghrib/Isha" should check base prayers? 
-            // Implementation Plan Assumption: User toggles per base prayer.
-            // Strict check:
+            // Check based on the DATE of the alarm (could be today or tomorrow)
+            val cal = Calendar.getInstance().apply { time = date }
+            val dayOfWeek = cal.get(Calendar.DAY_OF_WEEK)
             
-            val isEnabled = when {
-                 name.contains("Fajr") -> prefsRepository.isAdhanEnabled("Fajr")
-                 name.contains("Dhuhr") || name.contains("Jummah") -> prefsRepository.isAdhanEnabled("Dhuhr")
-                 name.contains("Asr") -> prefsRepository.isAdhanEnabled("Asr")
-                 name.contains("Maghrib") -> prefsRepository.isAdhanEnabled("Maghrib")
-                 name.contains("Isha") -> prefsRepository.isAdhanEnabled("Isha")
-                 else -> true
+            val baseName = when {
+                 name.contains("Fajr") -> "Fajr"
+                 name.contains("Dhuhr") || name.contains("Jummah") -> "Dhuhr"
+                 name.contains("Asr") -> "Asr"
+                 name.contains("Maghrib") -> "Maghrib"
+                 name.contains("Isha") -> "Isha"
+                 else -> null
+            }
+
+            val isEnabled = if (baseName != null) {
+                prefsRepository.isAdhanEnabled(baseName, dayOfWeek)
+            } else {
+                true // Unknown prayers enabled by default or logic?
             }
 
             if (isEnabled) {
                 alarms.add(name to getTimestamp(date, info.time))
             } else {
-                logRepository.log("Scheduler: Skipping $name (Disabled by user)")
+                logRepository.log("Scheduler: Skipping $name (Disabled for day $dayOfWeek)")
             }
         }
         

@@ -65,7 +65,7 @@ class PrayerScheduler @Inject constructor(
         }
     }
 
-    private fun calculateAlarmsForDay(
+    private suspend fun calculateAlarmsForDay(
         date: Date, 
         lat: Double, 
         lng: Double, 
@@ -73,6 +73,20 @@ class PrayerScheduler @Inject constructor(
     ): List<Pair<String, Long>> {
         val alarms = mutableListOf<Pair<String, Long>>()
         val combinedTimes = calculator.getCombinedPrayerTimes(date, lat, lng).toMutableList()
+
+        // Dhuhr Offset: Add 10 minutes
+        val dIndex = combinedTimes.indexOfFirst { it.name == "Dhuhr" }
+        if (dIndex != -1) {
+             try {
+                val dhuhr = combinedTimes[dIndex]
+                val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
+                val dDate = sdf.parse(dhuhr.time)
+                if (dDate != null) {
+                    val newTime = dDate.time + (10 * 60 * 1000)
+                    combinedTimes[dIndex] = dhuhr.copy(time = sdf.format(Date(newTime)))
+                }
+            } catch (e: Exception) { /* ignore */ }
+        }
 
         // Apply Combining Logic
         applyShortNightCombining(combinedTimes, date, lat, lng, calculator)
@@ -96,11 +110,31 @@ class PrayerScheduler @Inject constructor(
             if (info.name == "Sunrise" || info.name == "Sunset" || info.name == "Solar Noon") return@forEach
             
             var name = info.name
-             if ((name == "Dhuhr" || name == "Dhuhr/Asr") && isFriday) {
+            if ((name == "Dhuhr" || name == "Dhuhr/Asr") && isFriday) {
                 name = "Jummah (or Dhuhr)"
             }
 
-            alarms.add(name to getTimestamp(date, info.time))
+            // Check if notification is enabled for this prayer (handles combined names too if we map them or strict check)
+            // Current simplified check:
+            // "Fajr", "Dhuhr", "Asr", "Maghrib", "Isha" are keys.
+            // Combined names "Dhuhr/Asr", "Maghrib/Isha" should check base prayers? 
+            // Implementation Plan Assumption: User toggles per base prayer.
+            // Strict check:
+            
+            val isEnabled = when {
+                 name.contains("Fajr") -> prefsRepository.isAdhanEnabled("Fajr")
+                 name.contains("Dhuhr") || name.contains("Jummah") -> prefsRepository.isAdhanEnabled("Dhuhr")
+                 name.contains("Asr") -> prefsRepository.isAdhanEnabled("Asr")
+                 name.contains("Maghrib") -> prefsRepository.isAdhanEnabled("Maghrib")
+                 name.contains("Isha") -> prefsRepository.isAdhanEnabled("Isha")
+                 else -> true
+            }
+
+            if (isEnabled) {
+                alarms.add(name to getTimestamp(date, info.time))
+            } else {
+                logRepository.log("Scheduler: Skipping $name (Disabled by user)")
+            }
         }
         
         return alarms

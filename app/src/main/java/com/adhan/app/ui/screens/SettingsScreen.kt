@@ -23,6 +23,8 @@ import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import com.adhan.app.domain.models.PrayerTimesCalculator
 import com.adhan.app.ui.PrayerTimesViewModel
+import androidx.compose.ui.draw.scale
+import androidx.compose.foundation.layout.width
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -323,18 +325,31 @@ fun SettingsScreen(
                                             maxLines = 1
                                         )
                                     }
-                                    Button(
-                                        onClick = {
-                                            selectedPrayerForAudio = prayer
-                                            launcher.launch("audio/*")
-                                        },
-                                        colors = ButtonDefaults.buttonColors(
-                                            containerColor = Color.White.copy(alpha = 0.2f)
-                                        ),
-                                        shape = RoundedCornerShape(8.dp),
-                                        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp)
-                                    ) {
-                                        Text("Pick", color = Color.White, style = MaterialTheme.typography.labelMedium)
+                                    
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        Switch(
+                                            checked = uiState.adhanNotificationEnabled[prayer] ?: true,
+                                            onCheckedChange = { viewModel.setAdhanNotificationEnabled(prayer, it) },
+                                            colors = SwitchDefaults.colors(
+                                                checkedThumbColor = Color.White,
+                                                checkedTrackColor = Color.Cyan.copy(alpha = 0.5f)
+                                            ),
+                                            modifier = Modifier.scale(0.8f)
+                                        )
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                        Button(
+                                            onClick = {
+                                                selectedPrayerForAudio = prayer
+                                                launcher.launch("audio/*")
+                                            },
+                                            colors = ButtonDefaults.buttonColors(
+                                                containerColor = Color.White.copy(alpha = 0.2f)
+                                            ),
+                                            shape = RoundedCornerShape(8.dp),
+                                            contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp)
+                                        ) {
+                                            Text("Pick", color = Color.White, style = MaterialTheme.typography.labelMedium)
+                                        }
                                     }
                                 }
                             }

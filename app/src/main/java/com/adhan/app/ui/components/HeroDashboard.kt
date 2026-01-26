@@ -27,6 +27,7 @@ import kotlinx.coroutines.delay
 fun HeroDashboard(
     nextPrayerName: String,
     nextPrayerTime: String,
+    nextPrayerCountdown: String = "",
     nextPrayerDateLabel: String,
     hijriDate: String,
     gregorianDate: String,
@@ -162,13 +163,21 @@ fun HeroDashboard(
                     fontSize = 28.sp
                 )
                 Text(
-                    text = nextPrayerTime,
+                    text = if (nextPrayerCountdown.isNotEmpty()) nextPrayerCountdown else nextPrayerTime,
                     style = MaterialTheme.typography.displayMedium,
                     color = Color.White,
                     fontWeight = FontWeight.Bold,
                     fontSize = 52.sp,
                     letterSpacing = 2.sp
                 )
+                if (nextPrayerCountdown.isNotEmpty()) {
+                    Text(
+                        text = "at $nextPrayerTime",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = Color.White.copy(alpha = 0.7f),
+                        fontSize = 20.sp
+                    )
+                }
             }
         }
     }

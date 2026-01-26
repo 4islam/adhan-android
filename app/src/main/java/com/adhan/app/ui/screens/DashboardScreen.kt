@@ -28,7 +28,7 @@ fun DashboardScreen(viewModel: PrayerTimesViewModel) {
     val listState = rememberLazyListState()
 
     Box(modifier = Modifier.fillMaxSize()) {
-        if (!uiState.isLocationSet) {
+        if (uiState.isLoading) {
             Column(
                 modifier = Modifier.align(Alignment.Center),
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -36,7 +36,7 @@ fun DashboardScreen(viewModel: PrayerTimesViewModel) {
                 CircularProgressIndicator(color = Color.White)
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    text = "Detecting Location...",
+                    text = uiState.loadingMessage,
                     style = MaterialTheme.typography.titleMedium,
                     color = Color.White
                 )
@@ -56,6 +56,7 @@ fun DashboardScreen(viewModel: PrayerTimesViewModel) {
                     HeroDashboard(
                         nextPrayerName = uiState.nextPrayerName,
                         nextPrayerTime = uiState.nextPrayerTime,
+                        nextPrayerCountdown = uiState.nextPrayerCountdown,
                         nextPrayerDateLabel = uiState.nextPrayerDateLabel,
                         hijriDate = uiState.hijriDate,
                         gregorianDate = uiState.gregorianDate,

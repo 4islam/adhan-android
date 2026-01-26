@@ -47,6 +47,7 @@ data class PrayerTimesState(
     val combiningThreshold: Int = 70, // minutes
     val use12HourFormat: Boolean = true,
     val adhanSounds: Map<String, String> = emptyMap(), // Maps prayer name to URI string
+    val adhanNotificationEnabled: Map<String, Boolean> = emptyMap(),
     val rawPrayerTimes: List<PrayerTimesCalculator.CombinedPrayerInfo> = emptyList(), // 24h for logic
     val isLocationSet: Boolean = true,
     val nextPrayerDateLabel: String = "",
@@ -57,7 +58,10 @@ data class PrayerTimesState(
     val shortNightThresholdHours: Int = 9, // Hours
     val isShortAsrCombiningEnabled: Boolean = true,
     val shortAsrThresholdMinutes: Int = 90,
-    val adhanVolume: Int = 80 // Volume percentage 0-100
+    val adhanVolume: Int = 80, // Volume percentage 0-100
+    val isLoading: Boolean = true,
+    val loadingMessage: String = "Initializing...",
+    val nextPrayerCountdown: String = ""
 )
 
 @HiltViewModel
@@ -101,15 +105,18 @@ class PrayerTimesViewModel @Inject constructor(
 
     private fun observeLocation() {
         viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(loadingMessage = "Detecting Location...")
             repository.location.collect { data ->
                 _uiState.value = _uiState.value.copy(
                     latitude = data.lat,
                     longitude = data.lng,
                     locationName = data.name,
                     isOverrideActive = data.isOverrideActive,
-                    isLocationSet = data.isSet
+                    isLocationSet = data.isSet,
+                    isLoading = !data.isSet,
+                    loadingMessage = if (data.isSet) "" else "Waiting for location..."
                 )
-                updateTimes()
+                if (data.isSet) updateTimes()
             }
         }
     }
@@ -131,9 +138,11 @@ class PrayerTimesViewModel @Inject constructor(
         val use12HourFormat = prefs.getBoolean("use_12_hour", true)
 
         val loadedSounds = mutableMapOf<String, String>()
+        val loadedNotifications = mutableMapOf<String, Boolean>()
         listOf("Fajr", "Dhuhr", "Asr", "Maghrib", "Isha").forEach { prayer ->
             val uri = prefs.getString("adhan_sound_$prayer", null)
             if (uri != null) loadedSounds[prayer] = uri
+            loadedNotifications[prayer] = userPrefs.isAdhanEnabled(prayer)
         }
         
         val fadeConfigs = userPrefs.getFadeConfigs()
@@ -158,6 +167,7 @@ class PrayerTimesViewModel @Inject constructor(
             combiningThreshold = combiningThreshold,
             use12HourFormat = use12HourFormat,
             adhanSounds = loadedSounds,
+            adhanNotificationEnabled = loadedNotifications,
             selectedAudioRoute = prefs.getString("selected_audio_route", "Default") ?: "Default",
             fadeConfigs = fadeConfigs,
             isShortNightCombiningEnabled = shortNightEnabled,
@@ -285,6 +295,14 @@ class PrayerTimesViewModel @Inject constructor(
             prefs.edit().putString("adhan_sound_$prayerName", uri).apply()
         }
         _uiState.value = _uiState.value.copy(adhanSounds = currentSounds)
+    }
+
+    fun setAdhanNotificationEnabled(prayer: String, enabled: Boolean) {
+        val currentMap = _uiState.value.adhanNotificationEnabled.toMutableMap()
+        currentMap[prayer] = enabled
+        userPrefs.setAdhanEnabled(prayer, enabled)
+        _uiState.value = _uiState.value.copy(adhanNotificationEnabled = currentMap)
+        updateTimes() // Re-schedule alarms
     }
 
 
@@ -463,6 +481,20 @@ class PrayerTimesViewModel @Inject constructor(
             val lng = state.longitude
             
             val allTimesMap = calculator.getCombinedPrayerTimes(date, lat, lng).toMutableList()
+            
+            // Dhuhr Offset: Add 10 minutes to Solar Noon/Dhuhr start
+            val dIndex = allTimesMap.indexOfFirst { it.name == "Dhuhr" }
+            if (dIndex != -1) {
+                try {
+                    val dhuhr = allTimesMap[dIndex]
+                    val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
+                    val dDate = sdf.parse(dhuhr.time)
+                    if (dDate != null) {
+                        val newTime = dDate.time + (10 * 60 * 1000)
+                        allTimesMap[dIndex] = dhuhr.copy(time = sdf.format(Date(newTime)))
+                    }
+                } catch (e: Exception) { /* ignore */ }
+            }
             
             // Short Night Combining Logic
             if (state.isShortNightCombiningEnabled) {
@@ -674,10 +706,30 @@ class PrayerTimesViewModel @Inject constructor(
                 
                 // Compare before updating to avoid unnecessary recompositions
                 val currentState = _uiState.value
-                if (currentState.nextPrayerName != info.name || currentState.activePrayerName != activeName) {
+                
+                // Calculate Countdown
+                val nowMs = nowDate.time
+                val nextMs = try {
+                    val dateNext = timeFormat.parse(info.time)
+                    if (dateNext != null) dateNext.time else nowMs
+                } catch (e: Exception) { nowMs }
+                
+                var diffMs = nextMs - nowMs
+                if (diffMs < 0) diffMs += 24 * 60 * 60 * 1000 // Wrap next day if needed (mostly handled by sorting but safe guard)
+                
+                val hours = diffMs / (1000 * 60 * 60)
+                val minutes = (diffMs / (1000 * 60)) % 60
+                
+                val countdownString = if (hours > 0) "${hours}h ${minutes}m" else "${minutes}m"
+
+                if (currentState.nextPrayerName != info.name || 
+                    currentState.activePrayerName != activeName || 
+                    currentState.nextPrayerCountdown != countdownString) {
+                    
                     _uiState.value = currentState.copy(
                         nextPrayerName = info.name,
-                        nextPrayerTime = formatDisplayTime(info.time),
+                        nextPrayerTime = formatDisplayTime(info.time), // Keep original for reference if needed
+                        nextPrayerCountdown = countdownString,
                         activePrayerName = activeName,
                         nextPrayerDateLabel = ""
                     )
@@ -690,10 +742,25 @@ class PrayerTimesViewModel @Inject constructor(
         if (!nextFound) {
             val currentState = _uiState.value
             val ishaName = prayerList.last().name
-            if (currentState.activePrayerName != ishaName) {
+            
+            // Logic for "Coming up: Fajr Tomorrow"
+            val firstPrayer = prayerList[0]
+            val nowMs = nowDate.time
+            val nextMs = try {
+                val dateNext = timeFormat.parse(firstPrayer.time)
+                if (dateNext != null) dateNext.time + (24 * 60 * 60 * 1000) else nowMs
+            } catch (e: Exception) { nowMs }
+            
+            val diffMs = nextMs - nowMs
+             val hours = diffMs / (1000 * 60 * 60)
+            val minutes = (diffMs / (1000 * 60)) % 60
+            val countdownString = "${hours}h ${minutes}m"
+
+            if (currentState.activePrayerName != ishaName || currentState.nextPrayerCountdown != countdownString) {
                 _uiState.value = currentState.copy(
-                    nextPrayerName = prayerList[0].name,
-                    nextPrayerTime = formatDisplayTime(prayerList[0].time),
+                    nextPrayerName = firstPrayer.name,
+                    nextPrayerTime = formatDisplayTime(firstPrayer.time),
+                    nextPrayerCountdown = countdownString,
                     activePrayerName = ishaName,
                     nextPrayerDateLabel = "(Tomorrow)"
                 )

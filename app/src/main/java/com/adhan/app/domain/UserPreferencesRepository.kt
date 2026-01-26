@@ -55,4 +55,10 @@ class UserPreferencesRepository @Inject constructor(
         }
         return fadeConfigs
     }
+    
+    fun isAdhanEnabled(prayer: String): Boolean = prefs.getBoolean("adhan_enabled_$prayer", true)
+    
+    fun setAdhanEnabled(prayer: String, enabled: Boolean) {
+        prefs.edit().putBoolean("adhan_enabled_$prayer", enabled).apply()
+    }
 }

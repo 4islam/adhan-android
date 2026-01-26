@@ -101,6 +101,25 @@ class MediaRouterHelper @Inject constructor(
         }
     }
 
+    fun selectRouteByName(routeName: String) {
+         android.os.Handler(android.os.Looper.getMainLooper()).post {
+            try {
+                // If router is null, try init
+                if (mediaRouter == null) init()
+                
+                val route = mediaRouter?.routes?.find { it.name == routeName }
+                if (route != null) {
+                    log("MediaRouter: Selecting route by name: $routeName")
+                    route.select()
+                } else {
+                    log("MediaRouter: Route with name '$routeName' not found.")
+                }
+            } catch (e: Exception) {
+                 log("MediaRouter selectRouteByName error: ${e.message}")
+            }
+        }
+    }
+
     private fun updateRoutes(router: MediaRouter) {
         val routes = router.routes.filter { !it.isDefault && !it.isBluetooth }.map { 
              RouteInfo(it.id, it.name, it.description ?: "")

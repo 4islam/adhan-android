@@ -413,6 +413,20 @@ class PrayerTimesViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(adhanNotificationDays = currentDays)
         updateTimes()
     }
+    
+    fun setDayAudioRoute(prayer: String, dayOfWeek: Int, route: String) {
+        val finalRoute = if (route == "Global Default") null else route
+        userPrefs.setAudioRoute(prayer, dayOfWeek, finalRoute)
+        
+        // Update local state if we were tracking it in the map (optional for UI reactivity if needed, 
+        // but since it's a dialog fetch, maybe less critical? 
+        // Better to have it in uiState if we want to show icons etc on the bubble).
+        // For now, minimal implementation: just save.
+    }
+    
+    fun getDayAudioRoute(prayer: String, dayOfWeek: Int): String? {
+        return userPrefs.getAudioRoute(prayer, dayOfWeek)
+    }
 
     private fun startClock() {
         viewModelScope.launch {

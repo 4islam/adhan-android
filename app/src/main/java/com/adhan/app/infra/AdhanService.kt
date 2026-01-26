@@ -33,6 +33,9 @@ class AdhanService : Service() {
     @Inject
     lateinit var playbackStateRepository: com.adhan.app.domain.PlaybackStateRepository
 
+    @Inject
+    lateinit var mediaRouterHelper: com.adhan.app.infra.MediaRouterHelper
+
     private var player: ExoPlayer? = null
     private var mediaSession: androidx.media3.session.MediaSession? = null
     private val NOTIFICATION_ID = 1001
@@ -134,8 +137,6 @@ class AdhanService : Service() {
         }
     }
 
-
-
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val prayerName = intent?.getStringExtra("prayer_name") ?: "Prayer"
         
@@ -151,6 +152,10 @@ class AdhanService : Service() {
         android.util.Log.d("AdhanService", "onStartCommand: $prayerName")
         serviceScope.launch { logRepository.log("AdhanService started for: $prayerName") }
         
+        // Start MediaRouter Scanning immediately
+        mediaRouterHelper.init()
+        mediaRouterHelper.startScanning()
+
         logSystemState("Start: $prayerName")
 
         val prefs = getSharedPreferences("adhan_prefs", Context.MODE_PRIVATE)
@@ -170,7 +175,6 @@ class AdhanService : Service() {
                 }
                 
                 if (vibrator.hasVibrator()) {
-                     // Gentle pulsing pattern for Tahajjud
                      val timings = longArrayOf(0, 500, 500, 500, 500)
                      val amplitudes = intArrayOf(0, 50, 0, 100, 0)
                      
@@ -184,26 +188,21 @@ class AdhanService : Service() {
             }
 
             if (!isAudioEnabled) {
-                // Return early, silent notification only (unless vibration happened, but we stop service regardless of active vibration?)
-                // Vibration is fire-and-forget usually if non-repeating.
                 android.util.Log.d("AdhanService", "Tahajjud audio disabled.")
                 serviceScope.launch { logRepository.log("Tahajjud audio disabled.") }
                 startForeground(NOTIFICATION_ID, createNotification(prayerName))
                 stopSelf() 
                 return START_NOT_STICKY
             }
-            // If enabled, proceed to playback logic below
         }
 
         // Volume Override Logic
         try {
-            val prefs = getSharedPreferences("adhan_prefs", Context.MODE_PRIVATE)
             val adhanVolumePercent = prefs.getInt("adhan_volume", 80)
             val audioManager = getSystemService(Context.AUDIO_SERVICE) as android.media.AudioManager
             val maxVol = audioManager.getStreamMaxVolume(android.media.AudioManager.STREAM_MUSIC)
             val currentVol = audioManager.getStreamVolume(android.media.AudioManager.STREAM_MUSIC)
             
-            // Only store initial volume if not already stored (avoid overwriting if service restarts or multiple calls)
             if (initialVolume == null) {
                 initialVolume = currentVol
             }
@@ -220,99 +219,105 @@ class AdhanService : Service() {
         // Ensure notification is posted immediately
         startForeground(NOTIFICATION_ID, createNotification(prayerName))
         
-        // Determine URI and Fade settings based on prayer
-        try {
-            val prefs = getSharedPreferences("adhan_prefs", Context.MODE_PRIVATE)
-        var customUri: String? = null
-        
-        if (prayerName.equals("Tahajjud", ignoreCase = true)) {
-            customUri = prefs.getString("tahajjud_sound_uri", null)
-            // If custom is null, we will fall back to Fajr logic below or handle explicitly
-        } else {
-            customUri = prefs.getString("adhan_sound_$prayerName", null)
+        serviceScope.launch {
+            // Delay slightly to allow MediaRouter to discover devices if needed
+            // This is a tradeoff: delayed playback vs correct routing. 
+            // 2 seconds should be enough for cached routes or quick discovery
+             if (prefs.getString("selected_audio_route", "Default")?.startsWith("Network:") == true) {
+                 kotlinx.coroutines.delay(1500) 
+             }
+             
+             withContext(kotlinx.coroutines.Dispatchers.Main) {
+                playAdhan(prayerName, prefs)
+             }
         }
         
-        // Determine fade defaults based on prayer name
-        val isFajrOrTahajjud = prayerName.contains("Fajr", ignoreCase = true) || prayerName.equals("Tahajjud", ignoreCase = true)
-        val defaultDur = if (isFajrOrTahajjud) 5 else 0
-        val defaultVol = if (isFajrOrTahajjud) 0f else 1.0f
-        
-        val fadeDurationSeconds = prefs.getInt("fade_duration_$prayerName", defaultDur)
-        val fadeStartVolume = prefs.getFloat("fade_vol_$prayerName", defaultVol)
+        return START_NOT_STICKY
+    }
+
+    private suspend fun playAdhan(prayerName: String, prefs: android.content.SharedPreferences) {
+        try {
+            var customUri: String? = null
+            
+            if (prayerName.equals("Tahajjud", ignoreCase = true)) {
+                customUri = prefs.getString("tahajjud_sound_uri", null)
+            } else {
+                customUri = prefs.getString("adhan_sound_$prayerName", null)
+            }
+            
+            val isFajrOrTahajjud = prayerName.contains("Fajr", ignoreCase = true) || prayerName.equals("Tahajjud", ignoreCase = true)
+            val defaultDur = if (isFajrOrTahajjud) 5 else 0
+            val defaultVol = if (isFajrOrTahajjud) 0f else 1.0f
+            
+            val fadeDurationSeconds = prefs.getInt("fade_duration_$prayerName", defaultDur)
+            val fadeStartVolume = prefs.getFloat("fade_vol_$prayerName", defaultVol)
             
             val mediaItem: MediaItem? = if (customUri != null) {
-                android.util.Log.d("AdhanService", "Using custom URI: $customUri")
                 MediaItem.fromUri(android.net.Uri.parse(customUri))
             } else {
-                // Default Resources
                 if (prayerName.equals("Tahajjud", ignoreCase = true)) {
-                     // Force System Notification Sound for Tahajjud defaults
                      val defaultUri = android.media.RingtoneManager.getDefaultUri(android.media.RingtoneManager.TYPE_NOTIFICATION)
-                     // If defaultUri is null (some devices?), fallback to alarm
                      val finalUri = defaultUri ?: android.media.RingtoneManager.getDefaultUri(android.media.RingtoneManager.TYPE_ALARM)
-                     android.util.Log.d("AdhanService", "Using System Notification for Tahajjud: $finalUri")
                      MediaItem.fromUri(finalUri)
                 } else {
                     val resourceName = if (prayerName.contains("Fajr", ignoreCase = true)) "adhan_fajr" else "adhan_regular"
                     val rawResourceId = resources.getIdentifier(resourceName, "raw", packageName)
                     if (rawResourceId != 0) {
-                        android.util.Log.d("AdhanService", "Using built-in: $resourceName")
                         MediaItem.fromUri("android.resource://$packageName/$rawResourceId")
                     } else {
-                        android.util.Log.e("AdhanService", "Resource $resourceName not found!")
                         null
                     }
                 }
             }
 
             // Apply Custom Audio Routing
-            val selectedRoute = prefs.getString("selected_audio_route", "Default")
-            if (selectedRoute != null && selectedRoute != "Default" && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-                 // Use AudioRouter, ensure we run on Main for Player access
-                 serviceScope.launch {
-                     withContext(kotlinx.coroutines.Dispatchers.Main) {
-                         audioRouter.routeAudioWithLogging(player!!, selectedRoute)
-                     }
+            // Apply Custom Audio Routing
+            // 1. Check for Prayer+Day Helper
+            val calendar = java.util.Calendar.getInstance()
+            calendar.time = java.util.Date()
+            val dayOfWeek = calendar.get(java.util.Calendar.DAY_OF_WEEK)
+            
+            val specificRouteKey = "audio_route_${prayerName}_$dayOfWeek"
+            val specificRoute = prefs.getString(specificRouteKey, null)
+            
+            val selectedRoute = specificRoute ?: prefs.getString("selected_audio_route", "Default")
+            
+            if (selectedRoute != null && selectedRoute != "Default") {
+                 android.util.Log.d("AdhanService", "Routing Decision: Specific=$specificRoute, Global=${prefs.getString("selected_audio_route", "Default")}, Final=$selectedRoute")
+                 
+                 if (selectedRoute.startsWith("Network: ")) {
+                     val routeName = selectedRoute.removePrefix("Network: ")
+                     android.util.Log.d("AdhanService", "Attempting to select Network Route: $routeName")
+                     mediaRouterHelper.selectRouteByName(routeName)
+                     // Give it a moment to connect?
+                     kotlinx.coroutines.delay(1000) 
+                 } else if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                     audioRouter.routeAudioWithLogging(player!!, selectedRoute)
                  }
             }
-
 
             if (mediaItem != null) {
                 player?.let {
                     if (it.playbackState == Player.STATE_IDLE || it.playbackState == Player.STATE_ENDED) {
                         it.setMediaItem(mediaItem)
                         it.prepare()
-                        it.volume = fadeStartVolume // Start at config volume
+                        it.volume = fadeStartVolume 
                         it.play()
-                        android.util.Log.d("AdhanService", "Player started, fading in...")
                         
-                        serviceScope.launch {
-                            withContext(kotlinx.coroutines.Dispatchers.Main) {
-                                audioFader.startFadeIn(it, fadeDurationSeconds * 1000L, fadeStartVolume)
-                            }
-                        }
-                        
-                        android.util.Log.d("AdhanService", "Player started")
+                        // We are already on Main via withContext(Dispatchers.Main) in caller
+                        audioFader.startFadeIn(it, fadeDurationSeconds * 1000L, fadeStartVolume)
                     }
                 }
             }
         } catch (e: Exception) {
-            android.util.Log.e("AdhanService", "Error in onStartCommand", e)
+            android.util.Log.e("AdhanService", "Error in playAdhan", e)
         }
-
-        return START_NOT_STICKY
     }
 
     private fun createNotification(prayerName: String): Notification {
-        // PendingIntents for actions would require a Receiver, but MediaSession handles media buttons automatically
-        // provided we use MediaStyle and connect the session.
-        
         val mediaStyle = androidx.media.app.NotificationCompat.MediaStyle()
-            .setMediaSession(mediaSession?.sessionCompatToken) // Support lock screen controls?
-            .setShowActionsInCompactView(0) // Show Play/Pause
-
-        // Create a 'Stop' action intent if needed, but Media3 handles standard transport controls via Session
-        // For simplicity, we just use the MediaStyle decoration for now.
+            .setMediaSession(mediaSession?.sessionCompatToken) 
+            .setShowActionsInCompactView(0) 
 
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle("Adhan: $prayerName")
@@ -328,6 +333,9 @@ class AdhanService : Service() {
     override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onDestroy() {
+        // Stop scanning when service dies (if still scanning)
+        mediaRouterHelper.stopScanning()
+        
         mediaSession?.release()
         mediaSession = null
         player?.release()

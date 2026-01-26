@@ -4,6 +4,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -29,7 +30,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.size
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, androidx.compose.foundation.ExperimentalFoundationApi::class)
 @Composable
 fun SettingsScreen(
     viewModel: PrayerTimesViewModel,
@@ -358,6 +359,96 @@ fun SettingsScreen(
                                 
                                 // Day Selector Row
                                 val daysMap = uiState.adhanNotificationDays[prayer] ?: emptyMap()
+                                
+                                var showDayConfigDialog by remember { mutableStateOf(false) }
+                                var selectedConfigDay by remember { mutableStateOf<Int?>(null) }
+                                
+                                if (showDayConfigDialog && selectedConfigDay != null) {
+                                    val dayId = selectedConfigDay!!
+                                    val dayName = when(dayId) {
+                                        java.util.Calendar.SUNDAY -> "Sunday"
+                                        java.util.Calendar.MONDAY -> "Monday"
+                                        java.util.Calendar.TUESDAY -> "Tuesday"
+                                        java.util.Calendar.WEDNESDAY -> "Wednesday"
+                                        java.util.Calendar.THURSDAY -> "Thursday"
+                                        java.util.Calendar.FRIDAY -> "Friday"
+                                        java.util.Calendar.SATURDAY -> "Saturday"
+                                        else -> "Unknown Day"
+                                    }
+                                    
+                                    // Fetch current route for this specific day
+                                    // Depending on how reactive we want this, we might need a launched effect or just fetch once
+                                    var currentRoute by remember { mutableStateOf(viewModel.getDayAudioRoute(prayer, dayId) ?: "Global Default") }
+                                    var dialogExpanded by remember { mutableStateOf(false) }
+
+                                    AlertDialog(
+                                        onDismissRequest = { showDayConfigDialog = false },
+                                        title = { Text("$prayer on $dayName") },
+                                        text = {
+                                            Column {
+                                                Text("Configure specific settings for this day.", style = MaterialTheme.typography.bodyMedium)
+                                                Spacer(modifier = Modifier.height(16.dp))
+                                                
+                                                // Audio Route Selector
+                                                Text("Audio Output", style = MaterialTheme.typography.labelMedium)
+                                                Box(modifier = Modifier.fillMaxWidth().padding(top = 8.dp)) {
+                                                     ExposedDropdownMenuBox(
+                                                        expanded = dialogExpanded,
+                                                        onExpandedChange = { dialogExpanded = !dialogExpanded }
+                                                    ) {
+                                                        OutlinedTextField(
+                                                            value = currentRoute,
+                                                            onValueChange = {},
+                                                            readOnly = true,
+                                                            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = dialogExpanded) },
+                                                            colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(
+                                                                focusedTextColor = Color.White,
+                                                                unfocusedTextColor = Color.White
+                                                            ),
+                                                            modifier = Modifier.menuAnchor().fillMaxWidth()
+                                                        )
+
+                                                        ExposedDropdownMenu(
+                                                            expanded = dialogExpanded,
+                                                            onDismissRequest = { dialogExpanded = false }
+                                                        ) {
+                                                            DropdownMenuItem(
+                                                                text = { Text("Global Default") },
+                                                                onClick = {
+                                                                    currentRoute = "Global Default"
+                                                                    dialogExpanded = false
+                                                                }
+                                                            )
+                                                            uiState.audioOutputDevices.forEach { device ->
+                                                                DropdownMenuItem(
+                                                                    text = { Text(device) },
+                                                                    onClick = {
+                                                                        currentRoute = device
+                                                                        dialogExpanded = false
+                                                                    }
+                                                                )
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        confirmButton = {
+                                            TextButton(onClick = {
+                                                viewModel.setDayAudioRoute(prayer, dayId, currentRoute)
+                                                showDayConfigDialog = false
+                                            }) {
+                                                Text("Save")
+                                            }
+                                        },
+                                        dismissButton = {
+                                            TextButton(onClick = { showDayConfigDialog = false }) {
+                                                Text("Cancel")
+                                            }
+                                        }
+                                    )
+                                }
+
                                 Row(
                                     modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 4.dp),
                                     horizontalArrangement = Arrangement.SpaceBetween
@@ -377,14 +468,25 @@ fun SettingsScreen(
                                         val isFriday = dayId == java.util.Calendar.FRIDAY
                                         val activeColor = if (isFriday) Color(0xFF00E5FF) else Color.White
                                         
+import androidx.compose.foundation.combinedClickable
+
+// ... inside the file ...
+
+                                        // Need ExperimentalFoundationApi for combinedClickable 
                                         Box(
                                             modifier = Modifier
                                                 .size(32.dp)
                                                 .clip(CircleShape)
                                                 .background(if (isEnabled) activeColor.copy(alpha = 0.2f) else Color.White.copy(alpha = 0.05f))
-                                                .clickable { 
-                                                    viewModel.setAdhanDayEnabled(prayer, dayId, !isEnabled)
-                                                },
+                                                .combinedClickable(
+                                                    onClick = { 
+                                                        viewModel.setAdhanDayEnabled(prayer, dayId, !isEnabled)
+                                                    },
+                                                    onLongClick = {
+                                                        selectedConfigDay = dayId
+                                                        showDayConfigDialog = true
+                                                    }
+                                                ),
                                             contentAlignment = Alignment.Center
                                         ) {
                                             Text(

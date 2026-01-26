@@ -81,4 +81,16 @@ class UserPreferencesRepository @Inject constructor(
     fun setAdhanDayEnabled(prayer: String, dayOfWeek: Int, enabled: Boolean) {
         prefs.edit().putBoolean("adhan_enabled_${prayer}_$dayOfWeek", enabled).apply()
     }
+    
+    fun getAudioRoute(prayer: String, dayOfWeek: Int): String? {
+        return prefs.getString("audio_route_${prayer}_$dayOfWeek", null)
+    }
+    
+    fun setAudioRoute(prayer: String, dayOfWeek: Int, route: String?) {
+        if (route == null) {
+            prefs.edit().remove("audio_route_${prayer}_$dayOfWeek").apply()
+        } else {
+            prefs.edit().putString("audio_route_${prayer}_$dayOfWeek", route).apply()
+        }
+    }
 }

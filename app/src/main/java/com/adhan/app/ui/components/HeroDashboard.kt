@@ -100,40 +100,13 @@ fun HeroDashboard(
         Spacer(modifier = Modifier.height(24.dp))
 
         // Date Navigation Row
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            androidx.compose.material3.IconButton(onClick = onPrevDate) {
-                Icon(
-                    imageVector = Icons.Default.ChevronLeft,
-                    contentDescription = "Previous Day",
-                    tint = Color.White.copy(alpha = 0.7f),
-                    modifier = Modifier.size(32.dp)
-                )
-            }
-            
-            Text(
-                text = gregorianDate,
-                style = MaterialTheme.typography.headlineSmall,
-                color = if(isToday) Color.White else Color(0xFFFFB74D), // Highlight if not Today
-                fontWeight = FontWeight.Medium,
-                fontSize = 26.sp,
-                modifier = Modifier
-                    .padding(horizontal = 8.dp)
-                    .clickable(onClick = onDateClick)
-            )
-
-            androidx.compose.material3.IconButton(onClick = onNextDate) {
-                Icon(
-                    imageVector = Icons.Default.ChevronRight,
-                    contentDescription = "Next Day",
-                    tint = Color.White.copy(alpha = 0.7f),
-                    modifier = Modifier.size(32.dp)
-                )
-            }
-        }
+        DateNavigationRow(
+            gregorianDate = gregorianDate,
+            isToday = isToday,
+            onPrevDate = onPrevDate,
+            onNextDate = onNextDate,
+            onDateClick = onDateClick
+        )
 
         if (!isToday) {
              Text(

@@ -26,10 +26,15 @@ fun MainNavigation(
         }
         composable(NavScreen.Skylight.route) {
             SkylightVisualizer(
-                currentTime = uiState.currentTime,
+                selectedDate = uiState.selectedDate,
+                gregorianDate = uiState.gregorianDate,
                 lat = uiState.latitude,
                 lng = uiState.longitude,
-                onBack = { navController.popBackStack() }
+                onBack = { navController.popBackStack() },
+                onPrevDate = { viewModel.incrementDate(-1) },
+                onNextDate = { viewModel.incrementDate(1) },
+                onDateSelected = { viewModel.setSelectedDate(it) },
+                onJumpToToday = { viewModel.jumpToToday() }
             )
         }
         composable(NavScreen.Map.route) {

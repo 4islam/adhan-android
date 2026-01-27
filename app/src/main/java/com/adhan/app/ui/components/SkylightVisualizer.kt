@@ -11,7 +11,9 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.NightsStay
 import androidx.compose.material.icons.filled.WbSunny
 import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -25,14 +27,43 @@ import java.util.Date
 
 @Composable
 fun SkylightVisualizer(
-    currentTime: Date,
+    selectedDate: Date,
+    gregorianDate: String,
     lat: Double,
     lng: Double,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onPrevDate: () -> Unit,
+    onNextDate: () -> Unit,
+    onDateSelected: (Long) -> Unit,
+    onJumpToToday: () -> Unit
 ) {
-    val sunPos = Astrology.getSunPosition(currentTime, lat, lng)
-    val moonPos = Astrology.getMoonPosition(currentTime, lat, lng)
+    val sunPos = Astrology.getSunPosition(selectedDate, lat, lng)
+    val moonPos = Astrology.getMoonPosition(selectedDate, lat, lng)
     val scrollState = rememberScrollState()
+    
+    // Date Picker State
+    var showDatePicker by remember { mutableStateOf(false) }
+    val context = androidx.compose.ui.platform.LocalContext.current
+    
+    if (showDatePicker) {
+        val calendar = java.util.Calendar.getInstance()
+        calendar.time = selectedDate
+        
+        android.app.DatePickerDialog(
+            context,
+            { _, year, month, dayOfMonth ->
+                val newDate = java.util.Calendar.getInstance()
+                newDate.set(year, month, dayOfMonth)
+                onDateSelected(newDate.timeInMillis)
+                showDatePicker = false
+            },
+            calendar.get(java.util.Calendar.YEAR),
+            calendar.get(java.util.Calendar.MONTH),
+            calendar.get(java.util.Calendar.DAY_OF_MONTH)
+        ).show()
+        
+        LaunchedEffect(Unit) { showDatePicker = false }
+    }
 
     Column(
         modifier = Modifier
@@ -59,16 +90,46 @@ fun SkylightVisualizer(
             )
         }
         
+        Spacer(modifier = Modifier.height(16.dp))
+        
+        // Date Navigation
+        val isToday = android.text.format.DateUtils.isToday(selectedDate.time)
+        DateNavigationRow(
+            gregorianDate = gregorianDate,
+            isToday = isToday,
+            onPrevDate = onPrevDate,
+            onNextDate = onNextDate,
+            onDateClick = { showDatePicker = true },
+            modifier = Modifier.padding(horizontal = 8.dp)
+        )
+        
+        if (!isToday) {
+             Spacer(modifier = Modifier.height(16.dp))
+             Button(
+                 onClick = onJumpToToday,
+                 colors = ButtonDefaults.buttonColors(
+                     containerColor = Color.White.copy(alpha = 0.2f),
+                     contentColor = Color.White
+                 )
+             ) {
+                 Text("Return to Today")
+             }
+        }
+        
         Spacer(modifier = Modifier.height(32.dp))
 
         // Celestial Status (Center Area)
-        Box(
+        BoxWithConstraints(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f),
-            contentAlignment = Alignment.Center
+            contentAlignment = Alignment.TopStart
         ) {
-            // Background Arc
+            val width = constraints.maxWidth.toFloat()
+            val height = constraints.maxHeight.toFloat()
+            val horizonY = height * 0.7f
+            
+            // Background Arc (Static Reference)
             Canvas(modifier = Modifier.fillMaxSize()) {
                 val center = Offset(size.width / 2, size.height * 0.7f)
                 val radius = size.width * 0.45f
@@ -82,29 +143,85 @@ fun SkylightVisualizer(
                     size = Size(radius * 2, radius * 2),
                     style = Stroke(width = 2f, pathEffect = androidx.compose.ui.graphics.PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f))
                 )
+                
+                // Draw Horizon Line
+                drawLine(
+                    color = Color.White.copy(alpha = 0.2f),
+                    start = Offset(0f, horizonY),
+                    end = Offset(size.width, horizonY),
+                    strokeWidth = 2f
+                )
             }
 
-            // High Quality Icons (Vertically Stacked)
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Icon(
-                        imageVector = Icons.Default.WbSunny,
-                        contentDescription = "Sun",
-                        tint = Color(0xFFFFB74D),
-                        modifier = Modifier.size(48.dp)
-                    )
-                    Text("Sun", color = Color.White.copy(alpha = 0.6f), style = MaterialTheme.typography.labelSmall)
-                }
+            // Helper to calculate position
+            fun calculatePosition(alt: Double, az: Double): Offset {
+                // Altitude: 90 is Zenith (Top), 0 is Horizon, -90 is Nadir
+                // Map Altitude 90 -> 20% Height (Space for top bar)
+                // Map Altitude 0 -> 70% Height (Horizon)
+                // Map Altitude -90 -> Below Horizon
                 
-                Spacer(modifier = Modifier.height(16.dp))
+                // Scale factor: 50% of screen height covers 0 to 90 degrees
+                val altScale = height * 0.5f 
+                val y = horizonY - (alt.toFloat() / 90f) * altScale
+                
+                // Azimuth: 0 to 360 maps across width. 
+                // Let's assume standard map: North (0/360) is Center? Or East (90) Right?
+                // Visualizer usually implies looking South in Northern Hemisphere context often, but generally:
+                // Let's map 0..360 -> 0..Width for linear "Pan" view.
+                val x = (az.toFloat() / 360f) * width
+                
+                return Offset(x, y)
+            }
+            
+            // 1. Draw Sun
+            val sunOffset = calculatePosition(sunPos.altitude, sunPos.azimuth)
+            val sunSize = 48.dp
+            val sunPx = with(androidx.compose.ui.platform.LocalDensity.current) { sunSize.toPx() }
+            
+            // Only show if reasonably visible or just dim it? 
+            // User wants to see "rise/set", so seeing it below horizon with low opacity is cool.
+            val sunAlpha = if(sunPos.altitude > -10) 1f else 0.3f
+            
+            Column(
+                modifier = Modifier
+                    .offset { androidx.compose.ui.unit.IntOffset(
+                        (sunOffset.x - sunPx/2).toInt(), 
+                        (sunOffset.y - sunPx/2).toInt()
+                    ) },
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Icon(
+                    imageVector = Icons.Default.WbSunny,
+                    contentDescription = "Sun",
+                    tint = Color(0xFFFFB74D).copy(alpha = sunAlpha),
+                    modifier = Modifier.size(sunSize)
+                )
+                if (sunAlpha > 0.5f) {
+                   Text("Sun", color = Color.White.copy(alpha = 0.6f), style = MaterialTheme.typography.labelSmall)
+                }
+            }
 
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Icon(
-                        imageVector = Icons.Default.NightsStay,
-                        contentDescription = "Moon",
-                        tint = Color(0xFFB0BEC5),
-                        modifier = Modifier.size(40.dp)
-                    )
+            // 2. Draw Moon
+            val moonOffset = calculatePosition(moonPos.altitude, moonPos.azimuth)
+            val moonSize = 40.dp
+            val moonPx = with(androidx.compose.ui.platform.LocalDensity.current) { moonSize.toPx() }
+            val moonAlpha = if(moonPos.altitude > -10) 1f else 0.3f
+            
+             Column(
+                modifier = Modifier
+                     .offset { androidx.compose.ui.unit.IntOffset(
+                        (moonOffset.x - moonPx/2).toInt(), 
+                        (moonOffset.y - moonPx/2).toInt()
+                    ) },
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Icon(
+                    imageVector = Icons.Default.NightsStay,
+                    contentDescription = "Moon",
+                    tint = Color(0xFFB0BEC5).copy(alpha = moonAlpha),
+                    modifier = Modifier.size(moonSize)
+                )
+                 if (moonAlpha > 0.5f) {
                     Text("Moon", color = Color.White.copy(alpha = 0.6f), style = MaterialTheme.typography.labelSmall)
                 }
             }

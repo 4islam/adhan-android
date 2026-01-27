@@ -53,7 +53,12 @@ class MediaRouterHelper @Inject constructor(
         try {
             if (mediaRouter == null) {
                 android.os.Handler(android.os.Looper.getMainLooper()).post {
-                    mediaRouter = MediaRouter.getInstance(context)
+                    val router = MediaRouter.getInstance(context)
+                     router.routerParams = androidx.mediarouter.media.MediaRouterParams.Builder()
+                        .setOutputSwitcherEnabled(true)
+                        .setTransferToLocalEnabled(true)
+                         .build()
+                    mediaRouter = router
                 }
             }
         } catch (e: Exception) {

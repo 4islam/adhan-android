@@ -319,7 +319,18 @@ fun SoundsAudioSettings(viewModel: PrayerTimesViewModel, uiState: com.adhan.app.
                         modifier = Modifier.fillMaxWidth(),
                         colors = ButtonDefaults.buttonColors(containerColor = Color.White.copy(alpha = 0.1f))
                     ) {
-                        Text("System Output Pickers")
+                        Text("System Output Pickers (Cast/BT)")
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Button(
+                        onClick = {
+                            val intent = android.content.Intent(android.provider.Settings.ACTION_BLUETOOTH_SETTINGS)
+                            context.startActivity(intent)
+                        },
+                         modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(containerColor = Color.White.copy(alpha = 0.1f))
+                    ) {
+                         Text("Open Bluetooth Settings")
                     }
                 }
             }

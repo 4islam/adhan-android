@@ -198,7 +198,15 @@ class AdhanService : Service() {
 
         // Volume Override Logic
         try {
-            val adhanVolumePercent = prefs.getInt("adhan_volume", 80)
+            val calendar = java.util.Calendar.getInstance()
+            val dayOfWeek = calendar.get(java.util.Calendar.DAY_OF_WEEK)
+            
+            // Per-Day Volume?
+            val dayVolKey = "volume_override_${prayerName}_$dayOfWeek"
+            val dayVol = if (prefs.contains(dayVolKey)) prefs.getInt(dayVolKey, 80) else null
+            
+            val adhanVolumePercent = dayVol ?: prefs.getInt("adhan_volume", 80)
+            
             val audioManager = getSystemService(Context.AUDIO_SERVICE) as android.media.AudioManager
             val maxVol = audioManager.getStreamMaxVolume(android.media.AudioManager.STREAM_MUSIC)
             val currentVol = audioManager.getStreamVolume(android.media.AudioManager.STREAM_MUSIC)
@@ -250,9 +258,20 @@ class AdhanService : Service() {
             val isFajrOrTahajjud = prayerName.contains("Fajr", ignoreCase = true) || prayerName.equals("Tahajjud", ignoreCase = true)
             val defaultDur = if (isFajrOrTahajjud) 5 else 0
             val defaultVol = if (isFajrOrTahajjud) 0f else 1.0f
+
+            val calendar = java.util.Calendar.getInstance()
+            val dayOfWeek = calendar.get(java.util.Calendar.DAY_OF_WEEK)
             
-            val fadeDurationSeconds = prefs.getInt("fade_duration_$prayerName", defaultDur)
-            val fadeStartVolume = prefs.getFloat("fade_vol_$prayerName", defaultVol)
+            // Per-Day Fade?
+            val dayFadeKey = "fade_override_${prayerName}_$dayOfWeek"
+            val dayFade = if (prefs.contains(dayFadeKey)) prefs.getInt(dayFadeKey, 0) else null
+            
+            val fadeDurationSeconds = dayFade ?: prefs.getInt("fade_duration_$prayerName", defaultDur)
+            val fadeStartVolume = prefs.getFloat("fade_vol_$prayerName", defaultVol) // Keep start volume global for now? Or did I add override?
+            // "Fading options" requested. Override usually implies duration.
+            // I did not add START volume override in dialog, just "Volume" (which sets system volume).
+            // So fade start vol remains based on global config or assumption (0f if fading in).
+            // If duration > 0, we assume start vol 0.
             
             val mediaItem: MediaItem? = if (customUri != null) {
                 MediaItem.fromUri(android.net.Uri.parse(customUri))
@@ -275,9 +294,6 @@ class AdhanService : Service() {
             // Apply Custom Audio Routing
             // 0. Explicit Test Route (Highest Priority)
             // 1. Check for Prayer+Day Helper
-            val calendar = java.util.Calendar.getInstance()
-            calendar.time = java.util.Date()
-            val dayOfWeek = calendar.get(java.util.Calendar.DAY_OF_WEEK)
             
             val specificRouteKey = "audio_route_${prayerName}_$dayOfWeek"
             val specificRoute = prefs.getString(specificRouteKey, null)
@@ -303,11 +319,13 @@ class AdhanService : Service() {
                     if (it.playbackState == Player.STATE_IDLE || it.playbackState == Player.STATE_ENDED) {
                         it.setMediaItem(mediaItem)
                         it.prepare()
-                        it.volume = fadeStartVolume 
+                        it.volume = if (fadeDurationSeconds > 0) 0f else 1.0f 
                         it.play()
                         
                         // We are already on Main via withContext(Dispatchers.Main) in caller
-                        audioFader.startFadeIn(it, fadeDurationSeconds * 1000L, fadeStartVolume)
+                        if (fadeDurationSeconds > 0) {
+                            audioFader.startFadeIn(it, fadeDurationSeconds * 1000L, 1.0f)
+                        }
                     }
                 }
             }

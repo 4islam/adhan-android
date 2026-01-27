@@ -429,7 +429,7 @@ class PrayerTimesViewModel @Inject constructor(
         // For now, minimal implementation: just save.
     }
     
-    fun applyConfigToAllDays(prayer: String, enabled: Boolean, route: String) {
+    fun applyConfigToAllDays(prayer: String, enabled: Boolean, route: String, volume: Int?, fadeSeconds: Int?) {
         val finalRoute = if (route == "Global Default") null else route
         
         val currentDays = _uiState.value.adhanNotificationDays.toMutableMap()
@@ -438,6 +438,8 @@ class PrayerTimesViewModel @Inject constructor(
         for (day in java.util.Calendar.SUNDAY..java.util.Calendar.SATURDAY) {
             userPrefs.setAdhanDayEnabled(prayer, day, enabled)
             userPrefs.setAudioRoute(prayer, day, finalRoute)
+            userPrefs.setDayVolume(prayer, day, volume)
+            userPrefs.setDayFadeSeconds(prayer, day, fadeSeconds)
             daysForPrayer[day] = enabled
         }
         
@@ -448,6 +450,22 @@ class PrayerTimesViewModel @Inject constructor(
     
     fun getDayAudioRoute(prayer: String, dayOfWeek: Int): String? {
         return userPrefs.getAudioRoute(prayer, dayOfWeek)
+    }
+
+    fun getDayVolume(prayer: String, dayOfWeek: Int): Int? {
+        return userPrefs.getDayVolume(prayer, dayOfWeek)
+    }
+
+    fun setDayVolume(prayer: String, dayOfWeek: Int, volume: Int?) {
+        userPrefs.setDayVolume(prayer, dayOfWeek, volume)
+    }
+
+    fun getDayFadeSeconds(prayer: String, dayOfWeek: Int): Int? {
+        return userPrefs.getDayFadeSeconds(prayer, dayOfWeek)
+    }
+
+    fun setDayFadeSeconds(prayer: String, dayOfWeek: Int, seconds: Int?) {
+        userPrefs.setDayFadeSeconds(prayer, dayOfWeek, seconds)
     }
 
     private fun startClock() {

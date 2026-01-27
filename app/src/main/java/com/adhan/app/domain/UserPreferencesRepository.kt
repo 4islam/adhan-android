@@ -93,4 +93,32 @@ class UserPreferencesRepository @Inject constructor(
             prefs.edit().putString("audio_route_${prayer}_$dayOfWeek", route).apply()
         }
     }
+
+    fun getDayVolume(prayer: String, dayOfWeek: Int): Int? {
+        val key = "volume_override_${prayer}_$dayOfWeek"
+        return if (prefs.contains(key)) prefs.getInt(key, 80) else null
+    }
+
+    fun setDayVolume(prayer: String, dayOfWeek: Int, volume: Int?) {
+        val key = "volume_override_${prayer}_$dayOfWeek"
+        if (volume == null) {
+            prefs.edit().remove(key).apply()
+        } else {
+            prefs.edit().putInt(key, volume).apply()
+        }
+    }
+
+    fun getDayFadeSeconds(prayer: String, dayOfWeek: Int): Int? {
+        val key = "fade_override_${prayer}_$dayOfWeek"
+        return if (prefs.contains(key)) prefs.getInt(key, 0) else null
+    }
+
+    fun setDayFadeSeconds(prayer: String, dayOfWeek: Int, seconds: Int?) {
+        val key = "fade_override_${prayer}_$dayOfWeek"
+        if (seconds == null) {
+            prefs.edit().remove(key).apply()
+        } else {
+            prefs.edit().putInt(key, seconds).apply()
+        }
+    }
 }

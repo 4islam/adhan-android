@@ -12,6 +12,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -495,13 +496,24 @@ fun DayConfigurationDialog(
     
     var isEnabled by remember { mutableStateOf(uiState.adhanNotificationDays[prayer]?.get(dayId) ?: true) }
     var currentRoute by remember { mutableStateOf(viewModel.getDayAudioRoute(prayer, dayId) ?: "Global Default") }
+    
+    // Volume Override
+    val initialVol = viewModel.getDayVolume(prayer, dayId)
+    var isVolumeOverride by remember { mutableStateOf(initialVol != null) }
+    var volumeValue by remember { mutableStateOf(initialVol ?: 80) }
+
+    // Fade Override
+    val initialFade = viewModel.getDayFadeSeconds(prayer, dayId)
+    var isFadeOverride by remember { mutableStateOf(initialFade != null) }
+    var fadeValue by remember { mutableStateOf(initialFade ?: 5) }
+
     var expanded by remember { mutableStateOf(false) }
 
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text("$prayer on $dayName") },
         text = {
-            Column {
+            Column(modifier = Modifier.verticalScroll(androidx.compose.foundation.rememberScrollState())) {
                 Row(
                     modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -512,6 +524,9 @@ fun DayConfigurationDialog(
                 }
                 
                 if (isEnabled) {
+                    HorizontalDivider()
+                    Spacer(modifier = Modifier.height(8.dp))
+                    
                     Text("Audio Output", style = MaterialTheme.typography.labelMedium, modifier = Modifier.padding(bottom = 8.dp))
                     Box {
                          OutlinedButton(onClick = { expanded = true }, modifier = Modifier.fillMaxWidth()) {
@@ -530,10 +545,61 @@ fun DayConfigurationDialog(
                              }
                          }
                     }
+                    
+                    Spacer(modifier = Modifier.height(16.dp))
+                    HorizontalDivider()
+                    Spacer(modifier = Modifier.height(8.dp))
+                    
+                    // Volume Override UI
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                         Text("Override Volume")
+                         Switch(checked = isVolumeOverride, onCheckedChange = { isVolumeOverride = it })
+                    }
+                    if (isVolumeOverride) {
+                        Text("Volume: $volumeValue%", style = MaterialTheme.typography.labelSmall)
+                        Slider(
+                             value = volumeValue.toFloat(),
+                             onValueChange = { volumeValue = it.toInt() },
+                             valueRange = 0f..100f
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+                    HorizontalDivider()
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    // Fade Override UI
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                         Text("Override Fade")
+                         Switch(checked = isFadeOverride, onCheckedChange = { isFadeOverride = it })
+                    }
+                    if (isFadeOverride) {
+                        Text("Fade Duration: ${fadeValue}s", style = MaterialTheme.typography.labelSmall)
+                        Slider(
+                             value = fadeValue.toFloat(),
+                             onValueChange = { fadeValue = it.toInt() },
+                             valueRange = 0f..30f
+                        )
+                    }
+
                     Spacer(modifier = Modifier.height(16.dp))
                     OutlinedButton(
                         onClick = {
-                             viewModel.applyConfigToAllDays(prayer, isEnabled, currentRoute)
+                             viewModel.applyConfigToAllDays(
+                                 prayer, 
+                                 isEnabled, 
+                                 currentRoute, 
+                                 if (isVolumeOverride) volumeValue else null,
+                                 if (isFadeOverride) fadeValue else null
+                             )
                              onDismiss()
                         },
                         modifier = Modifier.fillMaxWidth()
@@ -547,6 +613,8 @@ fun DayConfigurationDialog(
             TextButton(onClick = {
                 viewModel.setAdhanDayEnabled(prayer, dayId, isEnabled)
                 viewModel.setDayAudioRoute(prayer, dayId, currentRoute)
+                viewModel.setDayVolume(prayer, dayId, if (isVolumeOverride) volumeValue else null)
+                viewModel.setDayFadeSeconds(prayer, dayId, if (isFadeOverride) fadeValue else null)
                 onDismiss()
             }) { Text("Save") }
         },

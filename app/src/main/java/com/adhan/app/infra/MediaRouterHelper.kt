@@ -29,7 +29,7 @@ class MediaRouterHelper @Inject constructor(
     private val _availableRoutes = MutableStateFlow<List<RouteInfo>>(emptyList())
     val availableRoutes: StateFlow<List<RouteInfo>> = _availableRoutes
 
-    private val selector: MediaRouteSelector = MediaRouteSelector.Builder()
+    val selector: MediaRouteSelector = MediaRouteSelector.Builder()
         .addControlCategory(androidx.mediarouter.media.MediaControlIntent.CATEGORY_LIVE_AUDIO)
         .addControlCategory(androidx.mediarouter.media.MediaControlIntent.CATEGORY_REMOTE_PLAYBACK)
         .build()

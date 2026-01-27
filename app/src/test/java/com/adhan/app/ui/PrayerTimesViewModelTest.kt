@@ -29,10 +29,18 @@ class PrayerTimesViewModelTest {
     private val prefs = mockk<SharedPreferences>(relaxed = true)
     private val prefsEditor = mockk<SharedPreferences.Editor>(relaxed = true)
     private val logRepository = mockk<com.adhan.app.domain.LogRepository>(relaxed = true)
+    private val audioRouter = mockk<com.adhan.app.infra.AudioRouter>(relaxed = true)
+    private val audioFader = mockk<com.adhan.app.infra.AudioFader>(relaxed = true)
+    private val prayerScheduler = mockk<com.adhan.app.domain.PrayerScheduler>(relaxed = true)
+    private val userPrefs = mockk<com.adhan.app.domain.UserPreferencesRepository>(relaxed = true)
+    private val mediaRouterHelper = mockk<com.adhan.app.infra.MediaRouterHelper>(relaxed = true)
+    private val playbackStateRepository = mockk<com.adhan.app.domain.PlaybackStateRepository>(relaxed = true)
 
     private val locationFlow = MutableStateFlow(
         LocationRepository.LocationData(51.5074, -0.1278, "London, UK", true, true)
     )
+    
+    private val availableRoutesFlow = MutableStateFlow<List<com.adhan.app.infra.MediaRouterHelper.RouteInfo>>(emptyList())
 
     @Before
     fun setup() {
@@ -43,6 +51,9 @@ class PrayerTimesViewModelTest {
         every { repository.location } returns locationFlow
         coEvery { logRepository.getLogs() } returns emptyList()
         coEvery { logRepository.log(any(), any()) } just Runs
+        every { mediaRouterHelper.availableRoutes } returns availableRoutesFlow
+        every { mediaRouterHelper.startScanning() } just Runs
+        every { audioRouter.getAvailableDevices() } returns emptyList()
         
         // Mocking default settings
         every { prefs.getInt("calc_method", any()) } returns PrayerTimesCalculator.Ahmadiyya
@@ -50,7 +61,18 @@ class PrayerTimesViewModelTest {
         every { prefs.getBoolean("audio_enabled", any()) } returns true
         every { prefs.getBoolean("use_12_hour", any()) } returns true
 
-        viewModel = PrayerTimesViewModel(alarmManager, repository, application, logRepository)
+        viewModel = PrayerTimesViewModel(
+            alarmManager, 
+            repository, 
+            application, 
+            logRepository,
+            audioRouter,
+            audioFader,
+            prayerScheduler,
+            userPrefs,
+            mediaRouterHelper,
+            playbackStateRepository
+        )
     }
 
     @After
@@ -77,7 +99,26 @@ class PrayerTimesViewModelTest {
         assertFalse("Sunrise should not be in prayer list", prayerNames.contains("Sunrise"))
         assertFalse("Sunset should not be in prayer list", prayerNames.contains("Sunset"))
         assertFalse("Solar Noon should not be in prayer list", prayerNames.contains("Solar Noon"))
+        @Test
+    fun `refreshAudioDevices updates UI when new route discovered`() = runTest {
+        // Arrange
+        // Initial state is empty
+        testDispatcher.scheduler.advanceUntilIdle()
+        assertTrue(viewModel.uiState.value.audioOutputDevices.isEmpty())
+        
+        // Act
+        // Simulate a new route appearing
+        val newRoute = com.adhan.app.infra.MediaRouterHelper.RouteInfo("id1", "Living Room Speaker", "Google Cast")
+        availableRoutesFlow.value = listOf(newRoute)
+        
+        testDispatcher.scheduler.advanceUntilIdle()
+        
+        // Assert
+        val devices = viewModel.uiState.value.audioOutputDevices
+        assertTrue("Should contain network route", devices.any { it.contains("Living Room Speaker") })
+        assertEquals(1, devices.size)
     }
+}
 
     @Test
     fun `verify 15-minute highlight logic`() = runTest {

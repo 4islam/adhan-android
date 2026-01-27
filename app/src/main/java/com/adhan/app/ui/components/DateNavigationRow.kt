@@ -44,8 +44,12 @@ fun DateNavigationRow(
             style = MaterialTheme.typography.headlineSmall,
             color = if(isToday) Color.White else Color(0xFFFFB74D), // Highlight if not Today
             fontWeight = FontWeight.Medium,
-            fontSize = 26.sp,
+            fontSize = 20.sp,
+            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+            maxLines = 1,
+            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
             modifier = Modifier
+                .weight(1f)
                 .padding(horizontal = 8.dp)
                 .clickable(onClick = onDateClick)
         )

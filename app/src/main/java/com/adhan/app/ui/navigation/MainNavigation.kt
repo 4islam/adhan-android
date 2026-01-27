@@ -28,13 +28,17 @@ fun MainNavigation(
             SkylightVisualizer(
                 selectedDate = uiState.selectedDate,
                 gregorianDate = uiState.gregorianDate,
+                hijriDate = uiState.hijriDate,
                 lat = uiState.latitude,
                 lng = uiState.longitude,
                 onBack = { navController.popBackStack() },
                 onPrevDate = { viewModel.incrementDate(-1) },
                 onNextDate = { viewModel.incrementDate(1) },
                 onDateSelected = { viewModel.setSelectedDate(it) },
-                onJumpToToday = { viewModel.jumpToToday() }
+                onJumpToToday = { viewModel.jumpToToday() },
+                onTimeScrub = { viewModel.setSkyTime(it) },
+                currentAnchor = uiState.skyAnchor,
+                onAnchorSelected = { viewModel.setSkyAnchor(it) }
             )
         }
         composable(NavScreen.Map.route) {

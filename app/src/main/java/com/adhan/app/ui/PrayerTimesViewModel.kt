@@ -19,8 +19,16 @@ import kotlinx.coroutines.Job
 
 data class FadeConfig(
     val durationSeconds: Int = 0, 
+
     val initialVolume: Float = 1.0f
 )
+
+enum class SkyAnchor {
+    Time, // Standard: maintain HH:mm
+    Sunrise,
+    SolarNoon,
+    Sunset
+}
 
 data class PrayerTimesState(
     val prayerTimes: List<PrayerTimesCalculator.CombinedPrayerInfo> = emptyList(),
@@ -67,7 +75,8 @@ data class PrayerTimesState(
     val highLatitudeRule: Int = PrayerTimesCalculator.AngleBased,
 
     val manualOffsets: Map<String, Int> = emptyMap(), // Prayer Name -> Minutes
-    val selectedDate: Date = Date()
+    val selectedDate: Date = Date(),
+    val skyAnchor: SkyAnchor = SkyAnchor.Time
 )
 
 @HiltViewModel
@@ -460,25 +469,33 @@ class PrayerTimesViewModel @Inject constructor(
     }
 
     fun openAudioOutputPicker() {
-        // Can still open system picker, but also we show our own list
+        // Handled in UI via selector
     }
+    
+    val mediaSelector: androidx.mediarouter.media.MediaRouteSelector
+        get() = mediaRouterHelper.selector
+
+    private var scanJob: Job? = null
 
     fun refreshAudioDevices() {
         mediaRouterHelper.startScanning()
         
-        val devices = audioRouter.getAvailableDevices()
-        // Wait briefly for network devices or collect flow
-        viewModelScope.launch {
-             // For simplicity, just combining now once. 
-             // In real app, we should observe both flows.
-             val networkRoutes = mediaRouterHelper.availableRoutes.value
-             val allDevices = devices.map { "${audioRouter.getDeviceTypeName(it.type)} (${it.productName})" }.toMutableList()
-             
-             networkRoutes.forEach { route ->
-                 allDevices.add("Network: ${route.name}")
-             }
-             
-             _uiState.value = _uiState.value.copy(audioOutputDevices = allDevices.distinct())
+        scanJob?.cancel()
+        scanJob = viewModelScope.launch {
+            mediaRouterHelper.availableRoutes.collect { networkRoutes ->
+                try {
+                    val devices = audioRouter.getAvailableDevices()
+                    val allDevices = devices.map { "${audioRouter.getDeviceTypeName(it.type)} (${it.productName})" }.toMutableList()
+                    
+                    networkRoutes.forEach { route ->
+                        allDevices.add("Network: ${route.name}")
+                    }
+                    
+                    _uiState.value = _uiState.value.copy(audioOutputDevices = allDevices.distinct())
+                } catch (e: Exception) {
+                    logRepository.log("Error refreshing audio devices: ${e.message}")
+                }
+            }
         }
     }
 
@@ -528,18 +545,95 @@ class PrayerTimesViewModel @Inject constructor(
     fun incrementDate(days: Int) {
         val calendar = Calendar.getInstance()
         calendar.time = _uiState.value.selectedDate
-        calendar.add(Calendar.DAY_OF_YEAR, days)
-        _uiState.value = _uiState.value.copy(selectedDate = calendar.time)
+        
+        // If anchored to simple time, just add days
+        if (_uiState.value.skyAnchor == SkyAnchor.Time) {
+            calendar.add(Calendar.DAY_OF_YEAR, days)
+            _uiState.value = _uiState.value.copy(selectedDate = calendar.time)
+        } else {
+            // Move the date first, then recalculate time based on anchor
+            calendar.add(Calendar.DAY_OF_YEAR, days)
+            val newDate = calendar.time
+            val time = calculateAnchorTime(_uiState.value.skyAnchor, newDate)
+            _uiState.value = _uiState.value.copy(selectedDate = time)
+        }
         updateTimes()
     }
 
     fun setSelectedDate(date: Long) {
-        _uiState.value = _uiState.value.copy(selectedDate = Date(date))
+        val newDateBase = Date(date)
+        if (_uiState.value.skyAnchor == SkyAnchor.Time) {
+             // Preserve time of day from parameter? Usually DatePicker returns midnight or set time.
+             // If from DatePicker, it likely resets time. Ideally we preserve "Time of Day" from current view if anchored to Time?
+             // But setSelectedDate comes from DatePicker which implies "Go to this date".
+             // Let's just set it. If user wants specific time they scrub.
+             _uiState.value = _uiState.value.copy(selectedDate = newDateBase)
+        } else {
+             val time = calculateAnchorTime(_uiState.value.skyAnchor, newDateBase)
+             _uiState.value = _uiState.value.copy(selectedDate = time)
+        }
         updateTimes()
+    }
+    
+    fun setSkyTime(date: Date) {
+        // Scrubbing automatically breaks anchor if it was solar based, or we treat it as temporary override?
+        // User asked: "allow to peg... allowing user to change date while pegged... or to a time of day"
+        // If checking a time, anchor becomes Time.
+        _uiState.value = _uiState.value.copy(
+            selectedDate = date,
+            skyAnchor = SkyAnchor.Time // Scrubbing switches to Manual Time mode
+        )
+        updateTimes() // Update times/positions
+    }
+    
+    fun setSkyAnchor(anchor: SkyAnchor) {
+        // Switch anchor and immediately update time to match that anchor for current day
+        val time = calculateAnchorTime(anchor, _uiState.value.selectedDate)
+        _uiState.value = _uiState.value.copy(
+            skyAnchor = anchor,
+            selectedDate = time
+        )
+        updateTimes()
+    }
+    
+    private fun calculateAnchorTime(anchor: SkyAnchor, date: Date): Date {
+        if (anchor == SkyAnchor.Time) return date
+        
+        val state = _uiState.value
+        // Provide calculator to get exact solar events for that day
+        val calculator = PrayerTimesCalculator()
+        calculator.setCalcMethod(state.calcMethod)
+        calculator.setHighLatsMethod(state.highLatitudeRule) 
+        
+        // We need raw single day calculation
+        val times = calculator.getPrayerTimes(date, state.latitude, state.longitude)
+        // Times are strings HH:mm. We need to parse relevant ones.
+        // indices: 0 Fajr, 1 Sunrise, 2 Dhuhr (Noon ish), 3 Asr, 4 Sunset, 5 Maghrib, 6 Isha
+        
+        val timeStr = when(anchor) {
+            SkyAnchor.Sunrise -> times[1]
+            SkyAnchor.SolarNoon -> times[2] // Dhuhr is essentially solar noon
+            SkyAnchor.Sunset -> times[4]
+            else -> return date // Should not happen
+        }
+        
+        if (timeStr == PrayerTimesCalculator.InvalidTime) return date
+        
+        return try {
+            val parts = timeStr.split(":")
+            val cal = Calendar.getInstance()
+            cal.time = date
+            cal.set(Calendar.HOUR_OF_DAY, parts[0].toInt())
+            cal.set(Calendar.MINUTE, parts[1].toInt())
+            cal.set(Calendar.SECOND, 0)
+            cal.time
+        } catch (e: Exception) {
+            date
+        }
     }
 
     fun jumpToToday() {
-        _uiState.value = _uiState.value.copy(selectedDate = Date())
+        _uiState.value = _uiState.value.copy(selectedDate = Date(), skyAnchor = SkyAnchor.Time)
         updateTimes()
     }
 
@@ -657,7 +751,7 @@ class PrayerTimesViewModel @Inject constructor(
             val moonTimes = calculator.getMoonTimes(date, lat, lng)
             val hijri = HijriCalendar.fromDate(date)
             val hijriString = "${hijri.day} ${hijri.monthName} ${hijri.year} AH"
-            val gregorianString = SimpleDateFormat("d MMMM yyyy", Locale.ENGLISH).format(date)
+            val gregorianString = SimpleDateFormat("EEEE, d MMMM yyyy", Locale.ENGLISH).format(date)
 
             val prayerList = mutableListOf<PrayerTimesCalculator.CombinedPrayerInfo>()
             val astroList = mutableListOf<PrayerTimesCalculator.CombinedPrayerInfo>()

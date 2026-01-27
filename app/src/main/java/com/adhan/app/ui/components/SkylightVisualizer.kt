@@ -7,7 +7,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.NightsStay
 import androidx.compose.material.icons.filled.WbSunny
 import androidx.compose.material3.*
@@ -22,20 +22,28 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.input.pointer.PointerInputChange
 import com.adhan.app.domain.models.Astrology
+import com.adhan.app.ui.SkyAnchor
 import java.util.Date
 
 @Composable
 fun SkylightVisualizer(
     selectedDate: Date,
     gregorianDate: String,
+    hijriDate: String,
     lat: Double,
     lng: Double,
     onBack: () -> Unit,
     onPrevDate: () -> Unit,
     onNextDate: () -> Unit,
     onDateSelected: (Long) -> Unit,
-    onJumpToToday: () -> Unit
+    onJumpToToday: () -> Unit,
+    onTimeScrub: (Date) -> Unit,
+    currentAnchor: com.adhan.app.ui.SkyAnchor,
+    onAnchorSelected: (com.adhan.app.ui.SkyAnchor) -> Unit
 ) {
     val sunPos = Astrology.getSunPosition(selectedDate, lat, lng)
     val moonPos = Astrology.getMoonPosition(selectedDate, lat, lng)
@@ -79,7 +87,7 @@ fun SkylightVisualizer(
                 onClick = onBack,
                 modifier = Modifier.align(Alignment.CenterStart)
             ) {
-                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = Color.White)
+                Icon(Icons.Filled.ArrowBack, contentDescription = "Back", tint = Color.White)
             }
             Text(
                 text = "Skylight",
@@ -103,6 +111,15 @@ fun SkylightVisualizer(
             modifier = Modifier.padding(horizontal = 8.dp)
         )
         
+        // Hijri Date
+        Text(
+            text = hijriDate,
+            style = MaterialTheme.typography.titleMedium,
+            color = Color(0xFF00E5FF), // Cyan
+            fontWeight = FontWeight.Medium,
+            modifier = Modifier.padding(top = 4.dp)
+        )
+        
         if (!isToday) {
              Spacer(modifier = Modifier.height(16.dp))
              Button(
@@ -122,7 +139,21 @@ fun SkylightVisualizer(
         BoxWithConstraints(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(1f),
+                .weight(1f)
+                .pointerInput(Unit) {
+                    detectHorizontalDragGestures { change: PointerInputChange, dragAmount: Float ->
+                        change.consume()
+                        // Sensitivity: 1px = 1 minute? Or screen width = 24 hours?
+                        // Let's go with pixel based.
+                        val minutesToAdd = (dragAmount / 2f).toInt() // fast scrub
+                        if (minutesToAdd != 0) {
+                            val cal = java.util.Calendar.getInstance()
+                            cal.time = selectedDate
+                            cal.add(java.util.Calendar.MINUTE, minutesToAdd)
+                            onTimeScrub(cal.time)
+                        }
+                    }
+                },
             contentAlignment = Alignment.TopStart
         ) {
             val width = constraints.maxWidth.toFloat()
@@ -227,21 +258,83 @@ fun SkylightVisualizer(
             }
         }
 
-        // Metrics Grid (2x2)
+        // Metrics & Controls
         Column(
-            modifier = Modifier.padding(bottom = 200.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            modifier = Modifier.padding(bottom = 100.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            // Anchor Controls
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+               AnchorChip("Time", currentAnchor == SkyAnchor.Time) { 
+                   if (currentAnchor == SkyAnchor.Time) onJumpToToday() else onAnchorSelected(SkyAnchor.Time)
+               }
+               AnchorChip("Sunrise", currentAnchor == SkyAnchor.Sunrise) { onAnchorSelected(SkyAnchor.Sunrise) }
+               AnchorChip("Noon", currentAnchor == SkyAnchor.SolarNoon) { onAnchorSelected(SkyAnchor.SolarNoon) }
+               AnchorChip("Sunset", currentAnchor == SkyAnchor.Sunset) { onAnchorSelected(SkyAnchor.Sunset) }
+            }
+            
+            // Time Display (Big)
+            Text(
+                text = java.text.SimpleDateFormat("HH:mm", java.util.Locale.getDefault()).format(selectedDate),
+                style = MaterialTheme.typography.displayLarge,
+                color = Color.White,
+                fontWeight = FontWeight.Bold
+            )
+            
+            // Time Slider
+            val cal = java.util.Calendar.getInstance()
+            cal.time = selectedDate
+            val minutes = cal.get(java.util.Calendar.HOUR_OF_DAY) * 60 + cal.get(java.util.Calendar.MINUTE)
+            val maxMinutes = 24 * 60f
+            
+            Slider(
+                value = minutes.toFloat(),
+                onValueChange = { newMinutes ->
+                    val newCal = java.util.Calendar.getInstance()
+                    newCal.time = selectedDate
+                    val h = (newMinutes / 60).toInt()
+                    val m = (newMinutes % 60).toInt()
+                    newCal.set(java.util.Calendar.HOUR_OF_DAY, h)
+                    newCal.set(java.util.Calendar.MINUTE, m)
+                    onTimeScrub(newCal.time)
+                },
+                valueRange = 0f..maxMinutes,
+                modifier = Modifier.fillMaxWidth(0.8f),
+                colors = SliderDefaults.colors(
+                    thumbColor = Color(0xFF00E5FF),
+                    activeTrackColor = Color(0xFF00E5FF),
+                    inactiveTrackColor = Color.White.copy(alpha = 0.2f)
+                )
+            )
+            
+            // Metrics
             Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                 MetricCard("Sun Altitude", "%.1f°".format(sunPos.altitude))
                 MetricCard("Sun Azimuth", "%.1f°".format(sunPos.azimuth))
             }
-            Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                MetricCard("Moon Altitude", "%.1f°".format(moonPos.altitude))
-                MetricCard("Moon Azimuth", "%.1f°".format(moonPos.azimuth))
-            }
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AnchorChip(text: String, selected: Boolean, onClick: () -> Unit) {
+    FilterChip(
+        selected = selected,
+        onClick = onClick,
+        label = { Text(text) },
+        colors = FilterChipDefaults.filterChipColors(
+            selectedContainerColor = Color(0xFF00E5FF),
+            selectedLabelColor = Color.Black,
+            containerColor = Color.White.copy(alpha = 0.1f),
+            labelColor = Color.White
+        ),
+        border = null
+    )
 }
 
 @Composable

@@ -308,8 +308,14 @@ fun SoundsAudioSettings(viewModel: PrayerTimesViewModel, uiState: com.adhan.app.
                         }
                     }
                     Spacer(modifier = Modifier.height(8.dp))
+                    val context = androidx.compose.ui.platform.LocalContext.current
                     Button(
-                        onClick = { viewModel.openAudioOutputPicker() },
+                        onClick = { 
+                            val selector = viewModel.mediaSelector
+                            val dialog = androidx.mediarouter.app.MediaRouteChooserDialog(context)
+                            dialog.routeSelector = selector
+                            dialog.show()
+                        },
                         modifier = Modifier.fillMaxWidth(),
                         colors = ButtonDefaults.buttonColors(containerColor = Color.White.copy(alpha = 0.1f))
                     ) {

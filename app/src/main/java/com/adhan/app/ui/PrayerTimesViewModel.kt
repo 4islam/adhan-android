@@ -16,6 +16,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 import kotlinx.coroutines.Job
+import com.adhan.app.domain.models.Astrology
 
 data class FadeConfig(
     val durationSeconds: Int = 0, 
@@ -76,7 +77,8 @@ data class PrayerTimesState(
 
     val manualOffsets: Map<String, Int> = emptyMap(), // Prayer Name -> Minutes
     val selectedDate: Date = Date(),
-    val skyAnchor: SkyAnchor = SkyAnchor.Time
+    val skyAnchor: SkyAnchor = SkyAnchor.Time,
+    val moonPhase: com.adhan.app.domain.models.Astrology.MoonPhase? = null
 )
 
 @HiltViewModel
@@ -799,13 +801,16 @@ class PrayerTimesViewModel @Inject constructor(
                 .map { it.copy(time = formatDisplayTime(it.time)) }
             val displayAstroList = astroList.map { it.copy(time = formatDisplayTime(it.time)) }
 
+            val moonPhase = Astrology.getMoonPhase(date)
+
             withContext(Dispatchers.Main) {
                 _uiState.value = _uiState.value.copy(
                     prayerTimes = displayPrayerList,
                     astronomicalEvents = displayAstroList,
                     rawPrayerTimes = prayerList,
                     hijriDate = hijriString,
-                    gregorianDate = gregorianString
+                    gregorianDate = gregorianString,
+                    moonPhase = moonPhase
                 )
                 
                 updateNextPrayer(date) // Pass the selected date for context

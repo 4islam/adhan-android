@@ -29,6 +29,7 @@ fun MainNavigation(
                 selectedDate = uiState.selectedDate,
                 gregorianDate = uiState.gregorianDate,
                 hijriDate = uiState.hijriDate,
+                moonPhase = uiState.moonPhase,
                 lat = uiState.latitude,
                 lng = uiState.longitude,
                 onBack = { navController.popBackStack() },

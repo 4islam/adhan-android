@@ -174,6 +174,58 @@ object Astrology {
         return null
     }
     
+    data class MoonPhase(
+        val phaseName: String, 
+        val illumination: Double,
+        val phaseIndex: Int, // 0-7: New, Waxing Crescent, First Quarter, Waxing Gibbous, Full, Waning Gibbous, Last Quarter, Waning Crescent
+        val age: Double
+    )
+
+    fun getMoonPhase(date: Date): MoonPhase {
+        val jd = (date.time / 86400000.0) + 2440587.5
+        val d = jd - 2451545.0
+        
+        // Simple calculation of age in days (synodic month is ~29.53 days)
+        // 2000-01-06 18:14 UTC was a New Moon. JD = 2451550.26
+        // Age = (JD - 2451550.26) % 29.530588853
+        
+        val newMoonRef = 2451550.26
+        val synodicMonth = 29.530588853
+        var age = (jd - newMoonRef) % synodicMonth
+        if (age < 0) age += synodicMonth
+        
+        // Illumination fraction
+        val i = (1 - cos(2 * PI * age / synodicMonth)) / 2
+        
+        // Phase Index (8 phases)
+        // 0: New (0-1.8 days)
+        // 1: Waxing Crescent
+        // 2: First Quarter (~7.4 days)
+        // 3: Waxing Gibbous
+        // 4: Full (~14.8 days)
+        // 5: Waning Gibbous
+        // 6: Last Quarter (~22.1 days)
+        // 7: Waning Crescent
+        
+        // Let's use octants
+        val phaseScale = (age / synodicMonth * 8) + 0.5
+        val index = floor(phaseScale).toInt() % 8
+        
+        val name = when(index) {
+            0 -> "New Kamar"
+            1 -> "Waxing Crescent"
+            2 -> "First Quarter"
+            3 -> "Waxing Gibbous"
+            4 -> "Full Kamar"
+            5 -> "Waning Gibbous"
+            6 -> "Last Quarter"
+            7 -> "Waning Crescent"
+            else -> "Unknown"
+        }
+        
+        return MoonPhase(name, i, index, age)
+    }
+
     // Helper since we can't easily construct a Date copy with setHours return value in one expression before Date extension functions
     private fun getStartOfDay(date: Date): Date {
         val cal = java.util.Calendar.getInstance()

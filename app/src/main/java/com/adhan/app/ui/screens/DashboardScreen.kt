@@ -100,6 +100,7 @@ fun DashboardScreen(viewModel: PrayerTimesViewModel) {
                         onPrevDate = { viewModel.incrementDate(-1) },
                         onNextDate = { viewModel.incrementDate(1) },
                         onDateClick = { showDatePicker = true },
+                        onJumpToToday = { viewModel.jumpToToday() },
                         isToday = isToday
                     )
                     Spacer(modifier = Modifier.height(16.dp))
@@ -205,21 +206,7 @@ fun DashboardScreen(viewModel: PrayerTimesViewModel) {
                 }
             }
             
-            // "Return to Today" FAB
-            if (!android.text.format.DateUtils.isToday(uiState.selectedDate.time)) {
-                ExtendedFloatingActionButton(
-                    onClick = { viewModel.jumpToToday() },
-                    modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                        .padding(bottom = 100.dp, end = 16.dp), // Position above navbar
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = Color.White
-                ) {
-                    Icon(Icons.Default.Today, "Today")
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text("Today")
-                }
-            }
+
         }
     }
 }

@@ -15,8 +15,8 @@ android {
         applicationId = "com.adhan.app"
         minSdk = 26
         targetSdk = 34
-        versionCode = 69
-        versionName = "3.5.0"
+        versionCode = 71
+        versionName = "3.5.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {

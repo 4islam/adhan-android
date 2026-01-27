@@ -42,6 +42,7 @@ fun HeroDashboard(
     onPrevDate: () -> Unit = {},
     onNextDate: () -> Unit = {},
     onDateClick: () -> Unit = {},
+    onJumpToToday: () -> Unit = {},
     isToday: Boolean = true
 ) {
     val calendar = remember(currentTime) { java.util.Calendar.getInstance().apply { time = currentTime } }
@@ -168,62 +169,84 @@ fun HeroDashboard(
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        // Circular Countdown
-        Box(contentAlignment = Alignment.Center) {
-            // Glow Circle (Static)
-            Canvas(modifier = Modifier.size(260.dp)) {
-                drawCircle(
-                    color = Color(0xFF00E5FF).copy(alpha = 0.05f),
-                    radius = size.minDimension / 2
-                )
-            }
-            
-            // Progress Ring
-            Canvas(modifier = Modifier.size(240.dp)) {
-                // Background Track
-                drawCircle(
-                    color = Color.White.copy(alpha = 0.1f),
-                    style = Stroke(width = 8.dp.toPx())
-                )
-                
-                // Cyan Active Ring (70% for demo)
-                drawArc(
-                    color = Color(0xFF00E5FF),
-                    startAngle = -90f,
-                    sweepAngle = 260f,
-                    useCenter = false,
-                    style = Stroke(
-                        width = 8.dp.toPx(),
-                        cap = StrokeCap.Round
-                    )
-                )
-            }
-
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(
-                    text = "$nextPrayerName $nextPrayerDateLabel".trim(),
-                    style = MaterialTheme.typography.titleLarge,
-                    color = Color.White,
-                    fontWeight = FontWeight.Light,
-                    fontSize = 28.sp
-                )
-                Text(
-                    text = if (nextPrayerCountdown.isNotEmpty()) nextPrayerCountdown else nextPrayerTime,
-                    style = MaterialTheme.typography.displayMedium,
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 52.sp,
-                    letterSpacing = 2.sp
-                )
-                if (nextPrayerCountdown.isNotEmpty()) {
-                    Text(
-                        text = "at $nextPrayerTime",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = Color.White.copy(alpha = 0.7f),
-                        fontSize = 20.sp
+        if (isToday) {
+            // Circular Countdown
+            Box(contentAlignment = Alignment.Center) {
+                // Glow Circle (Static)
+                Canvas(modifier = Modifier.size(260.dp)) {
+                    drawCircle(
+                        color = Color(0xFF00E5FF).copy(alpha = 0.05f),
+                        radius = size.minDimension / 2
                     )
                 }
+                
+                // Progress Ring
+                Canvas(modifier = Modifier.size(240.dp)) {
+                    // Background Track
+                    drawCircle(
+                        color = Color.White.copy(alpha = 0.1f),
+                        style = Stroke(width = 8.dp.toPx())
+                    )
+                    
+                    // Cyan Active Ring (70% for demo)
+                    drawArc(
+                        color = Color(0xFF00E5FF),
+                        startAngle = -90f,
+                        sweepAngle = 260f,
+                        useCenter = false,
+                        style = Stroke(
+                            width = 8.dp.toPx(),
+                            cap = StrokeCap.Round
+                        )
+                    )
+                }
+
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        text = "$nextPrayerName $nextPrayerDateLabel".trim(),
+                        style = MaterialTheme.typography.titleLarge,
+                        color = Color.White,
+                        fontWeight = FontWeight.Light,
+                        fontSize = 28.sp
+                    )
+                    Text(
+                        text = if (nextPrayerCountdown.isNotEmpty()) nextPrayerCountdown else nextPrayerTime,
+                        style = MaterialTheme.typography.displayMedium,
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 52.sp,
+                        letterSpacing = 2.sp
+                    )
+                    if (nextPrayerCountdown.isNotEmpty()) {
+                        Text(
+                            text = "at $nextPrayerTime",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = Color.White.copy(alpha = 0.7f),
+                            fontSize = 20.sp
+                        )
+                    }
+                }
             }
+        } else {
+             Spacer(modifier = Modifier.height(24.dp))
+             Text(
+                text = "Prayer Schedule",
+                style = MaterialTheme.typography.headlineMedium,
+                color = Color.White,
+                fontWeight = FontWeight.Bold
+            )
+             Spacer(modifier = Modifier.height(16.dp))
+             
+             androidx.compose.material3.Button(
+                 onClick = onJumpToToday,
+                 colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+                     containerColor = Color.White.copy(alpha = 0.2f),
+                     contentColor = Color.White
+                 )
+             ) {
+                 Text("Return to Today")
+             }
+             Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }

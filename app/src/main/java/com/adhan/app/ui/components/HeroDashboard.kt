@@ -1,6 +1,7 @@
 package com.adhan.app.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -17,6 +18,10 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.foundation.Canvas
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ChevronLeft
+import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material3.Icon
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
@@ -32,7 +37,12 @@ fun HeroDashboard(
     hijriDate: String,
     gregorianDate: String,
     locationName: String = "London",
-    currentTime: java.util.Date = java.util.Date()
+    currentTime: java.util.Date = java.util.Date(),
+    // Navigation Callbacks
+    onPrevDate: () -> Unit = {},
+    onNextDate: () -> Unit = {},
+    onDateClick: () -> Unit = {},
+    isToday: Boolean = true
 ) {
     val calendar = remember(currentTime) { java.util.Calendar.getInstance().apply { time = currentTime } }
     val isFriday = remember(calendar) { calendar.get(java.util.Calendar.DAY_OF_WEEK) == java.util.Calendar.FRIDAY }
@@ -69,7 +79,7 @@ fun HeroDashboard(
                     text = arabicVerse,
                     style = MaterialTheme.typography.titleMedium,
                     color = Color.White,
-                    textAlign = androidx.compose.ui.text.style.TextAlign.Right, // Traditional right-align for Arabic
+                    textAlign = androidx.compose.ui.text.style.TextAlign.Right,
                     lineHeight = 28.sp,
                     fontSize = 18.sp,
                     modifier = Modifier.fillMaxWidth()
@@ -88,14 +98,49 @@ fun HeroDashboard(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Gregorian Date
-        Text(
-            text = gregorianDate,
-            style = MaterialTheme.typography.headlineSmall,
-            color = Color.White,
-            fontWeight = FontWeight.Medium,
-            fontSize = 26.sp
-        )
+        // Date Navigation Row
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            androidx.compose.material3.IconButton(onClick = onPrevDate) {
+                Icon(
+                    imageVector = Icons.Default.ChevronLeft,
+                    contentDescription = "Previous Day",
+                    tint = Color.White.copy(alpha = 0.7f),
+                    modifier = Modifier.size(32.dp)
+                )
+            }
+            
+            Text(
+                text = gregorianDate,
+                style = MaterialTheme.typography.headlineSmall,
+                color = if(isToday) Color.White else Color(0xFFFFB74D), // Highlight if not Today
+                fontWeight = FontWeight.Medium,
+                fontSize = 26.sp,
+                modifier = Modifier
+                    .padding(horizontal = 8.dp)
+                    .clickable(onClick = onDateClick)
+            )
+
+            androidx.compose.material3.IconButton(onClick = onNextDate) {
+                Icon(
+                    imageVector = Icons.Default.ChevronRight,
+                    contentDescription = "Next Day",
+                    tint = Color.White.copy(alpha = 0.7f),
+                    modifier = Modifier.size(32.dp)
+                )
+            }
+        }
+
+        if (!isToday) {
+             Text(
+                text = "Viewing Future Date",
+                style = MaterialTheme.typography.labelSmall,
+                color = Color.White.copy(alpha = 0.5f)
+            )
+        }
 
         // Hijri Date (Cyan)
         Text(

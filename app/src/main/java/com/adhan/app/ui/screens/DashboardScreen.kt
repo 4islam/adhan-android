@@ -30,6 +30,35 @@ import com.adhan.app.ui.components.*
 fun DashboardScreen(viewModel: PrayerTimesViewModel) {
     val uiState by viewModel.uiState.collectAsState()
     val listState = rememberLazyListState()
+    
+    // Date Picker State
+    var showDatePicker by remember { mutableStateOf(false) }
+    
+    val context = LocalContext.current
+    
+    if (showDatePicker) {
+        val calendar = java.util.Calendar.getInstance()
+        calendar.time = uiState.selectedDate
+        
+        android.app.DatePickerDialog(
+            context,
+            { _, year, month, dayOfMonth ->
+                val newDate = java.util.Calendar.getInstance()
+                newDate.set(year, month, dayOfMonth)
+                viewModel.setSelectedDate(newDate.timeInMillis)
+                showDatePicker = false
+            },
+            calendar.get(java.util.Calendar.YEAR),
+            calendar.get(java.util.Calendar.MONTH),
+            calendar.get(java.util.Calendar.DAY_OF_MONTH)
+        ).show()
+        
+        // Reset state immediately as Dialog handles itself, but in Compose we usually wait onDismiss. 
+        // Logic above uses standard Android View dialog which blocks or handles independently.
+        // We set showDatePicker = false inside the callback or immediately if we want to just trigger it once.
+        // Better pattern for View-based dialog in Compose:
+        LaunchedEffect(Unit) { showDatePicker = false } 
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         if (uiState.isLoading) {
@@ -57,6 +86,8 @@ fun DashboardScreen(viewModel: PrayerTimesViewModel) {
             ) {
                 // Hero Section
                 item(key = "hero") {
+                    val isToday = android.text.format.DateUtils.isToday(uiState.selectedDate.time)
+                    
                     HeroDashboard(
                         nextPrayerName = uiState.nextPrayerName,
                         nextPrayerTime = uiState.nextPrayerTime,
@@ -65,7 +96,11 @@ fun DashboardScreen(viewModel: PrayerTimesViewModel) {
                         hijriDate = uiState.hijriDate,
                         gregorianDate = uiState.gregorianDate,
                         locationName = uiState.locationName,
-                        currentTime = uiState.currentTime
+                        currentTime = uiState.selectedDate, // Show selected date context
+                        onPrevDate = { viewModel.incrementDate(-1) },
+                        onNextDate = { viewModel.incrementDate(1) },
+                        onDateClick = { showDatePicker = true },
+                        isToday = isToday
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                 }
@@ -167,6 +202,22 @@ fun DashboardScreen(viewModel: PrayerTimesViewModel) {
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text("Stop Adhan")
+                }
+            }
+            
+            // "Return to Today" FAB
+            if (!android.text.format.DateUtils.isToday(uiState.selectedDate.time)) {
+                ExtendedFloatingActionButton(
+                    onClick = { viewModel.jumpToToday() },
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(bottom = 100.dp, end = 16.dp), // Position above navbar
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = Color.White
+                ) {
+                    Icon(Icons.Default.Today, "Today")
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Today")
                 }
             }
         }

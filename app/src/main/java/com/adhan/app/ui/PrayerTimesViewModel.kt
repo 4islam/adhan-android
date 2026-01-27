@@ -65,7 +65,9 @@ data class PrayerTimesState(
     val nextPrayerCountdown: String = "",
     val isAdhanPlaying: Boolean = false,
     val highLatitudeRule: Int = PrayerTimesCalculator.AngleBased,
-    val manualOffsets: Map<String, Int> = emptyMap() // Prayer Name -> Minutes
+
+    val manualOffsets: Map<String, Int> = emptyMap(), // Prayer Name -> Minutes
+    val selectedDate: Date = Date()
 )
 
 @HiltViewModel
@@ -523,6 +525,24 @@ class PrayerTimesViewModel @Inject constructor(
         }
     }
     
+    fun incrementDate(days: Int) {
+        val calendar = Calendar.getInstance()
+        calendar.time = _uiState.value.selectedDate
+        calendar.add(Calendar.DAY_OF_YEAR, days)
+        _uiState.value = _uiState.value.copy(selectedDate = calendar.time)
+        updateTimes()
+    }
+
+    fun setSelectedDate(date: Long) {
+        _uiState.value = _uiState.value.copy(selectedDate = Date(date))
+        updateTimes()
+    }
+
+    fun jumpToToday() {
+        _uiState.value = _uiState.value.copy(selectedDate = Date())
+        updateTimes()
+    }
+
     private fun updateTimes() {
         updateTimesJob?.cancel()
         updateTimesJob = viewModelScope.launch(Dispatchers.Default) {
@@ -533,7 +553,8 @@ class PrayerTimesViewModel @Inject constructor(
             calculator.setCombiningThreshold(state.combiningThreshold)
             calculator.setHighLatsMethod(state.highLatitudeRule)
             
-            val date = state.currentTime
+            // Use selectedDate for calculations
+            val date = state.selectedDate
             val lat = state.latitude
             val lng = state.longitude
             
@@ -693,7 +714,7 @@ class PrayerTimesViewModel @Inject constructor(
                     gregorianDate = gregorianString
                 )
                 
-                updateNextPrayer(date)
+                updateNextPrayer(date) // Pass the selected date for context
             }
 
             prayerScheduler.scheduleAlarmsForNext24Hours()
@@ -722,29 +743,43 @@ class PrayerTimesViewModel @Inject constructor(
         }
     }
 
-    private fun updateNextPrayer(now: Date) {
-        val currentStr = timeFormat.format(now)
+    private fun isSameDay(date1: Date, date2: Date): Boolean {
+        val cal1 = Calendar.getInstance().apply { time = date1 }
+        val cal2 = Calendar.getInstance().apply { time = date2 }
+        return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
+               cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR)
+    }
+
+    private fun updateNextPrayer(selectedDate: Date) {
+        val now = Date()
+        val isToday = isSameDay(selectedDate, now)
+
         val prayerList = _uiState.value.rawPrayerTimes
         if (prayerList.isEmpty()) return
 
-        var nextFound = false
-        val nowDate = timeFormat.parse(currentStr) ?: return
-        
-        for ((index, info) in prayerList.withIndex()) {
-            if (info.time > currentStr) {
-                var activeName: String? = null
-                
-                val diffMinutes = try {
-                    val dateNext = timeFormat.parse(info.time)
-                    if (dateNext != null) {
-                        (dateNext.time - nowDate.time) / (60 * 1000)
-                    } else {
+        var nextName = ""
+        var nextTime = ""
+        var countdown = ""
+        var dateLabel = ""
+        var activeName: String? = null
+
+        if (isToday) {
+            val currentStr = timeFormat.format(now)
+            val nowDate = timeFormat.parse(currentStr) ?: return
+
+            var nextFound = false
+            for ((index, info) in prayerList.withIndex()) {
+                if (info.time > currentStr) {
+                    val diffMinutes = try {
+                        val dateNext = timeFormat.parse(info.time)
+                        if (dateNext != null) {
+                            (dateNext.time - nowDate.time) / (60 * 1000)
+                        } else {
+                            Long.MAX_VALUE
+                        }
+                    } catch (e: Exception) {
                         Long.MAX_VALUE
                     }
-                } catch (e: Exception) {
-                    Long.MAX_VALUE
-                }
-                
                 if (diffMinutes <= 15) {
                     activeName = info.name
                 } else if (index > 0) {
@@ -752,7 +787,6 @@ class PrayerTimesViewModel @Inject constructor(
                 }
                 
                 val currentState = _uiState.value
-                
                 val nowMs = nowDate.time
                 val nextMs = try {
                     val dateNext = timeFormat.parse(info.time)
@@ -783,15 +817,33 @@ class PrayerTimesViewModel @Inject constructor(
                 break
             }
         }
-        
+    
         if (!nextFound) {
             val currentState = _uiState.value
             val ishaName = prayerList.lastOrNull()?.name ?: ""
             val activeName = if (prayerList.isNotEmpty()) ishaName else null
 
-             // Logic for "Coming up: Fajr Tomorrow"
-             // Simplified fallback for countdown
-             _uiState.value = currentState.copy(activePrayerName = activeName)
+            // Logic for "Coming up: Fajr Tomorrow"
+            // We assume it's Fajr of next day, no calculation here for simplicity as per original code
+             if (currentState.nextPrayerName != "Fajr" || currentState.activePrayerName != activeName) {
+                _uiState.value = currentState.copy(
+                    nextPrayerName = "Fajr",
+                    nextPrayerTime = "Tomorrow", // Or actual time if we have next day
+                    nextPrayerCountdown = "",
+                    activePrayerName = activeName,
+                    nextPrayerDateLabel = "Tomorrow"
+                )
+             }
         }
+    } else {
+        // Not Today: Just show static "Day Schedule"
+        _uiState.value = _uiState.value.copy(
+            nextPrayerName = "Schedule",
+            nextPrayerTime = "",
+            nextPrayerCountdown = "",
+            activePrayerName = null,
+            nextPrayerDateLabel = ""
+        )
     }
+}
 }

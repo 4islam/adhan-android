@@ -842,6 +842,17 @@ fun TestingToolsSettings(viewModel: PrayerTimesViewModel, uiState: com.adhan.app
                      Text("Schedule Background (10s)", color = Color.White)
                  }
                  HorizontalDivider()
+                  Button(
+                     onClick = { 
+                         viewModel.testAdhan(120)
+                         android.widget.Toast.makeText(context, "Scheduled in 2m", android.widget.Toast.LENGTH_SHORT).show()
+                     },
+                     modifier = Modifier.fillMaxWidth().padding(16.dp),
+                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF00E5FF).copy(alpha = 0.2f))
+                 ) {
+                     Text("Schedule Background (2m)", color = Color.White)
+                 }
+                 HorizontalDivider()
                  Button(
                      onClick = { 
                          viewModel.forceReschedule()

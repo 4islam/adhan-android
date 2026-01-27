@@ -25,7 +25,7 @@ class AlarmReceiver : BroadcastReceiver() {
         val pendingResult = goAsync()
         kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.IO).launch {
             try {
-                logRepository.log("AlarmReceiver received alarm for: $prayerName")
+                logRepository.log("AlarmReceiver START: $prayerName (WakeLock acquired)")
             } catch (e: Exception) {
                 e.printStackTrace()
             } finally {
@@ -47,9 +47,12 @@ class AlarmReceiver : BroadcastReceiver() {
             } else {
                 context.startService(serviceIntent)
             }
+             kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.IO).launch {
+                logRepository.log("AlarmReceiver: Service start requested for $prayerName")
+            }
         } catch (e: Exception) {
              kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.IO).launch {
-                logRepository.log("Failed to start service: ${e.message}", true)
+                logRepository.log("AlarmReceiver FATAL: Failed to start service: ${e.message}", true)
              }
         }
     }

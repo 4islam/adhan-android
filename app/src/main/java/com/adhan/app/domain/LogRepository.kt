@@ -27,6 +27,7 @@ class LogRepository @Inject constructor(
 
     suspend fun log(message: String, isError: Boolean = false) {
         withContext(Dispatchers.IO) {
+        synchronized(this) {
             val timestamp = System.currentTimeMillis()
             val dateStr = dateFormat.format(Date(timestamp))
             val types = if (isError) "ERROR" else "INFO"
@@ -37,6 +38,7 @@ class LogRepository @Inject constructor(
             } catch (e: Exception) {
                 e.printStackTrace()
             }
+        }
         }
     }
 

@@ -83,23 +83,43 @@ class PrayerAlarmManager @Inject constructor(
     }
 
     fun cancelAllAlarms() {
-        knownPrayerNames.forEach { name ->
-            val intent = Intent(context, AlarmReceiver::class.java).apply {
-                putExtra("prayer_name", name)
+        val cal = Calendar.getInstance()
+        val currentYear = cal.get(Calendar.YEAR)
+        val currentDay = cal.get(Calendar.DAY_OF_YEAR)
+
+        // Cancel Today and Tomorrow's slots for each prayer
+        for (dayOffset in 0..1) {
+            val day = currentDay + dayOffset
+            knownPrayerNames.forEach { name ->
+                val requestCode = getRequestCode(name, day, currentYear)
+                val intent = Intent(context, AlarmReceiver::class.java).apply {
+                    putExtra("prayer_name", name)
+                }
+                val pendingIntent = PendingIntent.getBroadcast(
+                    context,
+                    requestCode,
+                    intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                )
+                alarmManager.cancel(pendingIntent)
+                pendingIntent.cancel()
             }
-            val pendingIntent = PendingIntent.getBroadcast(
-                context,
-                name.hashCode(),
-                intent,
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-            )
-            alarmManager.cancel(pendingIntent)
-            pendingIntent.cancel()
         }
     }
 
+    internal fun getRequestCode(prayerName: String, dayOfYear: Int, year: Int): Int {
+        // Create a unique int for this prayer on this day
+        // prayerName.hashCode() provides a base, then we mix in day and year.
+        // year % 10 (last digit) is enough to avoid year-over-year collisions for a decade.
+        return prayerName.hashCode() + (year % 10 * 1000) + dayOfYear
+    }
 
     private fun scheduleAlarm(prayerName: String, timeInMillis: Long, extras: Map<String, String> = emptyMap()) {
+        val cal = Calendar.getInstance().apply { setTimeInMillis(timeInMillis) }
+        val dayOfYear = cal.get(Calendar.DAY_OF_YEAR)
+        val year = cal.get(Calendar.YEAR)
+        val requestCode = getRequestCode(prayerName, dayOfYear, year)
+
         val intent = Intent(context, AlarmReceiver::class.java).apply {
             putExtra("prayer_name", prayerName)
             extras.forEach { (key, value) -> putExtra(key, value) }
@@ -107,7 +127,7 @@ class PrayerAlarmManager @Inject constructor(
         
         val pendingIntent = PendingIntent.getBroadcast(
             context,
-            prayerName.hashCode(),
+            requestCode,
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
@@ -120,7 +140,7 @@ class PrayerAlarmManager @Inject constructor(
         
         val dateStr = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date(timeInMillis))
         kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.IO).launch {
-             logRepository.log("Scheduled $prayerName at $dateStr with extras: $extras")
+             logRepository.log("Scheduled $prayerName (ID: $requestCode) at $dateStr with extras: $extras")
         }
     }
 

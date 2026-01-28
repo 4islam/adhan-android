@@ -78,7 +78,12 @@ data class PrayerTimesState(
     val manualOffsets: Map<String, Int> = emptyMap(), // Prayer Name -> Minutes
     val selectedDate: Date = Date(),
     val skyAnchor: SkyAnchor = SkyAnchor.Time,
-    val moonPhase: com.adhan.app.domain.models.Astrology.MoonPhase? = null
+    val moonPhase: com.adhan.app.domain.models.Astrology.MoonPhase? = null,
+    
+    // Reliability State
+    val isBatteryOptimizationIgnored: Boolean = false,
+    val canScheduleExactAlarms: Boolean = true,
+    val hasNotificationPermission: Boolean = true
 )
 
 @HiltViewModel
@@ -120,7 +125,7 @@ class PrayerTimesViewModel @Inject constructor(
         loadSettings()
         observeLocation()
         startClock()
-        
+        checkReliabilitySettings()
         // Observe Playback State
         viewModelScope.launch {
             playbackStateRepository.isPlaying.collect { isPlaying ->
@@ -356,6 +361,56 @@ class PrayerTimesViewModel @Inject constructor(
 
     private var foregroundPlayer: androidx.media3.exoplayer.ExoPlayer? = null
     
+    fun checkReliabilitySettings() {
+        val powerManager = application.getSystemService(android.content.Context.POWER_SERVICE) as android.os.PowerManager
+        val isIgnored = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            powerManager.isIgnoringBatteryOptimizations(application.packageName)
+        } else true
+
+        val canExact = alarmManager.canScheduleExactAlarms()
+        
+        val hasNotif = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            androidx.core.content.ContextCompat.checkSelfPermission(
+                application,
+                android.Manifest.permission.POST_NOTIFICATIONS
+            ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+        } else true
+
+        _uiState.value = _uiState.value.copy(
+            isBatteryOptimizationIgnored = isIgnored,
+            canScheduleExactAlarms = canExact,
+            hasNotificationPermission = hasNotif
+        )
+    }
+
+    fun requestIgnoreBatteryOptimizations() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            val intent = android.content.Intent(android.provider.Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS).apply {
+                data = android.net.Uri.parse("package:${application.packageName}")
+                flags = android.content.Intent.FLAG_ACTIVITY_NEW_TASK
+            }
+            application.startActivity(intent)
+        }
+    }
+
+    fun openExactAlarmSettings() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            val intent = android.content.Intent(android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM).apply {
+                data = android.net.Uri.parse("package:${application.packageName}")
+                flags = android.content.Intent.FLAG_ACTIVITY_NEW_TASK
+            }
+            application.startActivity(intent)
+        }
+    }
+
+    fun openNotificationSettings() {
+        val intent = android.content.Intent(android.provider.Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+            putExtra(android.provider.Settings.EXTRA_APP_PACKAGE, application.packageName)
+            flags = android.content.Intent.FLAG_ACTIVITY_NEW_TASK
+        }
+        application.startActivity(intent)
+    }
+
     fun playAdhanNow(testRoute: String? = null) {
         val intent = android.content.Intent(application, com.adhan.app.infra.AdhanService::class.java).apply {
             putExtra("prayer_name", "Test Adhan (Foreground)")

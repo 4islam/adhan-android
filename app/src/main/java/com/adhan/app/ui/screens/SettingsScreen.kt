@@ -45,7 +45,8 @@ enum class SettingsView {
     Notifications,
     TahajjudFeatures,
     CalculationMethods,
-    TestingTools
+    TestingTools,
+    Reliability
 }
 
 @Composable
@@ -74,6 +75,7 @@ fun SettingsScreen(
                     SettingsView.TahajjudFeatures -> "Tahajjud & Features"
                     SettingsView.CalculationMethods -> "Calculation"
                     SettingsView.TestingTools -> "Testing Tools"
+                    SettingsView.Reliability -> "Reliability Audit"
                 },
                 isMain = currentView == SettingsView.Main,
                 onBack = {
@@ -106,6 +108,7 @@ fun SettingsScreen(
                     SettingsView.TahajjudFeatures -> TahajjudFeaturesSettings(viewModel, uiState)
                     SettingsView.CalculationMethods -> CalculationMethodsSettings(viewModel, uiState)
                     SettingsView.TestingTools -> TestingToolsSettings(viewModel, uiState, onNavigateToLogs)
+                    SettingsView.Reliability -> ReliabilitySettings(viewModel, uiState)
                 }
             }
         }
@@ -194,8 +197,10 @@ fun MainSettingsList(
         }
 
         item {
-            SettingsGroupTitle("DIAGNOSTICS")
+            SettingsGroupTitle("RELIABILITY & DIAGNOSTICS")
             SettingsGroupCard {
+                SettingsNavRow("Reliability Audit", Icons.Default.Check) { onNavigate(SettingsView.Reliability) }
+                HorizontalDivider()
                 SettingsNavRow("Testing Tools", Icons.Default.Check) { onNavigate(SettingsView.TestingTools) }
                 HorizontalDivider()
                 SettingsNavRow("App Logs", Icons.Default.Check, onClick = onNavigateToLogs)
@@ -866,6 +871,69 @@ fun TestingToolsSettings(viewModel: PrayerTimesViewModel, uiState: com.adhan.app
              }
          }
      }
+}
+
+@Composable
+fun ReliabilitySettings(viewModel: PrayerTimesViewModel, uiState: com.adhan.app.ui.PrayerTimesState) {
+    LaunchedEffect(Unit) {
+        viewModel.checkReliabilitySettings()
+    }
+
+    LazyColumn(contentPadding = PaddingValues(16.dp)) {
+        item {
+            SettingsGroupTitle("SYSTEM STATUS")
+            SettingsGroupCard {
+                ReliabilityStatusRow(
+                    label = "Battery Optimization",
+                    status = if (uiState.isBatteryOptimizationIgnored) "Disabled (Good)" else "Enabled (Risky)",
+                    isValid = uiState.isBatteryOptimizationIgnored,
+                    actionLabel = "Modify",
+                    onAction = { viewModel.requestIgnoreBatteryOptimizations() }
+                )
+                HorizontalDivider()
+                ReliabilityStatusRow(
+                    label = "Exact Alarms",
+                    status = if (uiState.canScheduleExactAlarms) "Granted" else "Restricted",
+                    isValid = uiState.canScheduleExactAlarms,
+                    actionLabel = "Fix",
+                    onAction = { viewModel.openExactAlarmSettings() }
+                )
+                HorizontalDivider()
+                ReliabilityStatusRow(
+                    label = "Notifications",
+                    status = if (uiState.hasNotificationPermission) "Granted" else "Missing",
+                    isValid = uiState.hasNotificationPermission,
+                    actionLabel = "Grant",
+                    onAction = { viewModel.openNotificationSettings() }
+                )
+            }
+            
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                "For 100% reliability, ensure Battery Optimization is set to 'Unrestricted' or 'Not Optimized'.",
+                style = MaterialTheme.typography.bodySmall,
+                color = Color.Gray,
+                modifier = Modifier.padding(horizontal = 8.dp)
+            )
+        }
+    }
+}
+
+@Composable
+fun ReliabilityStatusRow(label: String, status: String, isValid: Boolean, actionLabel: String, onAction: () -> Unit) {
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(16.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column(modifier = Modifier.weight(1f)) {
+            Text(label, color = Color.White, fontWeight = FontWeight.Bold)
+            Text(status, color = if (isValid) Color.Green else Color.Yellow, fontSize = 12.sp)
+        }
+        TextButton(onClick = onAction) {
+            Text(actionLabel, color = Color.Cyan)
+        }
+    }
 }
 
 // ================= HELPERS =================

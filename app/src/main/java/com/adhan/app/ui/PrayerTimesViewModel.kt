@@ -74,6 +74,8 @@ data class PrayerTimesState(
     val nextPrayerCountdown: String = "",
     val isAdhanPlaying: Boolean = false,
     val highLatitudeRule: Int = PrayerTimesCalculator.AngleBased,
+    val isShortIshaCombiningEnabled: Boolean = true,
+    val shortIshaThresholdMinutes: Int = 90,
 
     val manualOffsets: Map<String, Int> = emptyMap(), // Prayer Name -> Minutes
     val selectedDate: Date = Date(),
@@ -187,7 +189,8 @@ class PrayerTimesViewModel @Inject constructor(
         
         val shortAsrEnabled = userPrefs.isShortAsrEnabled()
         val shortAsrThreshold = userPrefs.getShortAsrThreshold()
-        
+        val isShortIshaCombiningEnabled = userPrefs.isShortIshaEnabled()
+        val shortIshaThresholdMinutes = userPrefs.getShortIshaThreshold()
 
         
         val adhanVolume = userPrefs.getAdhanVolume()
@@ -219,7 +222,8 @@ class PrayerTimesViewModel @Inject constructor(
             shortNightThresholdHours = shortNightThreshold,
             isShortAsrCombiningEnabled = shortAsrEnabled,
             shortAsrThresholdMinutes = shortAsrThreshold,
-
+            isShortIshaCombiningEnabled = isShortIshaCombiningEnabled,
+            shortIshaThresholdMinutes = shortIshaThresholdMinutes,
             adhanVolume = adhanVolume,
             highLatitudeRule = highLatitudeRule,
             manualOffsets = offsets
@@ -228,14 +232,26 @@ class PrayerTimesViewModel @Inject constructor(
     }
 
     fun setShortAsrCombiningEnabled(enabled: Boolean) {
-        prefs.edit().putBoolean("short_asr_enabled", enabled).apply()
+        userPrefs.setShortAsrEnabled(enabled)
         _uiState.value = _uiState.value.copy(isShortAsrCombiningEnabled = enabled)
         updateTimes()
     }
 
     fun setShortAsrThreshold(minutes: Int) {
-        prefs.edit().putInt("short_asr_threshold", minutes).apply()
+        userPrefs.setShortAsrThreshold(minutes)
         _uiState.value = _uiState.value.copy(shortAsrThresholdMinutes = minutes)
+        updateTimes()
+    }
+
+    fun setShortIshaCombiningEnabled(enabled: Boolean) {
+        userPrefs.setShortIshaEnabled(enabled)
+        _uiState.value = _uiState.value.copy(isShortIshaCombiningEnabled = enabled)
+        updateTimes()
+    }
+
+    fun setShortIshaThreshold(minutes: Int) {
+        userPrefs.setShortIshaThreshold(minutes)
+        _uiState.value = _uiState.value.copy(shortIshaThresholdMinutes = minutes)
         updateTimes()
     }
     
@@ -499,6 +515,27 @@ class PrayerTimesViewModel @Inject constructor(
         }
         
         currentDays[prayer] = daysForPrayer
+        _uiState.value = _uiState.value.copy(adhanNotificationDays = currentDays)
+        updateTimes()
+    }
+
+    fun applyConfigToAllPrayersOnDay(dayOfWeek: Int, enabled: Boolean, route: String, volume: Int?, fadeSeconds: Int?) {
+        val finalRoute = if (route == "Global Default") null else route
+        val prayers = listOf("Fajr", "Dhuhr", "Asr", "Maghrib", "Isha")
+        
+        val currentDays = _uiState.value.adhanNotificationDays.toMutableMap()
+        
+        prayers.forEach { prayer ->
+            userPrefs.setAdhanDayEnabled(prayer, dayOfWeek, enabled)
+            userPrefs.setAudioRoute(prayer, dayOfWeek, finalRoute)
+            userPrefs.setDayVolume(prayer, dayOfWeek, volume)
+            userPrefs.setDayFadeSeconds(prayer, dayOfWeek, fadeSeconds)
+            
+            val daysForPrayer = currentDays[prayer]?.toMutableMap() ?: mutableMapOf()
+            daysForPrayer[dayOfWeek] = enabled
+            currentDays[prayer] = daysForPrayer
+        }
+        
         _uiState.value = _uiState.value.copy(adhanNotificationDays = currentDays)
         updateTimes()
     }

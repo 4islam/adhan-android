@@ -38,6 +38,10 @@ class UserPreferencesRepository @Inject constructor(
     
     fun getShortAsrThreshold(): Int = prefs.getInt("short_asr_threshold", 90)
     
+    fun isShortIshaEnabled(): Boolean = prefs.getBoolean("short_isha_enabled", true)
+    
+    fun getShortIshaThreshold(): Int = prefs.getInt("short_isha_threshold", 90)
+    
     fun getAdhanVolume(): Int = prefs.getInt("adhan_volume", 80)
     
     fun getFadeConfigs(): Map<String, FadeConfig> {
@@ -120,5 +124,21 @@ class UserPreferencesRepository @Inject constructor(
         } else {
             prefs.edit().putInt(key, seconds).apply()
         }
+    }
+
+    fun setShortIshaEnabled(enabled: Boolean) {
+        prefs.edit().putBoolean("short_isha_enabled", enabled).apply()
+    }
+
+    fun setShortIshaThreshold(minutes: Int) {
+        prefs.edit().putInt("short_isha_threshold", minutes).apply()
+    }
+
+    fun setShortAsrEnabled(enabled: Boolean) {
+        prefs.edit().putBoolean("short_asr_enabled", enabled).apply()
+    }
+
+    fun setShortAsrThreshold(minutes: Int) {
+        prefs.edit().putInt("short_asr_threshold", minutes).apply()
     }
 }

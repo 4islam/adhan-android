@@ -59,4 +59,23 @@ class PrayerSchedulerTest {
         val names = alarms.map { it.first }
         org.junit.Assert.assertTrue("Should contain at least one of Fajr or Isha", names.any { it.contains("Fajr") || it.contains("Isha") })
     }
+
+    @Test
+    fun `scheduleAlarmsForNext24Hours should combine Maghrib and Isha when enabled and threshold met`() = runBlocking {
+        // Force Isha to be very close to Maghrib for testing
+        every { prefsRepository.isShortIshaEnabled() } returns true
+        every { prefsRepository.getShortIshaThreshold() } returns 120 // 2 hours
+        
+        scheduler.scheduleAlarmsForNext24Hours()
+        
+        val capturedAlarms = slot<List<Pair<String, Long>>>()
+        verify { alarmManager.scheduleExactAlarms(capture(capturedAlarms)) }
+        
+        val names = capturedAlarms.captured.map { it.first }
+        // In London, Maghrib and Isha are usually within 2 hours.
+        // If combined, "Maghrib" and "Isha" should be replaced by "Maghrib/Isha"
+        org.junit.Assert.assertTrue("Should contain Maghrib/Isha", names.contains("Maghrib/Isha"))
+        org.junit.Assert.assertFalse("Should NOT contain solo Maghrib", names.contains("Maghrib"))
+        org.junit.Assert.assertFalse("Should NOT contain solo Isha", names.contains("Isha"))
+    }
 }

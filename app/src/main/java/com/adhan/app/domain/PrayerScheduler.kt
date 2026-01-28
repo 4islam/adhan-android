@@ -91,6 +91,7 @@ class PrayerScheduler @Inject constructor(
         // Apply Combining Logic
         applyShortNightCombining(combinedTimes, date, lat, lng, calculator)
         applyShortAsrCombining(combinedTimes)
+        applyShortIshaCombining(combinedTimes)
 
         // Tahajjud
         if (prefsRepository.isTahajjudEnabled()) {
@@ -207,6 +208,33 @@ class PrayerScheduler @Inject constructor(
                      if (dIdx != -1 && aIdx != -1) {
                          times[dIdx] = times[dIdx].copy(name = "Dhuhr/Asr")
                          times[aIdx] = times[aIdx].copy(name = "Dhuhr/Asr", time = times[dIdx].time)
+                     }
+                }
+            } catch (e: Exception) { /* ignore */ }
+        }
+    }
+
+    private fun applyShortIshaCombining(times: MutableList<PrayerTimesCalculator.CombinedPrayerInfo>) {
+        if (!prefsRepository.isShortIshaEnabled()) return
+        val threshold = prefsRepository.getShortIshaThreshold()
+        
+        val maghrib = times.find { it.name == "Maghrib" }
+        val isha = times.find { it.name == "Isha" }
+        
+        if (maghrib != null && isha != null) {
+              try {
+                val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
+                val mTime = sdf.parse(maghrib.time)
+                val iTime = sdf.parse(isha.time)
+                val diffMs = iTime.time - mTime.time
+                val diffMins = diffMs / (1000.0 * 60.0)
+                
+                if (diffMins < threshold) {
+                     val mIdx = times.indexOfFirst { it.name == "Maghrib" }
+                     val iIdx = times.indexOfFirst { it.name == "Isha" }
+                     if (mIdx != -1 && iIdx != -1) {
+                         times[mIdx] = times[mIdx].copy(name = "Maghrib/Isha")
+                         times[iIdx] = times[iIdx].copy(name = "Maghrib/Isha", time = times[mIdx].time)
                      }
                 }
             } catch (e: Exception) { /* ignore */ }

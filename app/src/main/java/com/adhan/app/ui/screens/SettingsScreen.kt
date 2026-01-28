@@ -611,6 +611,24 @@ fun DayConfigurationDialog(
                     ) {
                         Text("Apply to All Days", color = Color.Cyan)
                     }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    OutlinedButton(
+                        onClick = {
+                             viewModel.applyConfigToAllPrayersOnDay(
+                                 dayId, 
+                                 isEnabled, 
+                                 currentRoute, 
+                                 if (isVolumeOverride) volumeValue else null,
+                                 if (isFadeOverride) fadeValue else null
+                             )
+                             onDismiss()
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("Apply to All Prayers today", color = Color.Cyan)
+                    }
                 }
             }
         },
@@ -698,8 +716,29 @@ fun TahajjudFeaturesSettings(viewModel: PrayerTimesViewModel, uiState: com.adhan
                          )
                      }
                  }
+                 
+                 HorizontalDivider()
+
+                 // Short Isha
+                 Row(modifier = Modifier.padding(16.dp), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+                     Column {
+                         Text("Short Isha Window", color = Color.White)
+                         Text("Maghrib & Isha", color = Color.White.copy(alpha = 0.5f), style = MaterialTheme.typography.labelSmall)
+                     }
+                     Switch(checked = uiState.isShortIshaCombiningEnabled, onCheckedChange = { viewModel.setShortIshaCombiningEnabled(it) })
+                 }
+                  if (uiState.isShortIshaCombiningEnabled) {
+                     Column(modifier = Modifier.padding(16.dp)) {
+                         Text("Threshold: ${uiState.shortIshaThresholdMinutes} minutes", color = Color.White)
+                         Slider(
+                             value = uiState.shortIshaThresholdMinutes.toFloat(),
+                             onValueChange = { viewModel.setShortIshaThreshold(it.toInt()) },
+                             valueRange = 45f..120f
+                         )
+                     }
+                 }
              }
-        }
+         }
     }
 }
 

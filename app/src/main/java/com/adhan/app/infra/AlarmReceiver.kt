@@ -13,6 +13,9 @@ class AlarmReceiver : BroadcastReceiver() {
     @javax.inject.Inject
     lateinit var logRepository: com.adhan.app.domain.LogRepository
 
+    @javax.inject.Inject
+    lateinit var prayerEventRepository: com.adhan.app.domain.PrayerEventRepository
+
     override fun onReceive(context: Context, intent: Intent) {
         val prayerName = intent.getStringExtra("prayer_name") ?: "Prayer"
         android.util.Log.d("AlarmReceiver", "onReceive: $prayerName")
@@ -26,6 +29,11 @@ class AlarmReceiver : BroadcastReceiver() {
         kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.IO).launch {
             try {
                 logRepository.log("AlarmReceiver START: $prayerName (WakeLock acquired)")
+                prayerEventRepository.logEvent(
+                    prayerName = prayerName,
+                    status = "Triggered",
+                    speaker = intent.getStringExtra("test_audio_route")
+                )
             } catch (e: Exception) {
                 e.printStackTrace()
             } finally {

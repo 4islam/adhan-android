@@ -34,6 +34,9 @@ class AdhanService : Service() {
     lateinit var playbackStateRepository: com.adhan.app.domain.PlaybackStateRepository
 
     @Inject
+    lateinit var prayerEventRepository: com.adhan.app.domain.PrayerEventRepository
+
+    @Inject
     lateinit var mediaRouterHelper: com.adhan.app.infra.MediaRouterHelper
 
     private var player: ExoPlayer? = null
@@ -41,6 +44,7 @@ class AdhanService : Service() {
     private val NOTIFICATION_ID = 1001
     private val CHANNEL_ID = "adhan_alerts_v2"
     private val serviceScope = kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.IO + kotlinx.coroutines.SupervisorJob())
+    private var currentPrayerName: String? = null
     private var initialVolume: Int? = null
 
     override fun onCreate() {
@@ -73,6 +77,12 @@ class AdhanService : Service() {
                     }
 
                     if (playbackState == Player.STATE_ENDED) {
+                        serviceScope.launch {
+                            prayerEventRepository.logEvent(
+                                prayerName = currentPrayerName ?: "Prayer",
+                                status = "Success"
+                            )
+                        }
                         stopForeground(STOP_FOREGROUND_REMOVE)
                         stopSelf()
                     }
@@ -88,7 +98,14 @@ class AdhanService : Service() {
                 override fun onPlayerError(error: androidx.media3.common.PlaybackException) {
                      val msg = "ExoPlayer ERROR: ${error.message}"
                      android.util.Log.e("AdhanService", msg)
-                     serviceScope.launch { logRepository.log(msg, true) }
+                     serviceScope.launch { 
+                         logRepository.log(msg, true)
+                         prayerEventRepository.logEvent(
+                             prayerName = currentPrayerName ?: "Prayer",
+                             status = "Error",
+                             errorMessage = error.message
+                         )
+                     }
                 }
             })
         }
@@ -150,6 +167,7 @@ class AdhanService : Service() {
         }
         
         android.util.Log.d("AdhanService", "onStartCommand: $prayerName")
+        currentPrayerName = prayerName
         serviceScope.launch { logRepository.log("AdhanService started for: $prayerName") }
         
         // Start MediaRouter Scanning immediately
@@ -319,8 +337,17 @@ class AdhanService : Service() {
                     if (it.playbackState == Player.STATE_IDLE || it.playbackState == Player.STATE_ENDED) {
                         it.setMediaItem(mediaItem)
                         it.prepare()
-                        it.volume = if (fadeDurationSeconds > 0) 0f else 1.0f 
                         it.play()
+                        
+                        val currentVolume = userPrefs.getVolume()
+                        serviceScope.launch {
+                            prayerEventRepository.logEvent(
+                                prayerName = prayerName,
+                                status = "Playing",
+                                speaker = selectedRoute ?: "Default",
+                                volume = currentVolume
+                            )
+                        }
                         
                         // We are already on Main via withContext(Dispatchers.Main) in caller
                         if (fadeDurationSeconds > 0) {

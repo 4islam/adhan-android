@@ -62,14 +62,18 @@ fun LogsScreen(
                         Icon(Icons.Default.Refresh, contentDescription = "Refresh")
                     }
                     IconButton(onClick = {
-                        val text = displayedLogs.joinToString("\n") { "${it.formattedTime}|${if(it.isError) "ERROR" else "INFO"}|${it.message}" }
+                        val text = displayedLogs.take(200).joinToString("\n") { 
+                            "${it.formattedTime}|${if(it.isError) "ERROR" else "INFO"}|${it.message}" 
+                        }
                         clipboardManager.setText(AnnotatedString(text))
-                        android.widget.Toast.makeText(context, "Logs copied", android.widget.Toast.LENGTH_SHORT).show()
+                        android.widget.Toast.makeText(context, "Last 200 logs copied", android.widget.Toast.LENGTH_SHORT).show()
                     }) {
                         Icon(Icons.Default.ContentCopy, contentDescription = "Copy")
                     }
                     IconButton(onClick = {
-                        val text = displayedLogs.joinToString("\n") { "${it.formattedTime}|${if(it.isError) "ERROR" else "INFO"}|${it.message}" }
+                        val text = displayedLogs.take(200).joinToString("\n") { 
+                            "${it.formattedTime}|${if(it.isError) "ERROR" else "INFO"}|${it.message}" 
+                        }
                         val sendIntent = android.content.Intent().apply {
                             action = android.content.Intent.ACTION_SEND
                             putExtra(android.content.Intent.EXTRA_TEXT, text)

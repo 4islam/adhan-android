@@ -8,6 +8,9 @@ import com.adhan.app.domain.models.PrayerTimesCalculator
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.text.SimpleDateFormat
 import java.util.*
+import android.util.Log
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -15,7 +18,8 @@ import javax.inject.Singleton
 @Singleton
 class PrayerAlarmManager @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val logRepository: com.adhan.app.domain.LogRepository
+    private val logRepository: com.adhan.app.domain.LogRepository,
+    private val prayerEventRepository: com.adhan.app.domain.PrayerEventRepository
 ) {
     private val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
@@ -139,8 +143,14 @@ class PrayerAlarmManager @Inject constructor(
         )
         
         val dateStr = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date(timeInMillis))
-        kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.IO).launch {
-             logRepository.log("Scheduled $prayerName (ID: $requestCode) at $dateStr with extras: $extras")
+        Log.d("PrayerAlarmManager", "Scheduling $prayerName at ${java.util.Date(timeInMillis)}")
+        CoroutineScope(Dispatchers.IO).launch {
+            logRepository.log("Scheduled $prayerName (ID: $requestCode) at $dateStr with extras: $extras")
+            prayerEventRepository.logEvent(
+                prayerName = prayerName,
+                status = "Scheduled",
+                speaker = extras["test_audio_route"] // Use the route from extras if available
+            )
         }
     }
 

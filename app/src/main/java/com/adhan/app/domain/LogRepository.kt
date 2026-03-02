@@ -25,22 +25,39 @@ class LogRepository @Inject constructor(
     private val logFile = File(context.filesDir, "adhan_debug_logs.txt")
     private val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
 
+    private val MAX_LOG_SIZE = 500 * 1024 // 500 KB
+
     suspend fun log(message: String, isError: Boolean = false) {
         withContext(Dispatchers.IO) {
-        synchronized(this) {
-            val timestamp = System.currentTimeMillis()
-            val dateStr = dateFormat.format(Date(timestamp))
-            val types = if (isError) "ERROR" else "INFO"
-            val line = "$dateStr|$types|$message\n"
-            
-            try {
-                logFile.appendText(line)
-            } catch (e: Exception) {
-                e.printStackTrace()
+            synchronized(this) {
+                val timestamp = System.currentTimeMillis()
+                val dateStr = dateFormat.format(Date(timestamp))
+                val types = if (isError) "ERROR" else "INFO"
+                val line = "$dateStr|$types|$message\n"
+                
+                try {
+                    if (logFile.exists() && logFile.length() > MAX_LOG_SIZE) {
+                        rotateLogs()
+                    }
+                    logFile.appendText(line)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
             }
         }
+    }
+
+    private fun rotateLogs() {
+        try {
+            val lines = logFile.readLines()
+            if (lines.size > 1000) {
+                logFile.writeText(lines.takeLast(500).joinToString("\n") + "\n")
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
+
 
     suspend fun getLogs(): List<LogEntry> {
         return withContext(Dispatchers.IO) {

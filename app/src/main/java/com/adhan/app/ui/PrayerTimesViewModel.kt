@@ -99,7 +99,8 @@ class PrayerTimesViewModel @Inject constructor(
     private val prayerScheduler: com.adhan.app.domain.PrayerScheduler,
     private val userPrefs: com.adhan.app.domain.UserPreferencesRepository,
     private val mediaRouterHelper: com.adhan.app.infra.MediaRouterHelper,
-    private val playbackStateRepository: com.adhan.app.domain.PlaybackStateRepository
+    private val playbackStateRepository: com.adhan.app.domain.PlaybackStateRepository,
+    private val prayerEventRepository: com.adhan.app.domain.PrayerEventRepository
 ) : ViewModel() {
     private val prefs = application.getSharedPreferences("adhan_prefs", android.content.Context.MODE_PRIVATE)
     private val _uiState = MutableStateFlow(PrayerTimesState())
@@ -110,6 +111,20 @@ class PrayerTimesViewModel @Inject constructor(
     fun loadLogs() {
         viewModelScope.launch {
             logs.value = logRepository.getLogs()
+        }
+    }
+
+    val prayerEvents = prayerEventRepository.events
+
+    fun loadPrayerEvents() {
+        viewModelScope.launch {
+            prayerEventRepository.loadEvents()
+        }
+    }
+
+    fun clearPrayerEvents() {
+        viewModelScope.launch {
+            prayerEventRepository.clearEvents()
         }
     }
 
@@ -1033,17 +1048,53 @@ class PrayerTimesViewModel @Inject constructor(
             val activeName = if (prayerList.isNotEmpty()) ishaName else null
 
             // Logic for "Coming up: Fajr Tomorrow"
-            // We assume it's Fajr of next day, no calculation here for simplicity as per original code
-             if (currentState.nextPrayerName != "Fajr" || currentState.activePrayerName != activeName) {
+            // We calculate tomorrow's Fajr for the countdown
+            val tomorrowCal = java.util.Calendar.getInstance().apply {
+                time = nowDate
+                add(java.util.Calendar.DAY_OF_YEAR, 1)
+            }
+            val calculator = com.adhan.app.domain.models.PrayerTimesCalculator()
+            calculator.setCalcMethod(currentState.calcMethod)
+            calculator.setAsrMethod(currentState.asrJuristic)
+            calculator.setCombiningThreshold(currentState.combiningThreshold)
+            calculator.setHighLatsMethod(currentState.highLatitudeRule)
+            
+            val tomorrowTimes = calculator.getCombinedPrayerTimes(tomorrowCal.time, currentState.latitude, currentState.longitude)
+            val tomorrowFajr = tomorrowTimes.find { it.name == "Fajr" }
+            
+            var countdownString = ""
+            var tomorrowFajrTime = "Tomorrow"
+            
+            if (tomorrowFajr != null) {
+                try {
+                    val timeParts = tomorrowFajr.time.split(":")
+                    tomorrowCal.set(java.util.Calendar.HOUR_OF_DAY, timeParts[0].toInt())
+                    tomorrowCal.set(java.util.Calendar.MINUTE, timeParts[1].toInt())
+                    tomorrowCal.set(java.util.Calendar.SECOND, 0)
+                    
+                    val diffMs = tomorrowCal.timeInMillis - nowDate.time
+                    val hours = diffMs / (1000 * 60 * 60)
+                    val minutes = (diffMs / (1000 * 60)) % 60
+                    countdownString = if (hours > 0) "${hours}h ${minutes}m" else "${minutes}m"
+                    tomorrowFajrTime = formatDisplayTime(tomorrowFajr.time)
+                } catch (e: Exception) {
+                    android.util.Log.e("PrayerTimesViewModel", "Error calculating tomorrow's Fajr", e)
+                }
+            }
+
+            if (currentState.nextPrayerName != "Fajr" || 
+                currentState.activePrayerName != activeName ||
+                currentState.nextPrayerCountdown != countdownString) {
                 _uiState.value = currentState.copy(
                     nextPrayerName = "Fajr",
-                    nextPrayerTime = "Tomorrow", // Or actual time if we have next day
-                    nextPrayerCountdown = "",
+                    nextPrayerTime = tomorrowFajrTime,
+                    nextPrayerCountdown = countdownString,
                     activePrayerName = activeName,
                     nextPrayerDateLabel = "Tomorrow"
                 )
-             }
+            }
         }
+
     } else {
         // Not Today: Just show static "Day Schedule"
         _uiState.value = _uiState.value.copy(

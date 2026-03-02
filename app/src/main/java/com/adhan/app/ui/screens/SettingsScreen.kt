@@ -46,7 +46,8 @@ enum class SettingsView {
     TahajjudFeatures,
     CalculationMethods,
     TestingTools,
-    Reliability
+    Reliability,
+    PastEvents
 }
 
 @Composable
@@ -76,6 +77,7 @@ fun SettingsScreen(
                     SettingsView.CalculationMethods -> "Calculation"
                     SettingsView.TestingTools -> "Testing Tools"
                     SettingsView.Reliability -> "Reliability Audit"
+                    SettingsView.PastEvents -> "Past Adhan Events"
                 },
                 isMain = currentView == SettingsView.Main,
                 onBack = {
@@ -109,6 +111,7 @@ fun SettingsScreen(
                     SettingsView.CalculationMethods -> CalculationMethodsSettings(viewModel, uiState)
                     SettingsView.TestingTools -> TestingToolsSettings(viewModel, uiState, onNavigateToLogs)
                     SettingsView.Reliability -> ReliabilitySettings(viewModel, uiState)
+                    SettingsView.PastEvents -> com.adhan.app.ui.screens.PastEventsScreen(viewModel, onBack = { currentView = SettingsView.Main })
                 }
             }
         }
@@ -200,6 +203,8 @@ fun MainSettingsList(
             SettingsGroupTitle("RELIABILITY & DIAGNOSTICS")
             SettingsGroupCard {
                 SettingsNavRow("Reliability Audit", Icons.Default.Check) { onNavigate(SettingsView.Reliability) }
+                HorizontalDivider()
+                SettingsNavRow("Past Adhan Events", Icons.Default.Check) { onNavigate(SettingsView.PastEvents) }
                 HorizontalDivider()
                 SettingsNavRow("Testing Tools", Icons.Default.Check) { onNavigate(SettingsView.TestingTools) }
                 HorizontalDivider()

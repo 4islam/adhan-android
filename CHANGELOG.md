@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 
+- **API Key Security**: Removed `app/google-services.json` from Git tracking and added it to `.gitignore` to resolve a public API key leak (adhan-native project).
 - **Log Copy Crash**: Fixed a critical crash in the `LogsScreen` when copying logs to the clipboard by limiting the buffer size.
 - **Log Management**: Implemented `LogRepository` size limiting (500KB) and automatic rotation to prevent memory issues.
 

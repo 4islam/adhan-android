@@ -60,7 +60,11 @@ Check out the iOS version of this project at: **[adhan-ios](https://github.com/4
 3. Ensure you have the latest Android SDK and Gradle version.
 4. Build and run on a physical device or emulator.
 
-## 📄 License
+## � Credits
+
+This project utilizes the core logic and formulas from the [PrayTime.js](http://tanzil.info/praytime) library, originally developed by **Hamid Zarrabi-Zadeh**.
+
+## �📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 

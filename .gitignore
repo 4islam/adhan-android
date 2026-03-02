@@ -35,3 +35,4 @@ run_test_gen.js
 gen_test_data_fragment.js
 empty.gradle
 Astrology.ts
+app/google-services.json

@@ -923,6 +923,7 @@ class PrayerTimesViewModel @Inject constructor(
             val allowedPrayers = listOf("Tahajjud", "Fajr", "Dhuhr", "Dhuhr/Asr", "Jummah (or Dhuhr)", "Asr", "Maghrib", "Maghrib/Isha", "Isha")
             val displayPrayerList = prayerList
                 .filter { it.name in allowedPrayers }
+                .distinctBy { it.name }
                 .map { it.copy(time = formatDisplayTime(it.time)) }
             val displayAstroList = astroList.map { it.copy(time = formatDisplayTime(it.time)) }
 

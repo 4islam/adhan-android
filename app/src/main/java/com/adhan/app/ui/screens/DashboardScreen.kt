@@ -128,22 +128,26 @@ fun DashboardScreen(viewModel: PrayerTimesViewModel) {
                                 
                                 if (itemInfo != null) {
                                     val viewportHeight = layoutInfo.viewportEndOffset - layoutInfo.viewportStartOffset
-                                    val itemCenter = itemInfo.offset + (itemInfo.size / 2f)
-                                    val viewportCenter = viewportHeight / 2f
-                                    
-                                    val distFromCenter = (itemCenter - viewportCenter) / (viewportHeight / 2f)
-                                    val absDist = kotlin.math.abs(distFromCenter).coerceAtMost(1f)
+                                    if (viewportHeight > 0) {
+                                        val itemCenter = itemInfo.offset + (itemInfo.size / 2f)
+                                        val viewportCenter = viewportHeight / 2f
+                                        
+                                        val distFromCenter = (itemCenter - viewportCenter) / (viewportHeight / 2f)
+                                        if (!distFromCenter.isNaN() && !distFromCenter.isInfinite()) {
+                                            val absDist = kotlin.math.abs(distFromCenter).coerceAtMost(1f)
 
-                                    rotationX = distFromCenter * -30f
-                                    cameraDistance = 12f * density
-                                    
-                                    val focalScale = if (isActive) 1.25f else 1.0f
-                                    val distScale = 1.0f - (absDist * 0.4f)
-                                    scaleX = focalScale * distScale
-                                    scaleY = focalScale * distScale
-                                    
-                                    alpha = (1.0f - (absDist * 0.3f)).coerceIn(0.4f, 1.0f)
-                                    translationY = distFromCenter * -20f
+                                            rotationX = distFromCenter * -30f
+                                            cameraDistance = 12f * density
+                                            
+                                            val focalScale = if (isActive) 1.25f else 1.0f
+                                            val distScale = 1.0f - (absDist * 0.4f)
+                                            scaleX = (focalScale * distScale).coerceAtLeast(0.1f)
+                                            scaleY = (focalScale * distScale).coerceAtLeast(0.1f)
+                                            
+                                            alpha = (1.0f - (absDist * 0.3f)).coerceIn(0.4f, 1.0f)
+                                            translationY = distFromCenter * -20f
+                                        }
+                                    }
                                 }
                             }
                     ) {

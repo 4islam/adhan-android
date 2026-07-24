@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Fixed
+- **Scroll Crash**: Fixed a fatal crash in `DashboardScreen` that occurred when scrolling the page rapidly, caused by a division-by-zero `NaN` evaluation in the 3D scroll logic.
+- **Combined Prayer Crash**: Fixed a fatal duplicate key exception that triggered when scrolling to the bottom of the list when Short Night or Short Asr combining was enabled.
+- **Service Compilation Error**: Fixed a compile error in `AdhanService` related to retrieving the user's volume preference.
+
 ## [3.5.19] - 2026-03-01
 
 ### Added

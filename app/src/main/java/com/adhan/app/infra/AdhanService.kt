@@ -339,7 +339,7 @@ class AdhanService : Service() {
                         it.prepare()
                         it.play()
                         
-                        val currentVolume = userPrefs.getVolume()
+                        val currentVolume = prefs.getInt("adhan_volume", 80)
                         serviceScope.launch {
                             prayerEventRepository.logEvent(
                                 prayerName = prayerName,

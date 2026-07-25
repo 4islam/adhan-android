@@ -141,4 +141,8 @@ class UserPreferencesRepository @Inject constructor(
     fun setShortAsrThreshold(minutes: Int) {
         prefs.edit().putInt("short_asr_threshold", minutes).apply()
     }
+
+    fun getManualOffset(prayer: String): Int {
+        return prefs.getInt("offset_$prayer", 0)
+    }
 }

@@ -74,18 +74,23 @@ class PrayerScheduler @Inject constructor(
         val alarms = mutableListOf<Pair<String, Long>>()
         val combinedTimes = calculator.getCombinedPrayerTimes(date, lat, lng).toMutableList()
 
-        // Dhuhr Offset: Add 10 minutes
-        val dIndex = combinedTimes.indexOfFirst { it.name == "Dhuhr" }
-        if (dIndex != -1) {
-             try {
-                val dhuhr = combinedTimes[dIndex]
-                val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
-                val dDate = sdf.parse(dhuhr.time)
-                if (dDate != null) {
-                    val newTime = dDate.time + (10 * 60 * 1000)
-                    combinedTimes[dIndex] = dhuhr.copy(time = sdf.format(Date(newTime)))
-                }
-            } catch (e: Exception) { /* ignore */ }
+        // Apply Manual Offsets
+        for (i in combinedTimes.indices) {
+            val info = combinedTimes[i]
+            val offset = prefsRepository.getManualOffset(info.name)
+            val fixedDhuhrOffset = if (info.name == "Dhuhr") 10 else 0
+            val totalOffset = offset + fixedDhuhrOffset
+
+            if (totalOffset != 0 && info.time != PrayerTimesCalculator.InvalidTime) {
+                try {
+                    val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
+                    val dDate = sdf.parse(info.time)
+                    if (dDate != null) {
+                        val newTime = dDate.time + (totalOffset * 60 * 1000)
+                        combinedTimes[i] = info.copy(time = sdf.format(Date(newTime)))
+                    }
+                } catch (e: Exception) { /* ignore */ }
+            }
         }
 
         // Apply Combining Logic
@@ -242,12 +247,17 @@ class PrayerScheduler @Inject constructor(
     }
 
     private fun calculateTahajjudTime(fajrTime: String, offsetMinutes: Int): String {
-        val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
-        val date = sdf.parse(fajrTime) ?: return fajrTime
-        val cal = Calendar.getInstance()
-        cal.time = date
-        cal.add(Calendar.MINUTE, -offsetMinutes)
-        return sdf.format(cal.time)
+        if (fajrTime == PrayerTimesCalculator.InvalidTime) return fajrTime
+        return try {
+            val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
+            val date = sdf.parse(fajrTime) ?: return fajrTime
+            val cal = Calendar.getInstance()
+            cal.time = date
+            cal.add(Calendar.MINUTE, -offsetMinutes)
+            sdf.format(cal.time)
+        } catch (e: Exception) {
+            fajrTime
+        }
     }
 
     private fun getTimestamp(date: Date, timeStr: String): Long {

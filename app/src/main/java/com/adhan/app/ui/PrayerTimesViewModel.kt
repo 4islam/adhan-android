@@ -947,12 +947,17 @@ class PrayerTimesViewModel @Inject constructor(
     }
 
     private fun calculateTahajjudTime(fajrTime: String, offsetMinutes: Int): String {
-        val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
-        val date = sdf.parse(fajrTime) ?: return fajrTime
-        val cal = Calendar.getInstance()
-        cal.time = date
-        cal.add(Calendar.MINUTE, -offsetMinutes)
-        return sdf.format(cal.time)
+        if (fajrTime == PrayerTimesCalculator.InvalidTime) return fajrTime
+        return try {
+            val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
+            val date = sdf.parse(fajrTime) ?: return fajrTime
+            val cal = Calendar.getInstance()
+            cal.time = date
+            cal.add(Calendar.MINUTE, -offsetMinutes)
+            sdf.format(cal.time)
+        } catch (e: Exception) {
+            fajrTime
+        }
     }
 
     private fun formatDisplayTime(time24: String): String {

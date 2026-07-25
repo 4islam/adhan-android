@@ -1,0 +1,865 @@
+--------- beginning of main
+07-24 11:05:31.141 28019 28019 D nativeloader: Load libframework-connectivity-tiramisu-jni.so using APEX ns com_android_tethering for caller /apex/com.android.tethering/javalib/framework-connectivity-t.jar: ok
+07-24 11:05:31.165 14061 27979 D BluetoothAdapter: isLeEnabled(): BLE_TURNING_ON
+07-24 11:05:31.173   247   247 W tombstoned: pid 26558 already registered, type kDebuggerdJavaBacktrace
+07-24 11:05:31.175 26558 28032 E system_server: libdebuggerd_client: unexpected registration response: 0
+--------- beginning of system
+07-24 11:05:31.189 26558 27352 W UriGrantsManagerService: No permission grants found for com.google.android.apps.photos
+07-24 11:05:31.238 14061 14071 W Auth    : [TokenResponseCallback] TokenResponse failed with exception [CONTEXT service_id=343 ]
+07-24 11:05:31.238 14061 14071 W Auth    : cqpy: Failed to process request
+07-24 11:05:31.238 14061 14071 W Auth    : 	at cqqe.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):23)
+07-24 11:05:31.238 14061 14071 W Auth    : 	at cqtu.b(:com.google.android.gms@255034035@25.50.34 (260400-855735097):15)
+07-24 11:05:31.238 14061 14071 W Auth    : 	at cqsu.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):82)
+07-24 11:05:31.238 14061 14071 W Auth    : 	at kpc.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):19)
+07-24 11:05:31.238 14061 14071 W Auth    : 	at cqtb.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):6)
+07-24 11:05:31.238 14061 14071 W Auth    : 	at buuo.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):9)
+07-24 11:05:31.238 14061 14071 W Auth    : 	at adzy.b(:com.google.android.gms@255034035@25.50.34 (260400-855735097):13)
+07-24 11:05:31.238 14061 14071 W Auth    : 	at adzy.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):141)
+07-24 11:05:31.238 14061 14071 W Auth    : 	at amck.b(:com.google.android.gms@255034035@25.50.34 (260400-855735097):34)
+07-24 11:05:31.238 14061 14071 W Auth    : 	at aeuw.d(:com.google.android.gms@255034035@25.50.34 (260400-855735097):170)
+07-24 11:05:31.238 14061 14071 W Auth    : 	at aeuw.b(:com.google.android.gms@255034035@25.50.34 (260400-855735097):48)
+07-24 11:05:31.238 14061 14071 W Auth    : 	at aeuu.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):744)
+07-24 11:05:31.238 14061 14071 W Auth    : 	at aeut.b(:com.google.android.gms@255034035@25.50.34 (260400-855735097):142)
+07-24 11:05:31.238 14061 14071 W Auth    : 	at yfy.d(:com.google.android.gms@255034035@25.50.34 (260400-855735097):88)
+07-24 11:05:31.238 14061 14071 W Auth    : 	at yfy.dispatchTransaction(:com.google.android.gms@255034035@25.50.34 (260400-855735097):153)
+07-24 11:05:31.238 14061 14071 W Auth    : 	at buxv.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):72)
+07-24 11:05:31.238 14061 14071 W Auth    : 	at xoc.onTransact(:com.google.android.gms@255034035@25.50.34 (260400-855735097):23)
+07-24 11:05:31.238 14061 14071 W Auth    : 	at android.os.Binder.transact(Binder.java:1325)
+07-24 11:05:31.238 14061 14071 W Auth    : 	at cgvg.onTransact(:com.google.android.gms@255034035@25.50.34 (260400-855735097):10)
+07-24 11:05:31.238 14061 14071 W Auth    : 	at android.os.Binder.transact(Binder.java:1325)
+07-24 11:05:31.238 14061 14071 W Auth    : 	at buyj.onTransact(:com.google.android.gms@255034035@25.50.34 (260400-855735097):161)
+07-24 11:05:31.238 14061 14071 W Auth    : 	at android.os.Binder.execTransactInternal(Binder.java:1473)
+07-24 11:05:31.238 14061 14071 W Auth    : 	at android.os.Binder.execTransact(Binder.java:1418)
+07-24 11:05:31.238 14061 14071 W Auth    : Caused by: cqsx: Connectivity error
+07-24 11:05:31.238 14061 14071 W Auth    : 	at cqsu.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):76)
+07-24 11:05:31.238 14061 14071 W Auth    : 	... 20 more
+07-24 11:05:31.238 14061 14071 W Auth    : Caused by: java.io.IOException
+07-24 11:05:31.238 14061 14071 W Auth    : 	at cqsu.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):73)
+07-24 11:05:31.238 14061 14071 W Auth    : 	... 20 more
+07-24 11:05:31.238 14061 14162 W Auth    : [TokenResponseCallback] TokenResponse failed with exception [CONTEXT service_id=343 ]
+07-24 11:05:31.238 14061 14162 W Auth    : cqpy: Failed to process request
+07-24 11:05:31.238 14061 14162 W Auth    : 	at cqqe.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):23)
+07-24 11:05:31.238 14061 14162 W Auth    : 	at cqtu.b(:com.google.android.gms@255034035@25.50.34 (260400-855735097):15)
+07-24 11:05:31.238 14061 14162 W Auth    : 	at cqsu.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):82)
+07-24 11:05:31.238 14061 14162 W Auth    : 	at kpc.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):19)
+07-24 11:05:31.238 14061 14162 W Auth    : 	at cqtb.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):6)
+07-24 11:05:31.238 14061 14162 W Auth    : 	at buuo.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):9)
+07-24 11:05:31.238 14061 14162 W Auth    : 	at adzy.b(:com.google.android.gms@255034035@25.50.34 (260400-855735097):13)
+07-24 11:05:31.238 14061 14162 W Auth    : 	at adzy.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):141)
+07-24 11:05:31.238 14061 14162 W Auth    : 	at amck.b(:com.google.android.gms@255034035@25.50.34 (260400-855735097):34)
+07-24 11:05:31.238 14061 14162 W Auth    : 	at aeuw.d(:com.google.android.gms@255034035@25.50.34 (260400-855735097):170)
+07-24 11:05:31.238 14061 14162 W Auth    : 	at aeuw.b(:com.google.android.gms@255034035@25.50.34 (260400-855735097):48)
+07-24 11:05:31.238 14061 14162 W Auth    : 	at aeuu.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):744)
+07-24 11:05:31.238 14061 14162 W Auth    : 	at aeut.b(:com.google.android.gms@255034035@25.50.34 (260400-855735097):142)
+07-24 11:05:31.238 14061 14162 W Auth    : 	at yfy.d(:com.google.android.gms@255034035@25.50.34 (260400-855735097):88)
+07-24 11:05:31.238 14061 14162 W Auth    : 	at yfy.dispatchTransaction(:com.google.android.gms@255034035@25.50.34 (260400-855735097):153)
+07-24 11:05:31.238 14061 14162 W Auth    : 	at buxv.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):72)
+07-24 11:05:31.238 14061 14162 W Auth    : 	at xoc.onTransact(:com.google.android.gms@255034035@25.50.34 (260400-855735097):23)
+07-24 11:05:31.238 14061 14162 W Auth    : 	at android.os.Binder.transact(Binder.java:1325)
+07-24 11:05:31.238 14061 14162 W Auth    : 	at cgvg.onTransact(:com.google.android.gms@255034035@25.50.34 (260400-855735097):10)
+07-24 11:05:31.238 14061 14162 W Auth    : 	at android.os.Binder.transact(Binder.java:1325)
+07-24 11:05:31.238 14061 14162 W Auth    : 	at buyj.onTransact(:com.google.android.gms@255034035@25.50.34 (260400-855735097):161)
+07-24 11:05:31.238 14061 14162 W Auth    : 	at android.os.Binder.execTransactInternal(Binder.java:1473)
+07-24 11:05:31.238 14061 14162 W Auth    : 	at android.os.Binder.execTransact(Binder.java:1418)
+07-24 11:05:31.238 14061 14162 W Auth    : Caused by: cqsx: Connectivity error
+07-24 11:05:31.238 14061 14162 W Auth    : 	at cqsu.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):76)
+07-24 11:05:31.238 14061 14162 W Auth    : 	... 20 more
+07-24 11:05:31.238 14061 14162 W Auth    : Caused by: java.io.IOException
+07-24 11:05:31.238 14061 14162 W Auth    : 	at cqsu.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):73)
+07-24 11:05:31.238 14061 14162 W Auth    : 	... 20 more
+07-24 11:05:31.239 14061 14162 E AuthPII : [RequestTokenManager] getToken() -> NETWORK_ERROR. App: com.google.android.calendar, Service: oauth2:https://www.googleapis.com/auth/calendar
+07-24 11:05:31.239 14061 14162 E AuthPII : bcxx: Error when calling server using GmsNetworkStack.
+07-24 11:05:31.239 14061 14162 E AuthPII : 	at aeuw.b(:com.google.android.gms@255034035@25.50.34 (260400-855735097):1595)
+07-24 11:05:31.239 14061 14162 E AuthPII : 	at aeuu.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):744)
+07-24 11:05:31.239 14061 14162 E AuthPII : 	at aeut.b(:com.google.android.gms@255034035@25.50.34 (260400-855735097):142)
+07-24 11:05:31.239 14061 14162 E AuthPII : 	at yfy.d(:com.google.android.gms@255034035@25.50.34 (260400-855735097):88)
+07-24 11:05:31.239 14061 14162 E AuthPII : 	at yfy.dispatchTransaction(:com.google.android.gms@255034035@25.50.34 (260400-855735097):153)
+07-24 11:05:31.239 14061 14162 E AuthPII : 	at buxv.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):72)
+07-24 11:05:31.239 14061 14162 E AuthPII : 	at xoc.onTransact(:com.google.android.gms@255034035@25.50.34 (260400-855735097):23)
+07-24 11:05:31.239 14061 14162 E AuthPII : 	at android.os.Binder.transact(Binder.java:1325)
+07-24 11:05:31.239 14061 14162 E AuthPII : 	at cgvg.onTransact(:com.google.android.gms@255034035@25.50.34 (260400-855735097):10)
+07-24 11:05:31.239 14061 14162 E AuthPII : 	at android.os.Binder.transact(Binder.java:1325)
+07-24 11:05:31.239 14061 14162 E AuthPII : 	at buyj.onTransact(:com.google.android.gms@255034035@25.50.34 (260400-855735097):161)
+07-24 11:05:31.239 14061 14162 E AuthPII : 	at android.os.Binder.execTransactInternal(Binder.java:1473)
+07-24 11:05:31.239 14061 14162 E AuthPII : 	at android.os.Binder.execTransact(Binder.java:1418)
+07-24 11:05:31.239 14061 14162 E AuthPII : Caused by: bcxx: Error requesting token.
+07-24 11:05:31.239 14061 14162 E AuthPII : 	at aeuw.d(:com.google.android.gms@255034035@25.50.34 (260400-855735097):212)
+07-24 11:05:31.239 14061 14162 E AuthPII : 	at aeuw.b(:com.google.android.gms@255034035@25.50.34 (260400-855735097):48)
+07-24 11:05:31.239 14061 14162 E AuthPII : 	... 12 more
+07-24 11:05:31.239 14061 14162 E AuthPII : Caused by: java.util.concurrent.ExecutionException: cqpy: Failed to process request
+07-24 11:05:31.239 14061 14162 E AuthPII : 	at gtzn.j(:com.google.android.gms@255034035@25.50.34 (260400-855735097):21)
+07-24 11:05:31.239 14061 14162 E AuthPII : 	at gtzw.v(:com.google.android.gms@255034035@25.50.34 (260400-855735097):107)
+07-24 11:05:31.239 14061 14162 E AuthPII : 	at aeuw.d(:com.google.android.gms@255034035@25.50.34 (260400-855735097):197)
+07-24 11:05:31.239 14061 14162 E AuthPII : 	... 13 more
+07-24 11:05:31.239 14061 14162 E AuthPII : Caused by: cqpy: Failed to process request
+07-24 11:05:31.239 14061 14162 E AuthPII : 	at cqqe.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):23)
+07-24 11:05:31.239 14061 14162 E AuthPII : 	at cqtu.b(:com.google.android.gms@255034035@25.50.34 (260400-855735097):15)
+07-24 11:05:31.239 14061 14162 E AuthPII : 	at cqsu.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):82)
+07-24 11:05:31.239 14061 14162 E AuthPII : 	at kpc.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):19)
+07-24 11:05:31.239 14061 14162 E AuthPII : 	at cqtb.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):6)
+07-24 11:05:31.239 14061 14162 E AuthPII : 	at buuo.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):9)
+07-24 11:05:31.239 14061 14162 E AuthPII : 	at adzy.b(:com.google.android.gms@255034035@25.50.34 (260400-855735097):13)
+07-24 11:05:31.239 14061 14162 E AuthPII : 	at adzy.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):141)
+07-24 11:05:31.239 14061 14162 E AuthPII : 	at amck.b(:com.google.android.gms@255034035@25.50.34 (260400-855735097):34)
+07-24 11:05:31.239 14061 14162 E AuthPII : 	at aeuw.d(:com.google.android.gms@255034035@25.50.34 (260400-855735097):170)
+07-24 11:05:31.239 14061 14162 E AuthPII : 	... 13 more
+07-24 11:05:31.239 14061 14162 E AuthPII : Caused by: cqsx: Connectivity error
+07-24 11:05:31.239 14061 14162 E AuthPII : 	at cqsu.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):76)
+07-24 11:05:31.239 14061 14162 E AuthPII : 	... 20 more
+07-24 11:05:31.239 14061 14162 E AuthPII : Caused by: java.io.IOException
+07-24 11:05:31.239 14061 14162 E AuthPII : 	at cqsu.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):73)
+07-24 11:05:31.239 14061 14162 E AuthPII : 	... 20 more
+07-24 11:05:31.239 14061 14162 E AuthPII : Message is Error when calling server using GmsNetworkStack.
+07-24 11:05:31.239 14061 14162 E AuthPII : bcxx: Error when calling server using GmsNetworkStack.
+07-24 11:05:31.239 14061 14162 E AuthPII : 	at aeuw.b(:com.google.android.gms@255034035@25.50.34 (260400-855735097):1595)
+07-24 11:05:31.239 14061 14162 E AuthPII : 	at aeuu.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):744)
+07-24 11:05:31.239 14061 14162 E AuthPII : 	at aeut.b(:com.google.android.gms@255034035@25.50.34 (260400-855735097):142)
+07-24 11:05:31.239 14061 14162 E AuthPII : 	at yfy.d(:com.google.android.gms@255034035@25.50.34 (260400-855735097):88)
+07-24 11:05:31.239 14061 14162 E AuthPII : 	at yfy.dispatchTransaction(:com.google.android.gms@255034035@25.50.34 (260400-855735097):153)
+07-24 11:05:31.239 14061 14162 E AuthPII : 	at buxv.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):72)
+07-24 11:05:31.239 14061 14162 E AuthPII : 	at xoc.onTransact(:com.google.android.gms@255034035@25.50.34 (260400-855735097):23)
+07-24 11:05:31.239 14061 14162 E AuthPII : 	at android.os.Binder.transact(Binder.java:1325)
+07-24 11:05:31.239 14061 14162 E AuthPII : 	at cgvg.onTransact(:com.google.android.gms@255034035@25.50.34 (260400-855735097):10)
+07-24 11:05:31.239 14061 14162 E AuthPII : 	at android.os.Binder.transact(Binder.java:1325)
+07-24 11:05:31.239 14061 14162 E AuthPII : 	at buyj.onTransact(:com.google.android.gms@255034035@25.50.34 (260400-855735097):161)
+07-24 11:05:31.239 14061 14162 E AuthPII : 	at android.os.Binder.execTransactInternal(Binder.java:1473)
+07-24 11:05:31.239 14061 14162 E AuthPII : 	at android.os.Binder.execTransact(Binder.java:1418)
+07-24 11:05:31.239 14061 14162 E AuthPII : Caused by: bcxx: Error requesting token.
+07-24 11:05:31.239 14061 14162 E AuthPII : 	at aeuw.d(:com.google.android.gms@255034035@25.50.34 (260400-855735097):212)
+07-24 11:05:31.239 14061 14162 E AuthPII : 	at aeuw.b(:com.google.android.gms@255034035@25.50.34 (260400-855735097):48)
+07-24 11:05:31.239 14061 14162 E AuthPII : 	... 12 more
+07-24 11:05:31.239 14061 14162 E AuthPII : Caused by: java.util.concurrent.ExecutionException: cqpy: Failed to process request
+07-24 11:05:31.239 14061 14162 E AuthPII : 	at gtzn.j(:com.google.android.gms@255034035@25.50.34 (260400-855735097):21)
+07-24 11:05:31.239 14061 14162 E AuthPII : 	at gtzw.v(:com.google.android.gms@255034035@25.50.34 (260400-855735097):107)
+07-24 11:05:31.239 14061 14162 E AuthPII : 	at aeuw.d(:com.google.android.gms@255034035@25.50.34 (260400-855735097):197)
+07-24 11:05:31.239 14061 14162 E AuthPII : 	... 13 more
+07-24 11:05:31.239 14061 14162 E AuthPII : Caused by: cqpy: Failed to process request
+07-24 11:05:31.239 14061 14162 E AuthPII : 	at cqqe.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):23)
+07-24 11:05:31.239 14061 14162 E AuthPII : 	at cqtu.b(:com.google.android.gms@255034035@25.50.34 (260400-855735097):15)
+07-24 11:05:31.239 14061 14162 E AuthPII : 	at cqsu.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):82)
+07-24 11:05:31.239 14061 14162 E AuthPII : 	at kpc.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):19)
+07-24 11:05:31.239 14061 14162 E AuthPII : 	at cqtb.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):6)
+07-24 11:05:31.239 14061 14162 E AuthPII : 	at buuo.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):9)
+07-24 11:05:31.239 14061 14162 E AuthPII : 	at adzy.b(:com.google.android.gms@255034035@25.50.34 (260400-855735097):13)
+07-24 11:05:31.239 14061 14162 E AuthPII : 	at adzy.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):141)
+07-24 11:05:31.239 14061 14162 E AuthPII : 	at amck.b(:com.google.android.gms@255034035@25.50.34 (260400-855735097):34)
+07-24 11:05:31.239 14061 14162 E AuthPII : 	at aeuw.d(:com.google.android.gms@255034035@25.50.34 (260400-855735097):170)
+07-24 11:05:31.239 14061 14162 E AuthPII : 	... 13 more
+07-24 11:05:31.239 14061 14162 E AuthPII : Caused by: cqsx: Connectivity error
+07-24 11:05:31.239 14061 14162 E AuthPII : 	at cqsu.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):76)
+07-24 11:05:31.239 14061 14162 E AuthPII : 	... 20 more
+07-24 11:05:31.239 14061 14162 E AuthPII : Caused by: java.io.IOException
+07-24 11:05:31.239 14061 14162 E AuthPII : 	at cqsu.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):73)
+07-24 11:05:31.239 14061 14162 E AuthPII : 	... 20 more
+07-24 11:05:31.239 14061 14162 I Auth    : (REDACTED) [GetToken] GetToken failed for app=%s with non recoverable status code: %s 
+07-24 11:05:31.239 14061 14162 W Auth    : [ChimeraGetToken] exception while trying to fetch auth tokens for app=com.google.android.calendar, scope=oauth2:https://www.googleapis.com/auth/calendar [CONTEXT service_id=153 ]
+07-24 11:05:31.239 14061 14162 W Auth    : aeuo: GetToken failed with status code: NetworkError
+07-24 11:05:31.239 14061 14162 W Auth    : 	at aeut.b(:com.google.android.gms@255034035@25.50.34 (260400-855735097):346)
+07-24 11:05:31.239 14061 14162 W Auth    : 	at yfy.d(:com.google.android.gms@255034035@25.50.34 (260400-855735097):88)
+07-24 11:05:31.239 14061 14162 W Auth    : 	at yfy.dispatchTransaction(:com.google.android.gms@255034035@25.50.34 (260400-855735097):153)
+07-24 11:05:31.239 14061 14162 W Auth    : 	at buxv.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):72)
+07-24 11:05:31.239 14061 14162 W Auth    : 	at xoc.onTransact(:com.google.android.gms@255034035@25.50.34 (260400-855735097):23)
+07-24 11:05:31.239 14061 14162 W Auth    : 	at android.os.Binder.transact(Binder.java:1325)
+07-24 11:05:31.239 14061 14162 W Auth    : 	at cgvg.onTransact(:com.google.android.gms@255034035@25.50.34 (260400-855735097):10)
+07-24 11:05:31.239 14061 14162 W Auth    : 	at android.os.Binder.transact(Binder.java:1325)
+07-24 11:05:31.239 14061 14162 W Auth    : 	at buyj.onTransact(:com.google.android.gms@255034035@25.50.34 (260400-855735097):161)
+07-24 11:05:31.239 14061 14162 W Auth    : 	at android.os.Binder.execTransactInternal(Binder.java:1473)
+07-24 11:05:31.239 14061 14162 W Auth    : 	at android.os.Binder.execTransact(Binder.java:1418)
+07-24 11:05:31.239 14061 14162 W libbinder.Binder: Binder transaction to com.google.android.auth.IAuthManagerService code 5 took 4025ms. Data bytes: 792 Reply bytes: 76 Flags: 18
+07-24 11:05:31.241 14061 14071 E AuthPII : [RequestTokenManager] getToken() -> NETWORK_ERROR. App: com.google.android.calendar, Service: oauth2:https://www.googleapis.com/auth/calendar
+07-24 11:05:31.241 14061 14071 E AuthPII : bcxx: Error when calling server using GmsNetworkStack.
+07-24 11:05:31.241 14061 14071 E AuthPII : 	at aeuw.b(:com.google.android.gms@255034035@25.50.34 (260400-855735097):1595)
+07-24 11:05:31.241 14061 14071 E AuthPII : 	at aeuu.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):744)
+07-24 11:05:31.241 14061 14071 E AuthPII : 	at aeut.b(:com.google.android.gms@255034035@25.50.34 (260400-855735097):142)
+07-24 11:05:31.241 14061 14071 E AuthPII : 	at yfy.d(:com.google.android.gms@255034035@25.50.34 (260400-855735097):88)
+07-24 11:05:31.241 14061 14071 E AuthPII : 	at yfy.dispatchTransaction(:com.google.android.gms@255034035@25.50.34 (260400-855735097):153)
+07-24 11:05:31.241 14061 14071 E AuthPII : 	at buxv.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):72)
+07-24 11:05:31.241 14061 14071 E AuthPII : 	at xoc.onTransact(:com.google.android.gms@255034035@25.50.34 (260400-855735097):23)
+07-24 11:05:31.241 14061 14071 E AuthPII : 	at android.os.Binder.transact(Binder.java:1325)
+07-24 11:05:31.241 14061 14071 E AuthPII : 	at cgvg.onTransact(:com.google.android.gms@255034035@25.50.34 (260400-855735097):10)
+07-24 11:05:31.241 14061 14071 E AuthPII : 	at android.os.Binder.transact(Binder.java:1325)
+07-24 11:05:31.241 14061 14071 E AuthPII : 	at buyj.onTransact(:com.google.android.gms@255034035@25.50.34 (260400-855735097):161)
+07-24 11:05:31.241 14061 14071 E AuthPII : 	at android.os.Binder.execTransactInternal(Binder.java:1473)
+07-24 11:05:31.241 14061 14071 E AuthPII : 	at android.os.Binder.execTransact(Binder.java:1418)
+07-24 11:05:31.241 14061 14071 E AuthPII : Caused by: bcxx: Error requesting token.
+07-24 11:05:31.241 14061 14071 E AuthPII : 	at aeuw.d(:com.google.android.gms@255034035@25.50.34 (260400-855735097):212)
+07-24 11:05:31.241 14061 14071 E AuthPII : 	at aeuw.b(:com.google.android.gms@255034035@25.50.34 (260400-855735097):48)
+07-24 11:05:31.241 14061 14071 E AuthPII : 	... 12 more
+07-24 11:05:31.241 14061 14071 E AuthPII : Caused by: java.util.concurrent.ExecutionException: cqpy: Failed to process request
+07-24 11:05:31.241 14061 14071 E AuthPII : 	at gtzn.j(:com.google.android.gms@255034035@25.50.34 (260400-855735097):21)
+07-24 11:05:31.241 14061 14071 E AuthPII : 	at gtzw.v(:com.google.android.gms@255034035@25.50.34 (260400-855735097):107)
+07-24 11:05:31.241 14061 14071 E AuthPII : 	at aeuw.d(:com.google.android.gms@255034035@25.50.34 (260400-855735097):197)
+07-24 11:05:31.241 14061 14071 E AuthPII : 	... 13 more
+07-24 11:05:31.241 14061 14071 E AuthPII : Caused by: cqpy: Failed to process request
+07-24 11:05:31.241 14061 14071 E AuthPII : 	at cqqe.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):23)
+07-24 11:05:31.241 14061 14071 E AuthPII : 	at cqtu.b(:com.google.android.gms@255034035@25.50.34 (260400-855735097):15)
+07-24 11:05:31.241 14061 14071 E AuthPII : 	at cqsu.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):82)
+07-24 11:05:31.241 14061 14071 E AuthPII : 	at kpc.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):19)
+07-24 11:05:31.241 14061 14071 E AuthPII : 	at cqtb.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):6)
+07-24 11:05:31.241 14061 14071 E AuthPII : 	at buuo.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):9)
+07-24 11:05:31.241 14061 14071 E AuthPII : 	at adzy.b(:com.google.android.gms@255034035@25.50.34 (260400-855735097):13)
+07-24 11:05:31.241 14061 14071 E AuthPII : 	at adzy.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):141)
+07-24 11:05:31.241 14061 14071 E AuthPII : 	at amck.b(:com.google.android.gms@255034035@25.50.34 (260400-855735097):34)
+07-24 11:05:31.241 14061 14071 E AuthPII : 	at aeuw.d(:com.google.android.gms@255034035@25.50.34 (260400-855735097):170)
+07-24 11:05:31.241 14061 14071 E AuthPII : 	... 13 more
+07-24 11:05:31.241 14061 14071 E AuthPII : Caused by: cqsx: Connectivity error
+07-24 11:05:31.241 14061 14071 E AuthPII : 	at cqsu.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):76)
+07-24 11:05:31.241 14061 14071 E AuthPII : 	... 20 more
+07-24 11:05:31.241 14061 14071 E AuthPII : Caused by: java.io.IOException
+07-24 11:05:31.241 14061 14071 E AuthPII : 	at cqsu.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):73)
+07-24 11:05:31.241 14061 14071 E AuthPII : 	... 20 more
+07-24 11:05:31.241 14061 14071 E AuthPII : Message is Error when calling server using GmsNetworkStack.
+07-24 11:05:31.241 14061 14071 E AuthPII : bcxx: Error when calling server using GmsNetworkStack.
+07-24 11:05:31.241 14061 14071 E AuthPII : 	at aeuw.b(:com.google.android.gms@255034035@25.50.34 (260400-855735097):1595)
+07-24 11:05:31.241 14061 14071 E AuthPII : 	at aeuu.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):744)
+07-24 11:05:31.241 14061 14071 E AuthPII : 	at aeut.b(:com.google.android.gms@255034035@25.50.34 (260400-855735097):142)
+07-24 11:05:31.241 14061 14071 E AuthPII : 	at yfy.d(:com.google.android.gms@255034035@25.50.34 (260400-855735097):88)
+07-24 11:05:31.241 14061 14071 E AuthPII : 	at yfy.dispatchTransaction(:com.google.android.gms@255034035@25.50.34 (260400-855735097):153)
+07-24 11:05:31.241 14061 14071 E AuthPII : 	at buxv.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):72)
+07-24 11:05:31.241 14061 14071 E AuthPII : 	at xoc.onTransact(:com.google.android.gms@255034035@25.50.34 (260400-855735097):23)
+07-24 11:05:31.241 14061 14071 E AuthPII : 	at android.os.Binder.transact(Binder.java:1325)
+07-24 11:05:31.241 14061 14071 E AuthPII : 	at cgvg.onTransact(:com.google.android.gms@255034035@25.50.34 (260400-855735097):10)
+07-24 11:05:31.241 14061 14071 E AuthPII : 	at android.os.Binder.transact(Binder.java:1325)
+07-24 11:05:31.241 14061 14071 E AuthPII : 	at buyj.onTransact(:com.google.android.gms@255034035@25.50.34 (260400-855735097):161)
+07-24 11:05:31.241 14061 14071 E AuthPII : 	at android.os.Binder.execTransactInternal(Binder.java:1473)
+07-24 11:05:31.241 14061 14071 E AuthPII : 	at android.os.Binder.execTransact(Binder.java:1418)
+07-24 11:05:31.241 14061 14071 E AuthPII : Caused by: bcxx: Error requesting token.
+07-24 11:05:31.241 14061 14071 E AuthPII : 	at aeuw.d(:com.google.android.gms@255034035@25.50.34 (260400-855735097):212)
+07-24 11:05:31.241 14061 14071 E AuthPII : 	at aeuw.b(:com.google.android.gms@255034035@25.50.34 (260400-855735097):48)
+07-24 11:05:31.241 14061 14071 E AuthPII : 	... 12 more
+07-24 11:05:31.241 14061 14071 E AuthPII : Caused by: java.util.concurrent.ExecutionException: cqpy: Failed to process request
+07-24 11:05:31.241 14061 14071 E AuthPII : 	at gtzn.j(:com.google.android.gms@255034035@25.50.34 (260400-855735097):21)
+07-24 11:05:31.241 14061 14071 E AuthPII : 	at gtzw.v(:com.google.android.gms@255034035@25.50.34 (260400-855735097):107)
+07-24 11:05:31.241 14061 14071 E AuthPII : 	at aeuw.d(:com.google.android.gms@255034035@25.50.34 (260400-855735097):197)
+07-24 11:05:31.241 14061 14071 E AuthPII : 	... 13 more
+07-24 11:05:31.241 14061 14071 E AuthPII : Caused by: cqpy: Failed to process request
+07-24 11:05:31.241 14061 14071 E AuthPII : 	at cqqe.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):23)
+07-24 11:05:31.241 14061 14071 E AuthPII : 	at cqtu.b(:com.google.android.gms@255034035@25.50.34 (260400-855735097):15)
+07-24 11:05:31.241 14061 14071 E AuthPII : 	at cqsu.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):82)
+07-24 11:05:31.241 14061 14071 E AuthPII : 	at kpc.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):19)
+07-24 11:05:31.241 14061 14071 E AuthPII : 	at cqtb.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):6)
+07-24 11:05:31.241 14061 14071 E AuthPII : 	at buuo.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):9)
+07-24 11:05:31.241 14061 14071 E AuthPII : 	at adzy.b(:com.google.android.gms@255034035@25.50.34 (260400-855735097):13)
+07-24 11:05:31.241 14061 14071 E AuthPII : 	at adzy.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):141)
+07-24 11:05:31.241 14061 14071 E AuthPII : 	at amck.b(:com.google.android.gms@255034035@25.50.34 (260400-855735097):34)
+07-24 11:05:31.241 14061 14071 E AuthPII : 	at aeuw.d(:com.google.android.gms@255034035@25.50.34 (260400-855735097):170)
+07-24 11:05:31.241 14061 14071 E AuthPII : 	... 13 more
+07-24 11:05:31.241 14061 14071 E AuthPII : Caused by: cqsx: Connectivity error
+07-24 11:05:31.241 14061 14071 E AuthPII : 	at cqsu.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):76)
+07-24 11:05:31.241 14061 14071 E AuthPII : 	... 20 more
+07-24 11:05:31.241 14061 14071 E AuthPII : Caused by: java.io.IOException
+07-24 11:05:31.241 14061 14071 E AuthPII : 	at cqsu.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):73)
+07-24 11:05:31.241 14061 14071 E AuthPII : 	... 20 more
+07-24 11:05:31.241 14061 14071 I Auth    : (REDACTED) [GetToken] GetToken failed for app=%s with non recoverable status code: %s 
+07-24 11:05:31.241 14061 14071 W Auth    : [ChimeraGetToken] exception while trying to fetch auth tokens for app=com.google.android.calendar, scope=oauth2:https://www.googleapis.com/auth/calendar [CONTEXT service_id=153 ]
+07-24 11:05:31.241 14061 14071 W Auth    : aeuo: GetToken failed with status code: NetworkError
+07-24 11:05:31.241 14061 14071 W Auth    : 	at aeut.b(:com.google.android.gms@255034035@25.50.34 (260400-855735097):346)
+07-24 11:05:31.241 14061 14071 W Auth    : 	at yfy.d(:com.google.android.gms@255034035@25.50.34 (260400-855735097):88)
+07-24 11:05:31.241 14061 14071 W Auth    : 	at yfy.dispatchTransaction(:com.google.android.gms@255034035@25.50.34 (260400-855735097):153)
+07-24 11:05:31.241 14061 14071 W Auth    : 	at buxv.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):72)
+07-24 11:05:31.241 14061 14071 W Auth    : 	at xoc.onTransact(:com.google.android.gms@255034035@25.50.34 (260400-855735097):23)
+07-24 11:05:31.241 14061 14071 W Auth    : 	at android.os.Binder.transact(Binder.java:1325)
+07-24 11:05:31.241 14061 14071 W Auth    : 	at cgvg.onTransact(:com.google.android.gms@255034035@25.50.34 (260400-855735097):10)
+07-24 11:05:31.241 14061 14071 W Auth    : 	at android.os.Binder.transact(Binder.java:1325)
+07-24 11:05:31.241 14061 14071 W Auth    : 	at buyj.onTransact(:com.google.android.gms@255034035@25.50.34 (260400-855735097):161)
+07-24 11:05:31.241 14061 14071 W Auth    : 	at android.os.Binder.execTransactInternal(Binder.java:1473)
+07-24 11:05:31.241 14061 14071 W Auth    : 	at android.os.Binder.execTransact(Binder.java:1418)
+07-24 11:05:31.241 14061 14071 W libbinder.Binder: Binder transaction to com.google.android.auth.IAuthManagerService code 5 took 2176ms. Data bytes: 780 Reply bytes: 76 Flags: 18
+07-24 11:05:31.254 22956 27850 W Auth    : [GoogleAuthUtil] [GoogleAuthUtil] error status:NETWORK_ERROR with method:getTokenWithDetails
+07-24 11:05:31.270 22956 28020 W Auth    : [GoogleAuthUtil] [GoogleAuthUtil] error status:NETWORK_ERROR with method:getTokenWithDetails
+07-24 11:05:31.286 26558 28032 W ActivityManager: Dumping Java threads failed, initiating native stack dump.
+07-24 11:05:31.282 26558 26558 W AnrMainProcessD: type=1400 audit(0.0:595): avc:  denied  { read } for  name="transactions" dev="binder" ino=1048588 scontext=u:r:system_server:s0 tcontext=u:object_r:binderfs_logs_transactions:s0 tclass=file permissive=0
+07-24 11:05:31.294 14061 14088 W libbinder.Binder: Binder transaction to android.content.IContentProvider code 1 took 2944ms. Data bytes: 364 Reply bytes: 80 Flags: 18
+07-24 11:05:31.304 26558 28032 I system_server: libdebuggerd_client: started dumping process 26558
+07-24 11:05:31.308   247   247 I tombstoned: registered intercept for pid 26558 and type kDebuggerdNativeBacktrace
+07-24 11:05:31.308 26558 26558 I libc    : Requested dump for pid 26558 (system_server)
+07-24 11:05:31.331 14061 14090 W libbinder.Binder: Binder transaction to android.content.IContentProvider code 1 took 2963ms. Data bytes: 388 Reply bytes: 80 Flags: 18
+07-24 11:05:31.447 22956 27852 W CalendarRequestExecutor: Failed execution for prefetched request. Executing again.
+07-24 11:05:31.447 22956 27852 W CalendarRequestExecutor: com.google.android.apiary.AuthenticationException: Could not get an auth token
+07-24 11:05:31.447 22956 27852 W CalendarRequestExecutor: 	at cal.hld.b(PG:66)
+07-24 11:05:31.447 22956 27852 W CalendarRequestExecutor: 	at cal.altl.a(PG:88)
+07-24 11:05:31.447 22956 27852 W CalendarRequestExecutor: 	at cal.alpn.d(PG:52)
+07-24 11:05:31.447 22956 27852 W CalendarRequestExecutor: 	at cal.alph.call(PG:21)
+07-24 11:05:31.447 22956 27852 W CalendarRequestExecutor: 	at java.util.concurrent.FutureTask.run(FutureTask.java:317)
+07-24 11:05:31.447 22956 27852 W CalendarRequestExecutor: 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1154)
+07-24 11:05:31.447 22956 27852 W CalendarRequestExecutor: 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:652)
+07-24 11:05:31.447 22956 27852 W CalendarRequestExecutor: 	at java.lang.Thread.run(Thread.java:1563)
+07-24 11:05:31.447 22956 27852 W CalendarRequestExecutor: Caused by: java.io.IOException: NetworkError
+07-24 11:05:31.447 22956 27852 W CalendarRequestExecutor: 	at cal.zrj.d(PG:211)
+07-24 11:05:31.447 22956 27852 W CalendarRequestExecutor: 	at cal.zrf.a(PG:357)
+07-24 11:05:31.447 22956 27852 W CalendarRequestExecutor: 	at cal.zrj.g(PG:53)
+07-24 11:05:31.447 22956 27852 W CalendarRequestExecutor: 	at cal.zrj.i(PG:81)
+07-24 11:05:31.447 22956 27852 W CalendarRequestExecutor: 	at cal.zrd.b(PG:5)
+07-24 11:05:31.447 22956 27852 W CalendarRequestExecutor: 	at cal.zrd.a(PG:36)
+07-24 11:05:31.447 22956 27852 W CalendarRequestExecutor: 	at cal.hld.b(PG:24)
+07-24 11:05:31.447 22956 27852 W CalendarRequestExecutor: 	... 7 more
+07-24 11:05:31.631 26558 26893 E BluetoothSystemServer: BluetoothManagerService: TIMEOUT_BIND: Impossible to bind to Bluetooth service
+07-24 11:05:31.657 26558 27906 W libbinder.Binder: Binder transaction to android.app.IActivityManager code 43 took 7302ms. Data bytes: 376 Reply bytes: 8 Flags: 18
+07-24 11:05:31.658 23575 27853 D AdvertisingIdClient: AdvertisingIdClient is bounded
+07-24 11:05:31.662 26558 27806 I ActivityManager: Process com.google.android.webview:webview_service (pid 31698) has died: cch  +75 CEM 
+07-24 11:05:31.714 26558 27101 W libbinder.Binder: Binder transaction to android.net.wifi.IWifiManager code 168 took 4325ms. Data bytes: 464 Reply bytes: 572 Flags: 16
+07-24 11:05:31.721 22956 27850 E SyncerLog: [4] Network error.
+07-24 11:05:31.721 22956 27850 E SyncerLog: java.lang.Throwable: NetworkStatusException
+07-24 11:05:31.721 22956 27850 E SyncerLog: 	at com.google.calendar.v2a.shared.net.impl.android.SyncServiceRequestExecutor.d(PG:392)
+07-24 11:05:31.721 22956 27850 E SyncerLog: 	at com.google.calendar.v2a.shared.sync.impl.InternalSyncServiceImpl.a(PG:791)
+07-24 11:05:31.721 22956 27850 E SyncerLog: 	at com.google.calendar.v2a.shared.sync.impl.android.AccountSyncer.a(PG:755)
+07-24 11:05:31.721 22956 27850 E SyncerLog: 	at com.google.calendar.v2a.shared.sync.impl.android.PlatformSyncShell$SyncAdapter.onPerformSync(PG:153)
+07-24 11:05:31.721 22956 27850 E SyncerLog: 	at android.content.AbstractThreadedSyncAdapter$SyncThread.run(AbstractThreadedSyncAdapter.java:354)
+07-24 11:05:31.721 22956 27850 E SyncerLog: Caused by: java.lang.Throwable: ServerStatusException
+07-24 11:05:31.721 22956 27850 E SyncerLog: 	at com.google.calendar.v2a.shared.net.impl.android.SyncServiceRequestExecutor.j(PG:60)
+07-24 11:05:31.721 22956 27850 E SyncerLog: 	at com.google.calendar.v2a.shared.net.impl.android.SyncServiceRequestExecutor.d(PG:137)
+07-24 11:05:31.721 22956 27850 E SyncerLog: 	... 4 more
+07-24 11:05:31.721 22956 27850 E SyncerLog: Caused by: java.lang.Throwable: GrpcStubException
+07-24 11:05:31.721 22956 27850 E SyncerLog: 	at cal.yot.h(PG:118)
+07-24 11:05:31.721 22956 27850 E SyncerLog: 	at com.google.calendar.v2a.shared.net.impl.android.SyncServiceRequestExecutor.h(PG:37)
+07-24 11:05:31.721 22956 27850 E SyncerLog: 	at cal.yot.i(PG:92)
+07-24 11:05:31.721 22956 27850 E SyncerLog: 	at com.google.calendar.v2a.shared.net.impl.android.SyncServiceRequestExecutor.i(PG:15)
+07-24 11:05:31.721 22956 27850 E SyncerLog: 	at cal.yot.e(PG:1)
+07-24 11:05:31.721 22956 27850 E SyncerLog: 	at com.google.calendar.v2a.shared.net.impl.android.SyncServiceRequestExecutor.d(PG:57)
+07-24 11:05:31.721 22956 27850 E SyncerLog: 	... 4 more
+07-24 11:05:31.721 22956 27850 E SyncerLog: Caused by: java.lang.Throwable: IOException
+07-24 11:05:31.721 22956 27850 E SyncerLog: 	at cal.zrj.d(PG:211)
+07-24 11:05:31.721 22956 27850 E SyncerLog: 	at cal.zrf.a(PG:357)
+07-24 11:05:31.721 22956 27850 E SyncerLog: 	at cal.zrj.g(PG:53)
+07-24 11:05:31.721 22956 27850 E SyncerLog: 	at cal.zrj.i(PG:81)
+07-24 11:05:31.721 22956 27850 E SyncerLog: 	at cal.zrd.b(PG:5)
+07-24 11:05:31.721 22956 27850 E SyncerLog: 	at cal.zrd.a(PG:36)
+07-24 11:05:31.721 22956 27850 E SyncerLog: 	at cal.yot.h(PG:25)
+07-24 11:05:31.721 22956 27850 E SyncerLog: 	... 9 more
+07-24 11:05:31.748 26558 26861 W libbinder.Binder: Binder transaction to android.view.IWindowSession code 2 took 2498ms. Data bytes: 508 Reply bytes: 1476 Flags: 18
+07-24 11:05:31.773 26558 26676 I libprocessgroup: Removed cgroup /sys/fs/cgroup/apps/uid_10180/pid_31698
+07-24 11:05:31.790 26558 27800 W libbinder.Binder: Binder transaction to com.android.internal.telephony.ITelephonyRegistry code 8 took 18265ms. Data bytes: 804 Reply bytes: 4 Flags: 18
+07-24 11:05:31.790 26558 27797 I ActivityManager: Process com.android.vending:instant_app_installer (pid 12855) has died: cch  +65 CEM 
+07-24 11:05:31.813 26558 27814 I ActivityManager: Process com.google.android.configupdater (pid 12980) has died: cch  +65 CEM 
+07-24 11:05:31.833 26558 26675 W ActivityManager: Slow operation: 17253ms so far, now at startProcess: done updating battery stats
+07-24 11:05:31.840 26558 26675 W ActivityManager: Slow operation: 17261ms so far, now at startProcess: building log message
+07-24 11:05:31.841 26558 26675 I ActivityManager: Start proc 28019:com.google.android.bluetooth/1002 for service {com.google.android.bluetooth/com.android.bluetooth.btservice.AdapterService}
+07-24 11:05:31.841 26558 26675 W ActivityManager: Slow operation: 17261ms so far, now at startProcess: starting to update pids map
+07-24 11:05:31.841 26558 26675 W ActivityManager: Slow operation: 17261ms so far, now at startProcess: done updating pids map
+07-24 11:05:31.848 26558 27655 W libbinder.Binder: Binder transaction to android.app.IActivityManager code 35 took 3501ms. Data bytes: 244 Reply bytes: 6876 Flags: 18
+07-24 11:05:31.851 26558 26593 W Looper  : Slow dispatch took 4024ms android.fg app=system_server main=false group=FOREGROUND h=com.android.server.DropBoxManagerService$DropBoxManagerBroadcastHandler c=null m=1
+07-24 11:05:31.867 26558 26674 I ActivityManager: Killing 4466:com.google.android.apps.photos/u0a170 (adj 905): excessive binder traffic during cached
+07-24 11:05:31.875 26558 27109 I ActivityManager: Process com.google.android.apps.safetyhub (pid 29098) has died: cch  +35 CEM 
+07-24 11:05:31.885 26558 26880 D ActivityManager: freezing 30139 host.exp.exponent
+07-24 11:05:31.885 26558 26880 D ActivityManager: Reschedule freeze for process 30139 host.exp.exponent (outstanding txns), timeout=2584
+07-24 11:05:31.889 26558 26880 D ActivityManager: freezing 14203 com.google.android.deskclock
+07-24 11:05:31.898 26558 27804 W libbinder.Binder: Binder transaction to android.app.IActivityManager code 46 took 11474ms. Data bytes: 104 Reply bytes: 8 Flags: 18
+07-24 11:05:31.916 23575 23575 D BoundBrokerSvc: onUnbind: Intent { act=com.google.android.gms.measurement.START xflg=0x4 pkg=com.google.android.gms }
+07-24 11:05:31.918 26558 26558 W AnrMainProcessD: type=1400 audit(0.0:596): avc:  denied  { read } for  name="transactions" dev="binder" ino=1048588 scontext=u:r:system_server:s0 tcontext=u:object_r:binderfs_logs_transactions:s0 tclass=file permissive=0
+07-24 11:05:31.923 26558 28052 D ActivityManager: created ANR temporary file:/data/anr/temp_anr_308109813719608755.txt
+07-24 11:05:31.923 26558 28052 I ActivityManager: Collecting stacks for pid 27910 into temporary file temp_anr_308109813719608755.txt
+07-24 11:05:31.926 30139 19216 I ReactNativeJNI: Memory warning (pressure level: TRIM_MEMORY_BACKGROUND) received by JS VM, running a GC
+07-24 11:05:32.246 26558 26593 W Looper  : Slow dispatch took 396ms android.fg app=system_server main=false group=FOREGROUND h=android.os.Handler c=com.android.internal.content.PackageMonitor$$ExternalSyntheticLambda0@8876f66 m=0
+07-24 11:05:32.304 26558 28033 I ActivityManager: Skipping duplicate ANR: com.android.server.am.ProcessErrorStateRecord@3532f71 No response to onStopJob
+07-24 11:05:32.323 26558 28033 D ActivityManager: Completed ANR of system in 2809ms, latency 8ms
+07-24 11:05:32.324 26558 28033 I ActivityManager: App already killed by AM skipping ANR: com.android.server.am.ProcessErrorStateRecord@47fb2a7 Process ProcessRecord{9fc6db2 27910:com.google.android.bluetooth/1002} failed to complete startup
+07-24 11:05:32.324 26558 28033 D ActivityManager: Completed ANR of com.google.android.bluetooth in 0ms, latency 465ms
+07-24 11:05:32.339 26558 27713 W libbinder.Binder: Binder transaction to android.app.IActivityManager code 43 took 3991ms. Data bytes: 580 Reply bytes: 8 Flags: 16
+07-24 11:05:32.497 27775 27775 W com.adhan.app: Verification of androidx.lifecycle.ViewModel androidx.lifecycle.SavedStateViewModelFactory.create(java.lang.Class, androidx.lifecycle.viewmodel.CreationExtras) took 162.965ms (871.35 bytecodes/s) (0B arena alloc)
+07-24 11:05:32.584 26558 26865 W JobScheduler: Job didn't exist in JobStore: fec2c11 {SyncManager} #1000/55 @SyncManager@com.google.android.calendar/com.google:android
+07-24 11:05:32.585 26558 26865 W JobServiceContext: No response to onStopJob for 6020063 {SyncManager} #1000/51 @SyncManager@com.google.android.calendar.tasks/com.google:android
+07-24 11:05:32.605 26558 27037 W ProcessStats: Tracking association SourceState{e905a86 com.google.android.calendar/10160 ImpBg #63399} whose proc state 6 is better than process ProcessState{1f69052 com.android.providers.calendar/10106 pkg=com.android.providers.calendar} proc state 14 (5 skipped)
+07-24 11:05:32.639 26454 26454 I Zygote  : Process 4466 exited due to signal 9 (Killed)
+07-24 11:05:32.648 22956 27850 I SyncerLog: [4] Total requests: 1 (plus 0 retried)
+07-24 11:05:32.648 22956 27850 I SyncerLog: [4] Sync Result: FAILURE
+07-24 11:05:32.653 26558 26594 W Looper  : Slow dispatch took 5167ms android.ui app=system_server main=false group=TOP_APP h=com.android.server.am.ActivityManagerService$UiHandler c=null m=68
+07-24 11:05:32.655 23575 27853 I AdvertisingIdClient: shouldSendLog -1
+07-24 11:05:32.656 27775 27775 W com.adhan.app: Verification of androidx.lifecycle.ViewModelProvider$Factory dagger.hilt.android.internal.lifecycle.DefaultViewModelFactories.getFragmentFactory(androidx.fragment.app.Fragment, androidx.lifecycle.ViewModelProvider$Factory) took 157.697ms (107.80 bytecodes/s) (0B arena alloc)
+07-24 11:05:32.658 26558 27037 W SyncManager: Detected sync making no progress for startTime 316416947, mTimeoutStartTime 316416947, mHistoryRowId 138, syncOperation JobId=51 ***/com.google u0 [com.google.android.calendar.tasks] PERIODIC ExpectedIn=-20h46m18s Reason=Periodic Retries=3. cancelling.
+07-24 11:05:32.681 26558 26933 D ConnectivityService: Switching to new default network for: uid/pid:1000/26558 activeRequest: 1 callbackRequest: 1 [NetworkRequest [ REQUEST id=1, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VPN&NOT_VCN_MANAGED&NOT_BANDWIDTH_CONSTRAINED RequestorUid: 1000 RequestorPkg: android UnderlyingNetworks: Null] ]] callback flags: 0 order: 2147483647 isUidTracked: false declaredMethods: NONE using NetworkAgentInfo{network{102}  handle{441492361229}  ni{MOBILE[NR] CONNECTED extra: epc.tmobile.com} created=2026-07-21T08:32:07.565Z Score(Policies : TRANSPORT_PRIMARY&EVER_EVALUATED&EVER_VALIDATED&IS_VALIDATED ; KeepConnected : 0)  created 26546788 firstValidated 26551957 lastValidated 26551957  lp{{InterfaceName: eth0 LinkAddresses: [ 10.0.2.15/24 ] DnsAddresses: [ /10.0.2.3 ] UsePrivateDns: true ValidatedPrivateDnsAddresses: [10.0.2.3] Domains: null MTU: 1500 TcpBufferSizes: 2097152,6291456,16777216,512000,2097152,8388608 Routes: [ 0.0.0.0/0 -> 10.0.2.2 eth0 mtu 1500,10.0.2.0/24 -> 0.0.0.0 eth0 mtu 0 ]}}  nc{[ Transports: CELLULAR Capabilities: MMS&SUPL&DUN&FOTA&IMS&CBS&INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VPN&VALIDATED&NOT_ROAMING&NOT_CONGESTED&NOT_SUSPENDED&NOT_VCN_MANAGED&MMTEL&NOT_BANDWIDTH_CONSTRAINED LinkUpBandwidth>=60000Kbps LinkDnBandwidth>=145000Kbps Specifier: <TelephonyNetworkSpecifier [mSubId = 1]> SubscriptionIds: {1} UnderlyingNetworks: Null]}  factorySerialNumber=11}
+07-24 11:05:32.696 26558 28052 E android.os.Debug: Failed to get binder state info for pid: 27910 status: -2: Success
+07-24 11:05:32.701 26558 28052 E system_server: libdebuggerd_client: failed to get process tids
+07-24 11:05:32.701 26558 28052 E system_server: libdebuggerd_client: failed to get process info: failed to open /proc/27910: No such file or directory
+07-24 11:05:32.701 14061 14088 W Auth    : [TokenResponseCallback] TokenResponse failed with exception [CONTEXT service_id=343 ]
+07-24 11:05:32.701 14061 14088 W Auth    : cqpy: Failed to process request
+07-24 11:05:32.701 14061 14088 W Auth    : 	at cqqe.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):23)
+07-24 11:05:32.701 14061 14088 W Auth    : 	at cqtu.b(:com.google.android.gms@255034035@25.50.34 (260400-855735097):15)
+07-24 11:05:32.701 14061 14088 W Auth    : 	at cqsu.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):82)
+07-24 11:05:32.701 14061 14088 W Auth    : 	at kpc.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):19)
+07-24 11:05:32.701 14061 14088 W Auth    : 	at cqtb.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):6)
+07-24 11:05:32.701 14061 14088 W Auth    : 	at buuo.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):9)
+07-24 11:05:32.701 14061 14088 W Auth    : 	at adzy.b(:com.google.android.gms@255034035@25.50.34 (260400-855735097):13)
+07-24 11:05:32.701 14061 14088 W Auth    : 	at adzy.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):141)
+07-24 11:05:32.701 14061 14088 W Auth    : 	at amck.b(:com.google.android.gms@255034035@25.50.34 (260400-855735097):34)
+07-24 11:05:32.701 14061 14088 W Auth    : 	at aeuw.d(:com.google.android.gms@255034035@25.50.34 (260400-855735097):170)
+07-24 11:05:32.701 14061 14088 W Auth    : 	at aeuw.b(:com.google.android.gms@255034035@25.50.34 (260400-855735097):48)
+07-24 11:05:32.701 14061 14088 W Auth    : 	at aeuu.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):744)
+07-24 11:05:32.701 14061 14088 W Auth    : 	at aeut.b(:com.google.android.gms@255034035@25.50.34 (260400-855735097):142)
+07-24 11:05:32.701 14061 14088 W Auth    : 	at yfy.d(:com.google.android.gms@255034035@25.50.34 (260400-855735097):88)
+07-24 11:05:32.701 14061 14088 W Auth    : 	at yfy.dispatchTransaction(:com.google.android.gms@255034035@25.50.34 (260400-855735097):153)
+07-24 11:05:32.701 14061 14088 W Auth    : 	at buxv.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):72)
+07-24 11:05:32.701 14061 14088 W Auth    : 	at xoc.onTransact(:com.google.android.gms@255034035@25.50.34 (260400-855735097):23)
+07-24 11:05:32.701 14061 14088 W Auth    : 	at android.os.Binder.transact(Binder.java:1325)
+07-24 11:05:32.701 14061 14088 W Auth    : 	at cgvg.onTransact(:com.google.android.gms@255034035@25.50.34 (260400-855735097):10)
+07-24 11:05:32.701 14061 14088 W Auth    : 	at android.os.Binder.transact(Binder.java:1325)
+07-24 11:05:32.701 14061 14088 W Auth    : 	at buyj.onTransact(:com.google.android.gms@255034035@25.50.34 (260400-855735097):161)
+07-24 11:05:32.701 14061 14088 W Auth    : 	at android.os.Binder.execTransactInternal(Binder.java:1473)
+07-24 11:05:32.701 14061 14088 W Auth    : 	at android.os.Binder.execTransact(Binder.java:1418)
+07-24 11:05:32.701 14061 14088 W Auth    : Caused by: cqsx: Connectivity error
+07-24 11:05:32.701 14061 14088 W Auth    : 	at cqsu.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):76)
+07-24 11:05:32.701 14061 14088 W Auth    : 	... 20 more
+07-24 11:05:32.701 14061 14088 W Auth    : Caused by: java.io.IOException
+07-24 11:05:32.701 14061 14088 W Auth    : 	at cqsu.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):73)
+07-24 11:05:32.701 14061 14088 W Auth    : 	... 20 more
+07-24 11:05:32.704 26558 26676 I libprocessgroup: Removed cgroup /sys/fs/cgroup/apps/uid_10153/pid_12855
+07-24 11:05:32.712 23575 27853 I AdvertisingIdClient: GetInfoInternal elapse 9852ms
+07-24 11:05:32.716 26558 26676 I libprocessgroup: Removed cgroup /sys/fs/cgroup/apps/uid_10143/pid_12980
+07-24 11:05:32.716 26558 26676 I libprocessgroup: Removed cgroup /sys/fs/cgroup/apps/uid_10170/pid_4466
+07-24 11:05:32.716 26558 26676 I libprocessgroup: Removed cgroup /sys/fs/cgroup/apps/uid_10156/pid_29098
+07-24 11:05:32.739 14061 26074 I NearbyMediums: (REDACTED) Querying wifi usable channels failed with exception
+07-24 11:05:32.739 14061 26074 I NearbyMediums: java.lang.UnsupportedOperationException
+07-24 11:05:32.739 14061 26074 I NearbyMediums: 	at android.os.Parcel.createExceptionOrNull(Parcel.java:3385)
+07-24 11:05:32.739 14061 26074 I NearbyMediums: 	at android.os.Parcel.createException(Parcel.java:3357)
+07-24 11:05:32.739 14061 26074 I NearbyMediums: 	at android.os.Parcel.readException(Parcel.java:3340)
+07-24 11:05:32.739 14061 26074 I NearbyMediums: 	at android.os.Parcel.readException(Parcel.java:3282)
+07-24 11:05:32.739 14061 26074 I NearbyMediums: 	at android.net.wifi.IWifiManager$Stub$Proxy.getUsableChannels(IWifiManager.java:6652)
+07-24 11:05:32.739 14061 26074 I NearbyMediums: 	at android.net.wifi.WifiManager.getUsableChannels(WifiManager.java:11834)
+07-24 11:05:32.739 14061 26074 I NearbyMediums: 	at detp.y(:com.google.android.gms@255034035@25.50.34 (260400-855735097):21)
+07-24 11:05:32.739 14061 26074 I NearbyMediums: 	at detp.q(:com.google.android.gms@255034035@25.50.34 (260400-855735097):16)
+07-24 11:05:32.739 14061 26074 I NearbyMediums: 	at detp.m(:com.google.android.gms@255034035@25.50.34 (260400-855735097):24)
+07-24 11:05:32.739 14061 26074 I NearbyMediums: 	at dfmn.run(:com.google.android.gms@255034035@25.50.34 (260400-855735097):9)
+07-24 11:05:32.739 14061 26074 I NearbyMediums: 	at beeh.c(:com.google.android.gms@255034035@25.50.34 (260400-855735097):50)
+07-24 11:05:32.739 14061 26074 I NearbyMediums: 	at beeh.run(:com.google.android.gms@255034035@25.50.34 (260400-855735097):73)
+07-24 11:05:32.739 14061 26074 I NearbyMediums: 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1154)
+07-24 11:05:32.739 14061 26074 I NearbyMediums: 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:652)
+07-24 11:05:32.739 14061 26074 I NearbyMediums: 	at bejy.run(:com.google.android.gms@255034035@25.50.34 (260400-855735097):8)
+07-24 11:05:32.739 14061 26074 I NearbyMediums: 	at java.lang.Thread.run(Thread.java:1563)
+07-24 11:05:32.739 14061 26074 I NearbyMediums: Caused by: android.os.RemoteException: Remote stack trace:
+07-24 11:05:32.739 14061 26074 I NearbyMediums: 	at com.android.server.wifi.WifiServiceImpl.getUsableChannels(WifiServiceImpl.java:8395)
+07-24 11:05:32.739 14061 26074 I NearbyMediums: 	at android.net.wifi.IWifiManager$Stub.onTransact(IWifiManager.java:3308)
+07-24 11:05:32.739 14061 26074 I NearbyMediums: 	at android.os.Binder.execTransactInternal(Binder.java:1478)
+07-24 11:05:32.739 14061 26074 I NearbyMediums: 	at android.os.Binder.execTransact(Binder.java:1418)
+07-24 11:05:32.739 14061 26074 I NearbyMediums: 
+07-24 11:05:32.739 14061 26074 I NearbyMediums: [DeviceCapabilities] Skip refreshing cached wifi channels because it is not supported (refreshCacheWifiChannelsRightAfterNetworkCallbackInvoked:true isWifiGetUsableChannelsSupported:false)
+07-24 11:05:32.741 14061 14088 E AuthPII : [RequestTokenManager] getToken() -> NETWORK_ERROR. App: com.google.android.calendar, Service: oauth2:https://www.googleapis.com/auth/calendar
+07-24 11:05:32.741 14061 14088 E AuthPII : bcxx: Error when calling server using GmsNetworkStack.
+07-24 11:05:32.741 14061 14088 E AuthPII : 	at aeuw.b(:com.google.android.gms@255034035@25.50.34 (260400-855735097):1595)
+07-24 11:05:32.741 14061 14088 E AuthPII : 	at aeuu.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):744)
+07-24 11:05:32.741 14061 14088 E AuthPII : 	at aeut.b(:com.google.android.gms@255034035@25.50.34 (260400-855735097):142)
+07-24 11:05:32.741 14061 14088 E AuthPII : 	at yfy.d(:com.google.android.gms@255034035@25.50.34 (260400-855735097):88)
+07-24 11:05:32.741 14061 14088 E AuthPII : 	at yfy.dispatchTransaction(:com.google.android.gms@255034035@25.50.34 (260400-855735097):153)
+07-24 11:05:32.741 14061 14088 E AuthPII : 	at buxv.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):72)
+07-24 11:05:32.741 14061 14088 E AuthPII : 	at xoc.onTransact(:com.google.android.gms@255034035@25.50.34 (260400-855735097):23)
+07-24 11:05:32.741 14061 14088 E AuthPII : 	at android.os.Binder.transact(Binder.java:1325)
+07-24 11:05:32.741 14061 14088 E AuthPII : 	at cgvg.onTransact(:com.google.android.gms@255034035@25.50.34 (260400-855735097):10)
+07-24 11:05:32.741 14061 14088 E AuthPII : 	at android.os.Binder.transact(Binder.java:1325)
+07-24 11:05:32.741 14061 14088 E AuthPII : 	at buyj.onTransact(:com.google.android.gms@255034035@25.50.34 (260400-855735097):161)
+07-24 11:05:32.741 14061 14088 E AuthPII : 	at android.os.Binder.execTransactInternal(Binder.java:1473)
+07-24 11:05:32.741 14061 14088 E AuthPII : 	at android.os.Binder.execTransact(Binder.java:1418)
+07-24 11:05:32.741 14061 14088 E AuthPII : Caused by: bcxx: Error requesting token.
+07-24 11:05:32.741 14061 14088 E AuthPII : 	at aeuw.d(:com.google.android.gms@255034035@25.50.34 (260400-855735097):212)
+07-24 11:05:32.741 14061 14088 E AuthPII : 	at aeuw.b(:com.google.android.gms@255034035@25.50.34 (260400-855735097):48)
+07-24 11:05:32.741 14061 14088 E AuthPII : 	... 12 more
+07-24 11:05:32.741 14061 14088 E AuthPII : Caused by: java.util.concurrent.ExecutionException: cqpy: Failed to process request
+07-24 11:05:32.741 14061 14088 E AuthPII : 	at gtzn.j(:com.google.android.gms@255034035@25.50.34 (260400-855735097):21)
+07-24 11:05:32.741 14061 14088 E AuthPII : 	at gtzw.v(:com.google.android.gms@255034035@25.50.34 (260400-855735097):107)
+07-24 11:05:32.741 14061 14088 E AuthPII : 	at aeuw.d(:com.google.android.gms@255034035@25.50.34 (260400-855735097):197)
+07-24 11:05:32.741 14061 14088 E AuthPII : 	... 13 more
+07-24 11:05:32.741 14061 14088 E AuthPII : Caused by: cqpy: Failed to process request
+07-24 11:05:32.741 14061 14088 E AuthPII : 	at cqqe.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):23)
+07-24 11:05:32.741 14061 14088 E AuthPII : 	at cqtu.b(:com.google.android.gms@255034035@25.50.34 (260400-855735097):15)
+07-24 11:05:32.741 14061 14088 E AuthPII : 	at cqsu.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):82)
+07-24 11:05:32.741 14061 14088 E AuthPII : 	at kpc.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):19)
+07-24 11:05:32.741 14061 14088 E AuthPII : 	at cqtb.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):6)
+07-24 11:05:32.741 14061 14088 E AuthPII : 	at buuo.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):9)
+07-24 11:05:32.741 14061 14088 E AuthPII : 	at adzy.b(:com.google.android.gms@255034035@25.50.34 (260400-855735097):13)
+07-24 11:05:32.741 14061 14088 E AuthPII : 	at adzy.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):141)
+07-24 11:05:32.741 14061 14088 E AuthPII : 	at amck.b(:com.google.android.gms@255034035@25.50.34 (260400-855735097):34)
+07-24 11:05:32.741 14061 14088 E AuthPII : 	at aeuw.d(:com.google.android.gms@255034035@25.50.34 (260400-855735097):170)
+07-24 11:05:32.741 14061 14088 E AuthPII : 	... 13 more
+07-24 11:05:32.741 14061 14088 E AuthPII : Caused by: cqsx: Connectivity error
+07-24 11:05:32.741 14061 14088 E AuthPII : 	at cqsu.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):76)
+07-24 11:05:32.741 14061 14088 E AuthPII : 	... 20 more
+07-24 11:05:32.741 14061 14088 E AuthPII : Caused by: java.io.IOException
+07-24 11:05:32.741 14061 14088 E AuthPII : 	at cqsu.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):73)
+07-24 11:05:32.741 14061 14088 E AuthPII : 	... 20 more
+07-24 11:05:32.741 14061 14088 E AuthPII : Message is Error when calling server using GmsNetworkStack.
+07-24 11:05:32.741 14061 14088 E AuthPII : bcxx: Error when calling server using GmsNetworkStack.
+07-24 11:05:32.741 14061 14088 E AuthPII : 	at aeuw.b(:com.google.android.gms@255034035@25.50.34 (260400-855735097):1595)
+07-24 11:05:32.741 14061 14088 E AuthPII : 	at aeuu.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):744)
+07-24 11:05:32.741 14061 14088 E AuthPII : 	at aeut.b(:com.google.android.gms@255034035@25.50.34 (260400-855735097):142)
+07-24 11:05:32.741 14061 14088 E AuthPII : 	at yfy.d(:com.google.android.gms@255034035@25.50.34 (260400-855735097):88)
+07-24 11:05:32.741 14061 14088 E AuthPII : 	at yfy.dispatchTransaction(:com.google.android.gms@255034035@25.50.34 (260400-855735097):153)
+07-24 11:05:32.741 14061 14088 E AuthPII : 	at buxv.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):72)
+07-24 11:05:32.741 14061 14088 E AuthPII : 	at xoc.onTransact(:com.google.android.gms@255034035@25.50.34 (260400-855735097):23)
+07-24 11:05:32.741 14061 14088 E AuthPII : 	at android.os.Binder.transact(Binder.java:1325)
+07-24 11:05:32.741 14061 14088 E AuthPII : 	at cgvg.onTransact(:com.google.android.gms@255034035@25.50.34 (260400-855735097):10)
+07-24 11:05:32.741 14061 14088 E AuthPII : 	at android.os.Binder.transact(Binder.java:1325)
+07-24 11:05:32.741 14061 14088 E AuthPII : 	at buyj.onTransact(:com.google.android.gms@255034035@25.50.34 (260400-855735097):161)
+07-24 11:05:32.741 14061 14088 E AuthPII : 	at android.os.Binder.execTransactInternal(Binder.java:1473)
+07-24 11:05:32.741 14061 14088 E AuthPII : 	at android.os.Binder.execTransact(Binder.java:1418)
+07-24 11:05:32.741 14061 14088 E AuthPII : Caused by: bcxx: Error requesting token.
+07-24 11:05:32.741 14061 14088 E AuthPII : 	at aeuw.d(:com.google.android.gms@255034035@25.50.34 (260400-855735097):212)
+07-24 11:05:32.741 14061 14088 E AuthPII : 	at aeuw.b(:com.google.android.gms@255034035@25.50.34 (260400-855735097):48)
+07-24 11:05:32.741 14061 14088 E AuthPII : 	... 12 more
+07-24 11:05:32.741 14061 14088 E AuthPII : Caused by: java.util.concurrent.ExecutionException: cqpy: Failed to process request
+07-24 11:05:32.741 14061 14088 E AuthPII : 	at gtzn.j(:com.google.android.gms@255034035@25.50.34 (260400-855735097):21)
+07-24 11:05:32.741 14061 14088 E AuthPII : 	at gtzw.v(:com.google.android.gms@255034035@25.50.34 (260400-855735097):107)
+07-24 11:05:32.741 14061 14088 E AuthPII : 	at aeuw.d(:com.google.android.gms@255034035@25.50.34 (260400-855735097):197)
+07-24 11:05:32.741 14061 14088 E AuthPII : 	... 13 more
+07-24 11:05:32.741 14061 14088 E AuthPII : Caused by: cqpy: Failed to process request
+07-24 11:05:32.741 14061 14088 E AuthPII : 	at cqqe.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):23)
+07-24 11:05:32.741 14061 14088 E AuthPII : 	at cqtu.b(:com.google.android.gms@255034035@25.50.34 (260400-855735097):15)
+07-24 11:05:32.741 14061 14088 E AuthPII : 	at cqsu.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):82)
+07-24 11:05:32.741 14061 14088 E AuthPII : 	at kpc.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):19)
+07-24 11:05:32.741 14061 14088 E AuthPII : 	at cqtb.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):6)
+07-24 11:05:32.741 14061 14088 E AuthPII : 	at buuo.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):9)
+07-24 11:05:32.741 14061 14088 E AuthPII : 	at adzy.b(:com.google.android.gms@255034035@25.50.34 (260400-855735097):13)
+07-24 11:05:32.741 14061 14088 E AuthPII : 	at adzy.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):141)
+07-24 11:05:32.741 14061 14088 E AuthPII : 	at amck.b(:com.google.android.gms@255034035@25.50.34 (260400-855735097):34)
+07-24 11:05:32.741 14061 14088 E AuthPII : 	at aeuw.d(:com.google.android.gms@255034035@25.50.34 (260400-855735097):170)
+07-24 11:05:32.741 14061 14088 E AuthPII : 	... 13 more
+07-24 11:05:32.741 14061 14088 E AuthPII : Caused by: cqsx: Connectivity error
+07-24 11:05:32.741 14061 14088 E AuthPII : 	at cqsu.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):76)
+07-24 11:05:32.741 14061 14088 E AuthPII : 	... 20 more
+07-24 11:05:32.741 14061 14088 E AuthPII : Caused by: java.io.IOException
+07-24 11:05:32.741 14061 14088 E AuthPII : 	at cqsu.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):73)
+07-24 11:05:32.741 14061 14088 E AuthPII : 	... 20 more
+07-24 11:05:32.742 14061 14088 I Auth    : (REDACTED) [GetToken] GetToken failed for app=%s with non recoverable status code: %s 
+07-24 11:05:32.742 14061 14088 W Auth    : [ChimeraGetToken] exception while trying to fetch auth tokens for app=com.google.android.calendar, scope=oauth2:https://www.googleapis.com/auth/calendar [CONTEXT service_id=153 ]
+07-24 11:05:32.742 14061 14088 W Auth    : aeuo: GetToken failed with status code: NetworkError
+07-24 11:05:32.742 14061 14088 W Auth    : 	at aeut.b(:com.google.android.gms@255034035@25.50.34 (260400-855735097):346)
+07-24 11:05:32.742 14061 14088 W Auth    : 	at yfy.d(:com.google.android.gms@255034035@25.50.34 (260400-855735097):88)
+07-24 11:05:32.742 14061 14088 W Auth    : 	at yfy.dispatchTransaction(:com.google.android.gms@255034035@25.50.34 (260400-855735097):153)
+07-24 11:05:32.742 14061 14088 W Auth    : 	at buxv.a(:com.google.android.gms@255034035@25.50.34 (260400-855735097):72)
+07-24 11:05:32.742 14061 14088 W Auth    : 	at xoc.onTransact(:com.google.android.gms@255034035@25.50.34 (260400-855735097):23)
+07-24 11:05:32.742 14061 14088 W Auth    : 	at android.os.Binder.transact(Binder.java:1325)
+07-24 11:05:32.742 14061 14088 W Auth    : 	at cgvg.onTransact(:com.google.android.gms@255034035@25.50.34 (260400-855735097):10)
+07-24 11:05:32.742 14061 14088 W Auth    : 	at android.os.Binder.transact(Binder.java:1325)
+07-24 11:05:32.742 14061 14088 W Auth    : 	at buyj.onTransact(:com.google.android.gms@255034035@25.50.34 (260400-855735097):161)
+07-24 11:05:32.742 14061 14088 W Auth    : 	at android.os.Binder.execTransactInternal(Binder.java:1473)
+07-24 11:05:32.742 14061 14088 W Auth    : 	at android.os.Binder.execTransact(Binder.java:1418)
+07-24 11:05:32.742 14061 14088 W libbinder.Binder: Binder transaction to com.google.android.auth.IAuthManagerService code 5 took 1200ms. Data bytes: 780 Reply bytes: 76 Flags: 18
+07-24 11:05:32.743 22956 27852 W Auth    : [GoogleAuthUtil] [GoogleAuthUtil] error status:NETWORK_ERROR with method:getTokenWithDetails
+07-24 11:05:32.746 26558 26927 I HalDevMgr: bestIfaceCreationProposal is null, requestIface=STA, existingIface=[name=wlan0 type=STA]
+07-24 11:05:32.771 26558 28052 W ActivityManager: Dumping Java threads failed, initiating native stack dump.
+07-24 11:05:32.766 26558 26558 W AnrMainProcessD: type=1400 audit(0.0:597): avc:  denied  { read } for  name="transactions" dev="binder" ino=1048588 scontext=u:r:system_server:s0 tcontext=u:object_r:binderfs_logs_transactions:s0 tclass=file permissive=0
+07-24 11:05:32.783 23575 23575 I AdvertisingIdClient: getting error as 17: API: ClientTelemetry.API is not available on this device. Connection failed with: ConnectionResult{statusCode=API_DISABLED_FOR_CONNECTION, resolution=null, message=null, clientMethodKey=null}
+07-24 11:05:32.871 26558 28052 E android.os.Debug: Failed to get binder state info for pid: 27910 status: -2: Success
+07-24 11:05:32.871 26558 28052 E system_server: libdebuggerd_client: failed to get process tids
+07-24 11:05:32.871 26558 28052 I system_server: libdebuggerd_client: started dumping process 27910
+07-24 11:05:32.877   247   247 I tombstoned: registered intercept for pid 27910 and type kDebuggerdNativeBacktrace
+07-24 11:05:32.877 26558 28052 E system_server: libdebuggerd_client: failed to send signal to pid 27910: No such process
+07-24 11:05:32.877   247   247 I tombstoned: intercept for pid 27910 and type kDebuggerdNativeBacktrace terminated: due to input
+07-24 11:05:32.918 28051 28051 W crash_dump64: failed to attach to thread 28033: No such process
+07-24 11:05:32.918 28051 28051 E crash_dump64: failed to interrupt 28033 to detach: No such process
+07-24 11:05:32.918 28051 28051 W crash_dump64: failed to ptrace interrupt thread 28033: No such process
+07-24 11:05:32.921 23575 27853 D AdvertisingIdClient: AdvertisingIdClient already created.
+07-24 11:05:33.166 26558 26582 E AppOps  : Bad call made by uid 1000. Package "com.google.android.apps.photos" does not belong to uid 1000.
+07-24 11:05:33.167 26558 26582 W BinderNative: Uncaught exception from death notification
+07-24 11:05:33.167 26558 26582 W BinderNative: java.lang.SecurityException: Specified package "com.google.android.apps.photos" under uid 1000 but it is not
+07-24 11:05:33.167 26558 26582 W BinderNative: 	at com.android.server.appop.AppOpsService.verifyAndGetBypass(AppOpsService.java:5033)
+07-24 11:05:33.167 26558 26582 W BinderNative: 	at com.android.server.appop.AppOpsService.verifyAndGetBypass(AppOpsService.java:4894)
+07-24 11:05:33.167 26558 26582 W BinderNative: 	at com.android.server.appop.AppOpsService.verifyAndGetBypass(AppOpsService.java:4886)
+07-24 11:05:33.167 26558 26582 W BinderNative: 	at com.android.server.appop.AppOpsService.stopWatchingAsyncNoted(AppOpsService.java:3816)
+07-24 11:05:33.167 26558 26582 W BinderNative: 	at com.android.server.appop.AppOpsService.lambda$startWatchingAsyncNoted$8(AppOpsService.java:3792)
+07-24 11:05:33.167 26558 26582 W BinderNative: 	at com.android.server.appop.AppOpsService.$r8$lambda$8-LvphSu5hQo1Pm8R22O3seI00E(AppOpsService.java:0)
+07-24 11:05:33.167 26558 26582 W BinderNative: 	at com.android.server.appop.AppOpsService$$ExternalSyntheticLambda1.onInterfaceDied(R8$$SyntheticClass:0)
+07-24 11:05:33.167 26558 26582 W BinderNative: 	at android.os.RemoteCallbackList$Builder$1.onCallbackDied(RemoteCallbackList.java:337)
+07-24 11:05:33.167 26558 26582 W BinderNative: 	at android.os.RemoteCallbackList$Interface.binderDied(RemoteCallbackList.java:229)
+07-24 11:05:33.167 26558 26582 W BinderNative: 	at android.os.IBinder$DeathRecipient.binderDied(IBinder.java:340)
+07-24 11:05:33.167 26558 26582 W BinderNative: 	at android.os.BinderProxy.sendDeathNotice(BinderProxy.java:787)
+07-24 11:05:33.510 23575 27853 I AdvertisingIdClient: shouldSendLog 316509590
+07-24 11:05:33.510 23575 27853 I AdvertisingIdClient: GetInfoInternal elapse 589ms
+07-24 11:05:33.516 28920 27666 I AiAiEcho: AppIndexer Package:[com.adhan.app] UserProfile:[0] Enabled:[true].
+07-24 11:05:33.516 28920 27666 I AiAiEcho: AppFetcherImplV2 updateApps package:[com.adhan.app], userId:[0], reason:[package is updated.].
+07-24 11:05:33.517 26558 28052 W ActivityManager: Native stack dump failed!
+07-24 11:05:33.517 28051 28051 I crash_dump64: obtaining output fd from tombstoned, type: kDebuggerdNativeBacktrace
+07-24 11:05:33.565   247   247 I tombstoned: received crash request for pid 26558
+07-24 11:05:33.565   247   247 I tombstoned: found intercept fd 513 for pid 26558 and type kDebuggerdNativeBacktrace
+07-24 11:05:33.565 26558 28032 E system_server: libdebuggerd_client: timeout expired before poll
+07-24 11:05:33.566 28051 28051 I crash_dump64: performing dump of process 26558 (target tid = 26558)
+07-24 11:05:33.571 22956 22960 W ndroid.calendar: Suspending all threads took: 12.395ms
+07-24 11:05:33.576 26558 26676 I ActivityManager: Process PhantomProcessRecord {7583370 28046:26558:crash_dump64/1000} died
+07-24 11:05:33.583 26558 28032 W ActivityManager: Native stack dump failed!
+07-24 11:05:33.592 26558 26582 D FileUtils: Rounded bytes from 2067193856 to 4000000000
+07-24 11:05:33.592 26558 26927 E WifiChipAidlImpl: getUsableChannels failed with service-specific exception: android.os.ServiceSpecificException:  (code 4)
+07-24 11:05:33.658 26961 26961 I artd    : GetBestInfo: odex next to the dex file (/data/app/~~79-A0wXBXKIAeH7ndUMghg==/com.google.android.gms-clzOdVZ9p_ZAmiNXja63pg==/oat/arm64/base.odex) is kOatUpToDate with filter 'speed-profile' executable 'false'
+07-24 11:05:33.679 26961 26961 I artd    : GetBestInfo: odex next to the dex file (/data/app/~~79-A0wXBXKIAeH7ndUMghg==/com.google.android.gms-clzOdVZ9p_ZAmiNXja63pg==/oat/arm64/split_AdsDynamite_installtime.odex) is kOatUpToDate with filter 'speed' executable 'false'
+07-24 11:05:33.691 26558 27101 W ActivityManager: Slow operation: 1008ms so far, now at attachApplicationLocked: before bindApplication
+07-24 11:05:33.693 26558 27101 W ActivityManager: Slow operation: 1010ms so far, now at attachApplicationLocked: immediately before bindApplication
+07-24 11:05:33.709 26558 27101 W ActivityManager: Slow operation: 1026ms so far, now at attachApplicationLocked: immediately after bindApplication
+07-24 11:05:33.709 26558 27101 W ActivityManager: Slow operation: 1026ms so far, now at attachApplicationLocked: after updateLruProcessLocked
+07-24 11:05:33.714 26558 27101 W ActivityManager: Slow operation: 1031ms so far, now at attachApplicationLocked: after updateOomAdjLocked
+07-24 11:05:33.717 26558 26593 W Looper  : Drained
+07-24 11:05:33.722 26961 26961 I artd    : GetBestInfo: odex next to the dex file (/data/app/~~79-A0wXBXKIAeH7ndUMghg==/com.google.android.gms-clzOdVZ9p_ZAmiNXja63pg==/oat/arm64/split_CronetDynamite_installtime.odex) is kOatUpToDate with filter 'speed-profile' executable 'false'
+07-24 11:05:33.750 26558 26558 W AnrMainProcessD: type=1400 audit(0.0:598): avc:  denied  { read } for  name="transactions" dev="binder" ino=1048588 scontext=u:r:system_server:s0 tcontext=u:object_r:binderfs_logs_transactions:s0 tclass=file permissive=0
+07-24 11:05:33.749 26558 26865 W JobServiceContext: No response to onStopJob for ba28b68 {SyncManager} #1000/56 @SyncManager@com.android.calendar/com.google:android
+07-24 11:05:33.751 26558 26659 W libbinder.Binder: Binder transaction to android.app.IActivityManager code 26 took 4400ms. Data bytes: 712 Reply bytes: 8 Flags: 16
+07-24 11:05:33.751 26558 26880 D ActivityManager: freezing 6749 com.android.chrome
+07-24 11:05:33.753 26558 28052 D ActivityManager: created ANR temporary file:/data/anr/temp_anr_4213078470705527489.txt
+07-24 11:05:33.753 26558 28052 I ActivityManager: Collecting stacks for pid 26558 into temporary file temp_anr_4213078470705527489.txt
+07-24 11:05:33.762 26558 27101 W libbinder.Binder: Binder transaction to android.app.IActivityManager code 29 took 1815ms. Data bytes: 112 Reply bytes: 4 Flags: 18
+07-24 11:05:33.769 28155 28155 W AlarmManager: Unrecognized alarm listener com.android.internal.telephony.data.AutoDataSwitchController$$ExternalSyntheticLambda3@117c3a9
+07-24 11:05:33.771 26558 26933 D ConnectivityService: Switching to new default network for: uid/pid:1000/26558 activeRequest: 12 callbackRequest: 12 [NetworkRequest [ TRACK_DEFAULT id=12, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VPN&NOT_VCN_MANAGED&NOT_BANDWIDTH_CONSTRAINED Uids: <{10155-10155, 10156-10156, 10160-10160, 10167-10167}> RequestorUid: 1000 RequestorPkg: android UnderlyingNetworks: Null] ], NetworkRequest [ REQUEST id=13, [ Transports: SATELLITE Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VPN&NOT_VCN_MANAGED Uids: <{10155-10155, 10156-10156, 10160-10160, 10167-10167}> UnderlyingNetworks: Null] ]] callback flags: 0 order: 40 isUidTracked: false declaredMethods: NONE using NetworkAgentInfo{network{102}  handle{441492361229}  ni{MOBILE[NR] CONNECTED extra: epc.tmobile.com} created=2026-07-21T08:32:07.565Z Score(Policies : TRANSPORT_PRIMARY&EVER_EVALUATED&EVER_VALIDATED&IS_VALIDATED ; KeepConnected : 0)  created 26546788 firstValidated 26551957 lastValidated 26551957  lp{{InterfaceName: eth0 LinkAddresses: [ 10.0.2.15/24 ] DnsAddresses: [ /10.0.2.3 ] UsePrivateDns: true ValidatedPrivateDnsAddresses: [10.0.2.3] Domains: null MTU: 1500 TcpBufferSizes: 2097152,6291456,16777216,512000,2097152,8388608 Routes: [ 0.0.0.0/0 -> 10.0.2.2 eth0 mtu 1500,10.0.2.0/24 -> 0.0.0.0 eth0 mtu 0 ]}}  nc{[ Transports: CELLULAR Capabilities: MMS&SUPL&DUN&FOTA&IMS&CBS&INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VPN&VALIDATED&NOT_ROAMING&NOT_CONGESTED&NOT_SUSPENDED&NOT_VCN_MANAGED&MMTEL&NOT_BANDWIDTH_CONSTRAINED LinkUpBandwidth>=60000Kbps LinkDnBandwidth>=145000Kbps Specifier: <TelephonyNetworkSpecifier [mSubId = 1]> SubscriptionIds: {1} UnderlyingNetworks: Null]}  factorySerialNumber=11}
+07-24 11:05:33.804 26961 26961 I artd    : GetBestInfo: odex next to the dex file (/data/app/~~79-A0wXBXKIAeH7ndUMghg==/com.google.android.gms-clzOdVZ9p_ZAmiNXja63pg==/oat/arm64/split_DynamiteLoader_installtime.odex) is kOatUpToDate with filter 'speed' executable 'false'
+07-24 11:05:33.805 14061 26074 D BluetoothAdapter: isLeEnabled(): BLE_TURNING_ON
+07-24 11:05:33.809 26558 26933 D ConnectivityService: Switching to new default network for: uid/pid:1000/26558 activeRequest: 10 callbackRequest: 10 [NetworkRequest [ TRACK_DEFAULT id=10, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VPN&NOT_VCN_MANAGED&NOT_BANDWIDTH_CONSTRAINED Uid: 10154 RequestorUid: 1000 RequestorPkg: android UnderlyingNetworks: Null] ], NetworkRequest [ REQUEST id=11, [ Transports: SATELLITE Capabilities: INTERNET&TRUSTED&NOT_VPN&NOT_VCN_MANAGED Uid: 10154 UnderlyingNetworks: Null] ]] callback flags: 0 order: 40 isUidTracked: false declaredMethods: NONE using NetworkAgentInfo{network{102}  handle{441492361229}  ni{MOBILE[NR] CONNECTED extra: epc.tmobile.com} created=2026-07-21T08:32:07.565Z Score(Policies : TRANSPORT_PRIMARY&EVER_EVALUATED&EVER_VALIDATED&IS_VALIDATED ; KeepConnected : 0)  created 26546788 firstValidated 26551957 lastValidated 26551957  lp{{InterfaceName: eth0 LinkAddresses: [ 10.0.2.15/24 ] DnsAddresses: [ /10.0.2.3 ] UsePrivateDns: true ValidatedPrivateDnsAddresses: [10.0.2.3] Domains: null MTU: 1500 TcpBufferSizes: 2097152,6291456,16777216,512000,2097152,8388608 Routes: [ 0.0.0.0/0 -> 10.0.2.2 eth0 mtu 1500,10.0.2.0/24 -> 0.0.0.0 eth0 mtu 0 ]}}  nc{[ Transports: CELLULAR Capabilities: MMS&SUPL&DUN&FOTA&IMS&CBS&INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VPN&VALIDATED&NOT_ROAMING&NOT_CONGESTED&NOT_SUSPENDED&NOT_VCN_MANAGED&MMTEL&NOT_BANDWIDTH_CONSTRAINED LinkUpBandwidth>=60000Kbps LinkDnBandwidth>=145000Kbps Specifier: <TelephonyNetworkSpecifier [mSubId = 1]> SubscriptionIds: {1} UnderlyingNetworks: Null]}  factorySerialNumber=11}
+07-24 11:05:33.817 14061 14061 D BoundBrokerSvc: onUnbind: Intent { act=com.google.android.gms.instantapps.START xflg=0x4 pkg=com.google.android.gms }
+07-24 11:05:33.837 14061 14163 I NearbyDiscovery: (REDACTED) FastPairHandler: Received action %s
+07-24 11:05:33.854 26961 26961 I artd    : GetBestInfo: odex next to the dex file (/data/app/~~79-A0wXBXKIAeH7ndUMghg==/com.google.android.gms-clzOdVZ9p_ZAmiNXja63pg==/oat/arm64/split_DynamiteModulesA_installtime.odex) is kOatUpToDate with filter 'speed' executable 'false'
+07-24 11:05:34.035 26961 26961 I artd    : GetBestInfo: odex next to the dex file (/data/app/~~79-A0wXBXKIAeH7ndUMghg==/com.google.android.gms-clzOdVZ9p_ZAmiNXja63pg==/oat/arm64/split_DynamiteModulesC_installtime.odex) is kOatUpToDate with filter 'speed' executable 'false'
+07-24 11:05:34.301 26961 26961 I artd    : GetBestInfo: odex next to the dex file (/data/app/~~79-A0wXBXKIAeH7ndUMghg==/com.google.android.gms-clzOdVZ9p_ZAmiNXja63pg==/oat/arm64/split_GoogleCertificates_installtime.odex) is kOatUpToDate with filter 'speed' executable 'false'
+07-24 11:05:34.409 28155 28412 D SatelliteController: handleCmdUpdateNtnSignalStrengthReporting: ignore request, satellite is disabled
+07-24 11:05:34.413 26558 26933 W libbinder.IPCThreadState: Sending oneway calls to frozen process.
+07-24 11:05:34.424 26961 26961 I artd    : GetBestInfo: odex next to the dex file (/data/app/~~79-A0wXBXKIAeH7ndUMghg==/com.google.android.gms-clzOdVZ9p_ZAmiNXja63pg==/oat/arm64/split_MapsDynamite_installtime.odex) is kOatUpToDate with filter 'speed' executable 'false'
+07-24 11:05:34.637 26961 26961 I artd    : GetBestInfo: odex next to the dex file (/data/app/~~79-A0wXBXKIAeH7ndUMghg==/com.google.android.gms-clzOdVZ9p_ZAmiNXja63pg==/oat/arm64/split_MeasurementDynamite_installtime.odex) is kOatUpToDate with filter 'speed' executable 'false'
+07-24 11:05:34.829 27375 28066 I DeviceStatusMonitor: DeviceStatusMonitor.handleBroadcast():138 onReceive() : Action = android.net.conn.CONNECTIVITY_CHANGE
+07-24 11:05:34.868 27375 28066 I DeviceStatusMonitor: DeviceStatusMonitor.notifyIfNetworkChanged():196 notifyIfNetworkChanged: newState = METERED, airplaneModeOn = false, notifyAnyway = false
+07-24 11:05:34.881 23575 23601 I Icing   : Storage manager: low false usage 1.72MB avail 654.24MB capacity 5.80GB
+07-24 11:05:34.914 26558 26988 D ShortcutService: received package broadcast intent: Intent { act=android.intent.action.PACKAGE_CHANGED dat=package: flg=0x45000010 (has extras) }
+07-24 11:05:34.914 26558 26988 D ShortcutService: changing package: com.adhan.app userId=0
+07-24 11:05:34.917 26558 27806 W libbinder.IPCThreadState: Sending oneway calls to frozen process.
+07-24 11:05:34.921 27775 27775 D AudioSystem: onNewService: media.audio_policy service obtained 0xb400006ec0a8e740
+07-24 11:05:34.925 28155 28412 D SatelliteController: iisInCarrierRoamingNbIotNtn: satellite is disabled
+07-24 11:05:34.925 28155 28412 D SatelliteController: getCarrierRoamingNtnConnectType: Falling back to global carrier config connect type: 0
+07-24 11:05:34.931 26961 26961 I artd    : GetBestInfo: /data/user_de/0/com.google.android.gms/app_chimera/m/00000004/DynamiteModulesC.apk has no usable artifacts
+07-24 11:05:34.941 27375 28066 I NetworkInfoNotification: NetworkInfoNotification$Listener.onReceive():107 onNetworkAvailable: networkState = METERED, isAirplaneModeOn = false
+07-24 11:05:35.004 27375 28066 W NotificationCenter: NotificationCenter$NotificationQueue.notifyPendingNotificationsOnExecutor():877 Heavy notify work detected on UI thread: [oao->fer] takes 27ms
+07-24 11:05:35.005 27375 27375 I NetworkInfoNotification: NetworkInfoNotification$Listener.onReceive():107 onNetworkAvailable: networkState = METERED, isAirplaneModeOn = false
+07-24 11:05:35.028 27375 28068 I NetworkInfoNotification: NetworkInfoNotification$Listener.onReceive():107 onNetworkAvailable: networkState = METERED, isAirplaneModeOn = false
+07-24 11:05:35.029 27375 28068 E NotificationCenter: NotificationCenter.registerListenerInternal():378 Listener mjf@65027d3 is already registered for notification class miv
+07-24 11:05:35.048 28155 28412 D SatelliteController: iisInCarrierRoamingNbIotNtn: satellite is disabled
+07-24 11:05:35.050 28155 28412 D SatelliteController: getCarrierRoamingNtnConnectType: Falling back to global carrier config connect type: 0
+07-24 11:05:35.053 26558 26582 W libbinder.IPCThreadState: Sending oneway calls to frozen process.
+07-24 11:05:35.059 26558 27717 W libbinder.Binder: Binder transaction to android.app.IActivityManager code 43 took 2184ms. Data bytes: 604 Reply bytes: 8 Flags: 18
+07-24 11:05:35.060 26558 27909 W libbinder.Binder: Binder transaction to android.app.IActivityManager code 46 took 10655ms. Data bytes: 104 Reply bytes: 8 Flags: 18
+07-24 11:05:35.060 26558 27903 W libbinder.Binder: Binder transaction to android.app.IActivityManager code 23 took 20757ms. Data bytes: 104 Reply bytes: 4 Flags: 18
+07-24 11:05:35.062 26558 27804 W libbinder.Binder: Binder transaction to android.app.IActivityManager code 46 took 3150ms. Data bytes: 104 Reply bytes: 8 Flags: 18
+07-24 11:05:35.082 26961 26961 I artd    : GetBestInfo: /data/user_de/0/com.google.android.gms/app_chimera/m/00000001/CronetDynamite.apk has no usable artifacts
+07-24 11:05:35.083 26558 28052 I system_server: libdebuggerd_client: started dumping process 26558
+07-24 11:05:35.083   247   247 W tombstoned: pid 26558 already registered, type kDebuggerdJavaBacktrace
+07-24 11:05:35.084 26558 28052 E system_server: libdebuggerd_client: unexpected registration response: 0
+07-24 11:05:35.084 26961 26961 I artd    : GetBestInfo: /data/user_de/0/com.google.android.gms/app_chimera/m/00000002/DynamiteLoader.apk has no usable artifacts
+07-24 11:05:35.100 27375 27375 I NetworkInfoNotification: NetworkInfoNotification$Listener.onReceive():107 onNetworkAvailable: networkState = METERED, isAirplaneModeOn = false
+07-24 11:05:35.166 26558 26558 W AnrMainProcessD: type=1400 audit(0.0:599): avc:  denied  { read } for  name="transactions" dev="binder" ino=1048588 scontext=u:r:system_server:s0 tcontext=u:object_r:binderfs_logs_transactions:s0 tclass=file permissive=0
+07-24 11:05:35.135 26558 26933 E libbinder.IPCThreadState: Binder transaction failure. id: 43453728, cmd: BR_DEAD_REPLY (29189), error: -22 (Invalid argument)
+07-24 11:05:35.135 26558 26933 W ActivityManager: pid 26558 system sent binder code 1 with flags 1 and got error -32
+07-24 11:05:35.135 26558 26933 D ActivityManager: Too many transaction errors, throttling freezer binder callback.
+07-24 11:05:35.135 26558 26933 E ConnectivityService: RemoteException caught trying to send a callback msg for NetworkRequest [ TRACK_DEFAULT id=647, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED&NOT_BANDWIDTH_CONSTRAINED Uid: 10153 RequestorUid: 10153 RequestorPkg: com.android.vending UnderlyingNetworks: Null] ]
+07-24 11:05:35.136 26558 26933 W libbinder.IPCThreadState: Sending oneway calls to frozen process.
+07-24 11:05:35.137 26558 26933 W libbinder.IPCThreadState: Sending oneway calls to frozen process.
+07-24 11:05:35.158 26961 26961 I artd    : GetBestInfo: /data/user_de/0/com.google.android.gms/app_chimera/m/00000018/dl-TfliteDynamiteDynamite.integ_260580502100400.apk has no usable artifacts
+07-24 11:05:35.158 27375 27375 I HandwritingOnlineSuperpacks: HandwritingOnlineSuperpacks$1.onNetworkAvailable():70 onNetworkAvailable
+07-24 11:05:35.171 26558 28052 W ActivityManager: Dumping Java threads failed, initiating native stack dump.
+07-24 11:05:35.186 26961 26961 I artd    : GetBestInfo: /data/user_de/0/com.google.android.gms/app_chimera/m/00000011/dl-MlkitBarcodeUi.optional_255034100400.apk has no usable artifacts
+07-24 11:05:35.218 26961 26961 I artd    : GetBestInfo: /data/user_de/0/com.google.android.gms/app_chimera/m/00000005/GoogleCertificates.apk has no usable artifacts
+07-24 11:05:35.240 27775 27775 D AudioSystem: getService: IAudioPolicyService retrieved: 0xb400006ec0a8e740  cached: 0xb400006ec0a8e740
+07-24 11:05:35.273 26961 26961 I artd    : GetBestInfo: /data/user/0/com.google.android.gms/app_dg_cache/4346EA85CDA1436041B029D54013FBB1AA13E134/the.apk has no usable artifacts
+07-24 11:05:35.274 23575 27853 W FA-SVC  : Failed to get dsid. appId, exception type, exception: host.exp.exponent, java.util.concurrent.TimeoutException, java.util.concurrent.TimeoutException: Waited 1000 milliseconds (plus 180084 nanoseconds delay) for gtzy@5f4ff39[status=PENDING, info=[function=[com.google.android.gms.ads.social.m@af30edf]]]: gtzw.v(:com.google.android.gms@255034035@25.50.34 (260400-855735097):371)
+07-24 11:05:35.285 27598 28086 I BugleRcsEngine: Connected state: [1], networkType: [MOBILE] [CONTEXT thread_id=59 ]
+07-24 11:05:35.315 26558 26933 E libbinder.IPCThreadState: Binder transaction failure. id: 43453811, cmd: BR_DEAD_REPLY (29189), error: -22 (Invalid argument)
+07-24 11:05:35.315 26558 26933 W ActivityManager: pid 26558 system sent binder code 1 with flags 1 and got error -32
+07-24 11:05:35.315 26558 26933 D ActivityManager: Too many transaction errors, throttling freezer binder callback.
+07-24 11:05:35.316 26558 26933 E ConnectivityService: RemoteException caught trying to send a callback msg for NetworkRequest [ TRACK_DEFAULT id=620, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED&NOT_BANDWIDTH_CONSTRAINED Uid: 10170 RequestorUid: 10170 RequestorPkg: com.google.android.apps.photos UnderlyingNetworks: Null] ]
+07-24 11:05:35.316 26558 26933 W libbinder.IPCThreadState: Sending oneway calls to frozen process.
+07-24 11:05:35.319 26558 26925 D NetworkStatsObservers: Registering observer for RequestInfo from pid/uid:26558/1000(android) for DataUsageRequest [ requestId=112, networkTemplate=NetworkTemplate: matchRule=MOBILE, matchSubscriberIds=[310260...], matchWifiNetworkKeys=[], metered=YES, defaultNetwork=NO, thresholdInBytes=3771180 ] accessLevel:3
+07-24 11:05:35.322 26558 27040 D NetworkStatsObservers: Unregistering RequestInfo from pid/uid:26558/1000(android) for DataUsageRequest [ requestId=111, networkTemplate=NetworkTemplate: matchRule=MOBILE, matchSubscriberIds=[310260...], matchWifiNetworkKeys=[], metered=YES, defaultNetwork=NO, thresholdInBytes=3796731 ] accessLevel:3
+07-24 11:05:35.323 27598 28086 I BugleRcsEngine: Connected state: [1], networkType: [MOBILE] [CONTEXT thread_id=59 ]
+07-24 11:05:35.324  3790  3857 I Finsky:background: [93] IQ: start evaluating install requests.
+07-24 11:05:35.331 26558 26933 W libbinder.IPCThreadState: Sending oneway calls to frozen process.
+07-24 11:05:35.331 26558 26933 E libbinder.IPCThreadState: Binder transaction failure. id: 43453833, cmd: BR_DEAD_REPLY (29189), error: -22 (Invalid argument)
+07-24 11:05:35.331 26558 26933 W ActivityManager: pid 26558 system sent binder code 1 with flags 1 and got error -32
+07-24 11:05:35.331 26558 26933 D ActivityManager: Too many transaction errors, throttling freezer binder callback.
+07-24 11:05:35.331 26558 26933 E ConnectivityService: RemoteException caught trying to send a callback msg for NetworkRequest [ TRACK_DEFAULT id=674, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED&NOT_BANDWIDTH_CONSTRAINED Uid: 10170 RequestorUid: 10170 RequestorPkg: com.google.android.apps.photos UnderlyingNetworks: Null] ]
+07-24 11:05:35.332 26558 26933 W libbinder.IPCThreadState: Sending oneway calls to frozen process.
+07-24 11:05:35.333 26558 26968 D NetworkTimeUpdateService: New default network 102; checking time.
+07-24 11:05:35.334 26558 26593 W time_detector: Existing suggestion found to be invalid elapsedRealtimeMillis=316512269, suggestion=TelephonyTimeSuggestion{mSlotIndex='0', mUnixEpochTime=UnixEpochTime{mElapsedRealtimeMillis=39928, mUnixEpochTimeMillis=1784596221000}, mDebugInfo=[Sending new time suggestion nitzSignal=NitzSignal{mReceiptElapsedMillis=PT39.928S, mNitzData=NitzData{mOriginalString=26/07/21:01:10:21-28:1:America!Edmonton, mZoneOffset=-25200000, mDstOffset=3600000, mCurrentTimeMillis=1784596221000, mEmulatorHostTimeZone=libcore.util.ZoneInfo[mDstSavings=3600000,mUseDst=true,mDelegate=[id="America/Edmonton",mRawOffset=-25200000,mEarliestRawOffset=-27232000,transitions=274]]}, mAgeMillis=0}, reason=handleNitzReceived(NitzSignal{mReceiptElapsedMillis=PT39.928S, mNitzData=NitzData{mOriginalString=26/07/21:01:10:21-28:1:America!Edmonton, mZoneOffset=-25200000, mDstOffset=3600000, mCurrentTimeMillis=1784596221000, mEmulatorHostTimeZone=libcore.util.ZoneInfo[mDstSavings=3600000,mUseDst=true,mDelegate=[id="America/Edmonton",mRawOffset=-25200000,mEarliestRawOffset=-27232000,transitions=274]]}, mAgeMillis=0})]}
+07-24 11:05:35.336 27138 27171 D UpstreamNetworkMonitor: New default Internet network: 102
+07-24 11:05:35.357 26961 26961 I artd    : GetBestInfo: vdex next to the dex file (/data/user/0/com.google.android.gms/app_dg_cache/D8F245380855CE3A003186ACD31EB77C6E734343/oat/arm64/the.vdex) is kOatUpToDate with filter 'verify' executable 'false'
+07-24 11:05:35.366 26558 26933 W libbinder.IPCThreadState: Sending oneway calls to frozen process.
+07-24 11:05:35.366 26558 26933 W libbinder.IPCThreadState: Sending oneway calls to frozen process.
+07-24 11:05:35.372 26558 26933 W ActivityManager: pid 26558 system sent binder code 1 with flags 1 and got error -32
+07-24 11:05:35.373 26558 26933 D ActivityManager: Too many transaction errors, throttling freezer binder callback.
+07-24 11:05:35.373 26558 26933 E ConnectivityService: RemoteException caught trying to send a callback msg for NetworkRequest [ TRACK_DEFAULT id=647, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED&NOT_BANDWIDTH_CONSTRAINED Uid: 10153 RequestorUid: 10153 RequestorPkg: com.android.vending UnderlyingNetworks: Null] ]
+07-24 11:05:35.373 26558 26933 E libbinder.IPCThreadState: Binder transaction failure. id: 43453929, cmd: BR_DEAD_REPLY (29189), error: -22 (Invalid argument)
+07-24 11:05:35.373 26558 26933 W ActivityManager: pid 26558 system sent binder code 1 with flags 1 and got error -32
+07-24 11:05:35.373 26558 26933 D ActivityManager: Too many transaction errors, throttling freezer binder callback.
+07-24 11:05:35.373 26558 26933 E ConnectivityService: RemoteException caught trying to send a callback msg for NetworkRequest [ LISTEN id=649, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED&NOT_BANDWIDTH_CONSTRAINED Uid: 10153 RequestorUid: 10153 RequestorPkg: com.android.vending UnderlyingNetworks: Null] ]
+07-24 11:05:35.373 26558 26933 W libbinder.IPCThreadState: Sending oneway calls to frozen process.
+07-24 11:05:35.373 26558 26933 W libbinder.IPCThreadState: Sending oneway calls to frozen process.
+07-24 11:05:35.374 26558 26933 W libbinder.IPCThreadState: Sending oneway calls to frozen process.
+07-24 11:05:35.374 26558 26933 W libbinder.IPCThreadState: Sending oneway calls to frozen process.
+07-24 11:05:35.374 26558 26933 W libbinder.IPCThreadState: Sending oneway calls to frozen process.
+07-24 11:05:35.374 26558 26933 W ActivityManager: pid 26558 system sent binder code 1 with flags 1 and got error -32
+07-24 11:05:35.374 26558 26933 D ActivityManager: Too many transaction errors, throttling freezer binder callback.
+07-24 11:05:35.374 26558 26933 E ConnectivityService: RemoteException caught trying to send a callback msg for NetworkRequest [ TRACK_DEFAULT id=674, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED&NOT_BANDWIDTH_CONSTRAINED Uid: 10170 RequestorUid: 10170 RequestorPkg: com.google.android.apps.photos UnderlyingNetworks: Null] ]
+07-24 11:05:35.391 26961 26961 I artd    : GetBestInfo: /data/user_de/0/com.google.android.gms/app_chimera/m/0000000f/dl-VisionOcr.optional_255034100000.apk has no usable artifacts
+07-24 11:05:35.415 26961 26961 I artd    : GetBestInfo: /data/user_de/0/com.google.android.gms/app_chimera/m/00000014/dl-PlayCloudSearch.optional_255034100000.apk has no usable artifacts
+07-24 11:05:35.417 27375 27375 I HandwritingSuperpacks: HandwritingSuperpacks.register():265 register(): version '94', url 'https://dl.google.com/handwriting/models/handwriting_release.superpack_manifest.20260206.json' [ONLINE]
+07-24 11:05:35.418  3790  3886 I Finsky:background: [111] DS: Network is available [NetworkState{connected=true, wifi=false, metered=true, roaming=false}].
+07-24 11:05:35.418  3790  3886 I Finsky:background: [111] DS: Updating downloads for network change
+07-24 11:05:35.429 26961 26961 I artd    : GetBestInfo: /data/user_de/0/com.google.android.gms/app_chimera/m/0000000c/dl-VisionOcr.optional_253434100000.apk has no usable artifacts
+07-24 11:05:35.431 27375 27885 I SP      : Registering handwriting_recognition.94, url: https://dl.google.com/handwriting/models/handwriting_release.superpack_manifest.20260206.json, constraints: m:*:*:*, flags: *, requested: 94, current: 94
+07-24 11:05:35.435 27375 27375 W NotificationCenter: NotificationCenter$NotificationQueue.notifyPendingNotificationsOnExecutor():877 Heavy notify work detected on UI thread: [oao->fxv, oao->fud] takes 433ms
+07-24 11:05:35.435  3790  3857 I Finsky:background: [93] IQ: no jobs active. Skipping
+07-24 11:05:35.474 26558 26933 W libbinder.IPCThreadState: Sending oneway calls to frozen process.
+07-24 11:05:35.474 26558 26933 W libbinder.IPCThreadState: Sending oneway calls to frozen process.
+07-24 11:05:35.475 26558 26933 D ConnectivityService: Sending CONNECTED broadcast for type 0 [102 CELLULAR] isDefaultNetwork=true
+07-24 11:05:35.477 26455 26455 D NativePermissionController: checkPermission: missing 13 for 10224
+07-24 11:05:35.501 26961 26961 I artd    : GetBestInfo: /data/user_de/0/com.google.android.gms/app_chimera/m/00000009/dl-Appsearch.optional_253434100400.apk has no usable artifacts
+07-24 11:05:35.509 26455 26455 D NativePermissionController: checkPermission: missing 13 for 10224
+07-24 11:05:35.509 27210 27245 D AlphabeticIndexCompat: computeSectionName: cs: Adhan App sectionName: A
+07-24 11:05:35.511 26558 26593 W Looper  : Slow dispatch took 176ms android.fg app=system_server main=false group=FOREGROUND h=android.os.Handler c=com.android.server.timedetector.TimeDetectorInternalImpl$$ExternalSyntheticLambda0@da6d030 m=0
+07-24 11:05:35.516 27210 27210 D AllAppsStore: setApps: apps.length=22
+07-24 11:05:35.516 27210 27210 D AllAppsStore: notifyUpdate: notifying listeners
+07-24 11:05:35.516 27210 27210 D ActivityAllAppsContainerView: onAppsUpdated; number of apps: 22
+07-24 11:05:35.516 27210 27210 D ActivityAllAppsContainerView: rebindAdapters: force: false
+07-24 11:05:35.517 27210 27210 D ActivityAllAppsContainerView: rebindAdapters: Not needed.
+07-24 11:05:35.517 27210 27210 D StatsLog: LAUNCHER_ALLAPPS_COUNT
+07-24 11:05:35.517 27210 27210 D AlphabeticalAppsList: Clearing FastScrollerSections.
+07-24 11:05:35.517 27210 27210 D AlphabeticalAppsList: Adding apps with sections. HasPrivateApps: false
+07-24 11:05:35.517 27210 27210 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: A with appInfoTitle: Adhan App
+07-24 11:05:35.517 27210 27210 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: C with appInfoTitle: Calendar
+07-24 11:05:35.517 27210 27210 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: D with appInfoTitle: Drive
+07-24 11:05:35.517 27210 27210 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: E with appInfoTitle: Expo Go
+07-24 11:05:35.517 27210 27210 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: F with appInfoTitle: Files
+07-24 11:05:35.517 27210 27210 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: G with appInfoTitle: Gmail
+07-24 11:05:35.517 27210 27210 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: M with appInfoTitle: Maps
+07-24 11:05:35.517 27210 27210 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: P with appInfoTitle: Phone
+07-24 11:05:35.517 27210 27210 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: S with appInfoTitle: Safety
+07-24 11:05:35.517 27210 27210 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: T with appInfoTitle: TMoble
+07-24 11:05:35.517 27210 27210 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: V with appInfoTitle: Voice Access
+07-24 11:05:35.517 27210 27210 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: Y with appInfoTitle: YouTube
+07-24 11:05:35.517 27210 27210 D AlphabeticalAppsList: Adding FastScrollSection duplicate to scroll to the bottom.
+07-24 11:05:35.517 27210 27210 D AlphabeticalAppsList: Clearing FastScrollerSections.
+07-24 11:05:35.517 27210 27210 D AlphabeticalAppsList: Adding apps with sections. HasPrivateApps: false
+07-24 11:05:35.517 27210 27210 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: A with appInfoTitle: Adhan App
+07-24 11:05:35.517 27210 27210 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: C with appInfoTitle: Calendar
+07-24 11:05:35.517 27210 27210 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: D with appInfoTitle: Drive
+07-24 11:05:35.517 27210 27210 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: E with appInfoTitle: Expo Go
+07-24 11:05:35.517 27210 27210 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: F with appInfoTitle: Files
+07-24 11:05:35.517 27210 27210 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: G with appInfoTitle: Gmail
+07-24 11:05:35.517 27210 27210 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: M with appInfoTitle: Maps
+07-24 11:05:35.517 27210 27210 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: P with appInfoTitle: Phone
+07-24 11:05:35.517 27210 27210 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: S with appInfoTitle: Safety
+07-24 11:05:35.517 27210 27210 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: T with appInfoTitle: TMoble
+07-24 11:05:35.517 27210 27210 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: V with appInfoTitle: Voice Access
+07-24 11:05:35.517 27210 27210 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: Y with appInfoTitle: YouTube
+07-24 11:05:35.517 27210 27210 D AlphabeticalAppsList: Adding FastScrollSection duplicate to scroll to the bottom.
+07-24 11:05:35.520 26558 26861 D ActivityManager: sync unfroze 23511 com.google.android.apps.messaging for 7
+07-24 11:05:35.522 26558 26861 W ContentProviderHelper: Slow operation: 137ms so far, now at getContentProviderImpl: after updateOomAdj
+07-24 11:05:35.522 26558 26861 W ContentProviderHelper: Slow operation: 137ms so far, now at getContentProviderImpl: done!
+07-24 11:05:35.522 26558 26861 W libbinder.Binder: Binder transaction to android.app.IActivityManager code 35 took 3677ms. Data bytes: 380 Reply bytes: 4304 Flags: 18
+07-24 11:05:35.523 26558 26893 D BluetoothSystemServer: BluetoothManagerService: bluetoothStateChangeHandler(BLE_TURNING_ON, OFF): Send ServiceDown
+07-24 11:05:35.523 26558 26893 D BluetoothSystemServer: BluetoothManagerService: Broadcasting sendBluetoothServiceDownCallback() to 9 receivers.
+07-24 11:05:35.530 26961 26961 I artd    : GetBestInfo: /data/user_de/0/com.google.android.gms/app_chimera/m/0000000d/dl-MlkitOcrCommon.optional_253434100400.apk has no usable artifacts
+07-24 11:05:35.530 26558 27624 W libbinder.Binder: Binder transaction to android.app.IActivityManager code 69 took 3609ms. Data bytes: 116 Reply bytes: 0 Flags: 17
+07-24 11:05:35.532 26558 26880 D ActivityManager: freezing 3723 com.android.vending
+07-24 11:05:35.533 26558 26880 D ActivityManager: freezing 27314 com.google.android.adservices.api
+07-24 11:05:35.533 26558 26880 D ActivityManager: freezing 8764 com.android.chrome:privileged_process0
+07-24 11:05:35.533 26558 26880 D ActivityManager: freezing 3790 com.android.vending:background
+07-24 11:05:35.545 26558 26594 W Looper  : Slow dispatch took 2891ms android.ui app=system_server main=false group=TOP_APP h=com.android.server.am.ActivityManagerService$UiHandler c=null m=2
+07-24 11:05:35.549 26558 26891 I InputDispatcher: 773f08 Application Not Responding: system spent 2015ms processing MotionEvent
+07-24 11:05:35.553 26961 26961 I artd    : GetBestInfo: /data/user_de/0/com.google.android.gms/app_chimera/m/00000010/dl-Appsearch.optional_255034100400.apk has no usable artifacts
+07-24 11:05:35.563 26558 26865 I ActivityManager: Skip duplicated ANR, pid=26558 No response to onStopJob
+07-24 11:05:35.564 26558 26893 W libbinder.IPCThreadState: Sending oneway calls to frozen process.
+07-24 11:05:35.566 26558 26893 W libbinder.IPCThreadState: Sending oneway calls to frozen process.
+07-24 11:05:35.566 26558 26893 D BluetoothAdapter: onBluetoothServiceDown
+07-24 11:05:35.567 27543 25296 D BluetoothAdapter: onBluetoothServiceDown
+07-24 11:05:35.567 28920 28929 D BluetoothAdapter: onBluetoothServiceDown
+07-24 11:05:35.571 26558 26865 W JobScheduler: Job didn't exist in JobStore: ba28b68 {SyncManager} #1000/56 @SyncManager@com.android.calendar/com.google:android
+07-24 11:05:35.573 26455 26455 D NativePermissionController: checkPermission: missing 13 for 10224
+07-24 11:05:35.576 26558 26891 I InputDispatcher: PointerEventDispatcher0 spent 2042ms processing MotionEvent
+07-24 11:05:35.584 26455 26455 D NativePermissionController: checkPermission: missing 13 for 10224
+07-24 11:05:35.611 26558 27012 W libbinder.Binder: Binder transaction to android.hardware.input.IInputManager code 1598246212 took 3830ms. Data bytes: 200 Reply bytes: 4 Flags: 16
+07-24 11:05:35.632 27775 27775 I Choreographer: Skipped 4962 frames!  The application may be doing too much work on its main thread.
+07-24 11:05:35.668 26961 26961 I artd    : GetBestInfo: /data/user_de/0/com.google.android.gms/app_chimera/m/00000013/dl-MlkitOcrCommon.optional_255034100400.apk has no usable artifacts
+07-24 11:05:35.674 23575 24511 D BluetoothAdapter: onBluetoothServiceDown
+07-24 11:05:35.675 28155 28849 D BluetoothAdapter: onBluetoothServiceDown
+07-24 11:05:35.678 26961 26961 I artd    : GetBestInfo: /data/user_de/0/com.google.android.gms/app_chimera/m/0000000a/dl-TfliteDynamiteDynamite.integ_243930802100400.apk has no usable artifacts
+07-24 11:05:35.681  5663  5782 D BluetoothAdapter: onBluetoothServiceDown
+07-24 11:05:35.722 26558 28063 I ActivityManager: Skipping duplicate ANR: com.android.server.am.ProcessErrorStateRecord@3532f71 No response to onStopJob
+07-24 11:05:35.725 26558 28063 D ActivityManager: Completed ANR of system in 1962ms, latency 49ms
+07-24 11:05:35.725 26558 26933 W ContextImpl: Calling a method in the system process without a qualified user: android.app.ContextImpl.sendStickyBroadcast:1758 android.net.connectivity.com.android.server.ConnectivityService.sendStickyBroadcast:4373 android.net.connectivity.com.android.server.ConnectivityService.sendGeneralBroadcast:4343 android.net.connectivity.com.android.server.ConnectivityService.sendConnectedBroadcast:4316 android.net.connectivity.com.android.server.ConnectivityService.sendLegacyNetworkBroadcast:13209 
+07-24 11:05:35.726 26558 26893 D BluetoothSystemServer: BluetoothManagerService: unbindAndFinish(): mAdapter=null isBinding=false
+07-24 11:05:35.726 26558 26893 D BluetoothSystemServer: BluetoothManagerService: broadcastIntentStateChange: action=BLE_STATE_CHANGED prevState=BLE_TURNING_ON newState=OFF
+07-24 11:05:35.728 26961  7818 I artd    : GetBestInfo: /data/user_de/0/com.google.android.gms/app_chimera/m/00000007/MeasurementDynamite.apk has no usable artifacts
+07-24 11:05:35.735 26961  7818 I artd    : GetBestInfo: /data/user_de/0/com.google.android.gms/app_chimera/m/0000000e/dl-PlayCloudSearch.optional_253434100000.apk has no usable artifacts
+07-24 11:05:35.747 26961  7818 I artd    : GetBestInfo: /data/user_de/0/com.google.android.gms/app_chimera/m/0000000b/dl-MlkitBarcodeUi.optional_253434100400.apk has no usable artifacts
+07-24 11:05:35.752 27375 28406 W chromium: [0724/110535.681130:WARNING:net/dns/dns_config_service_android.cc:69] Failed to read DnsConfig.
+07-24 11:05:35.777 14061 14065 W .gms.persistent: Suspending all threads took: 1.525s
+07-24 11:05:35.779 14061 14070 D BluetoothAdapter: onBluetoothServiceDown
+07-24 11:05:35.785 14061 14088 W libbinder.Binder: Binder transaction to android.os.IMessenger code 1 took 1401ms. Data bytes: 1580 Reply bytes: 0 Flags: 17
+07-24 11:05:35.816 14061 14125 I NearbyMediums: WifiNetwork defaultNetworkCallback onAvailable netId:102
+07-24 11:05:35.843 23511 23511 D WM-DelayedWorkTracker: Scheduling work 37c99c51-f13a-4598-a020-43b1de4e0aeb
+07-24 11:05:35.851 26558 26893 D BluetoothSystemServer: BluetoothManagerService: Recovery 4 scheduled in 16000ms
+07-24 11:05:35.854 27375 28070 I HandwritingOnlineSuperpacks: HandwritingOnlineSuperpacks.syncInternal():168 syncPackMapping()
+07-24 11:05:35.885 23575 23579 W gle.android.gms: Suspending all threads took: 52.418ms
+07-24 11:05:35.890 26558 27109 W libbinder.Binder: Binder transaction to android.net.wifi.IWifiManager code 35 took 4002ms. Data bytes: 128 Reply bytes: 12 Flags: 16
+07-24 11:05:35.907 14061 27971 I SQLiteConnection: Long db operation: /data/user/0/com.google.android.gms/databases/phenotype.db
+07-24 11:05:35.934 23511 23511 D WM-GreedyScheduler: Starting tracking for 37c99c51-f13a-4598-a020-43b1de4e0aeb
+07-24 11:05:36.001 26558 26933 D ConnectivityService: NetReassign [238 : null → 102, 568 : null → 102, 79 : null → 102, 671 : null → 102, 467 : null → 102, 76 : null → 102, 281 : null → 102, 25 : null → 102, 648 : null → 102, 23 : null → 102, 78 : null → 102, 562 : null → 102, 21 : null → 102, 538 : null → 102, 10 : null → 102, 668 : null → 102, 34 : null → 102, 457 : null → 102, 190 : null → 102, 550 : null → 102, 540 : null → 102, 96 : null → 102, 395 : null → 102, 473 : null → 102, 248 : null → 102, 171 : null → 102, 94 : null → 102, 152 : null → 102, 113 : null → 102, 314 : null → 102, 91 : null → 102, 558 : null → 102, 621 : null → 102, 576 : null → 102, 128 : null → 102, 38 : null → 102, 240 : null → 102, 273 : null → 102, 12 : null → 102, 65 : null → 102, 535 : null → 102, 651 : null → 102, 246 : null → 102, 27 : null → 102, 105 : null → 102, 81 : null → 102, 393 : null → 102, 303 : null → 102, 32 : null → 102, 565 : null → 102, 117 : null → 102, 533 : null → 102, 666 : null → 102, 459 : null → 102, 389 : null → 102, 675 : null → 102, 1 : null → 102, 542 : null → 102, 234 : null → 102, 71 : null → 102, 42 : null → 102, 30 : null → 102, 163 : null → 102, 6 : null → 102, 252 : null → 102, 572 : null → 102, 298 : null → 102, 36 : null → 102, 470 : null → 102, 508 : null → 102, 165 : null → 102, 454 : null → 102, 502 : null → 102, 139 : null → 102, 462 : null → 102, 342 : null → 102, 512 : null → 102, 231 : null → 102] [c 458] [a 3456] [i 199]
+07-24 11:05:36.049 26558 26558 W Looper  : Slow dispatch took 7913ms main app=system_server main=true group=FOREGROUND h=android.app.job.JobServiceEngine$JobHandler c=null m=2
+07-24 11:05:36.071 23511 23559 D WM-WorkConstraintsTrack: NetworkRequestConstraintController onLost callback
+07-24 11:05:36.193 27775 27775 W com.adhan.app: Verification of androidx.compose.ui.layout.LayoutNodeSubcompositionsState androidx.compose.ui.node.LayoutNode.getSubcompositionsState$ui_release() took 136.032ms (22.05 bytecodes/s) (0B arena alloc)
+07-24 11:05:36.353 26558 27800 W libbinder.Binder: Binder transaction to android.net.wifi.IWifiManager code 35 took 4035ms. Data bytes: 128 Reply bytes: 12 Flags: 16
+07-24 11:05:36.847 26558 26933 D InetDiagMessage: Destroyed 1 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14
+07-24 11:05:36.848 26558 26933 D InetDiagMessage: Destroyed 1 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
+07-24 11:05:36.848 26558 26933 D InetDiagMessage: Destroyed live tcp sockets for local address /10.0.2.16, netIdRanges[[100, 64511]], uidRanges:null in 1ms
+07-24 11:05:36.848 26558 26933 D InetDiagMessage: Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14
+07-24 11:05:36.848 26558 26933 D InetDiagMessage: Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
+07-24 11:05:36.848 26558 26933 D InetDiagMessage: Destroyed live tcp sockets for local address /fec0::f95d:c2ab:def8:52b6, netIdRanges[[100, 64511]], uidRanges:null in 0ms
+07-24 11:05:36.848 26558 26933 D InetDiagMessage: Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14
+07-24 11:05:36.849 26558 26933 D InetDiagMessage: Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
+07-24 11:05:36.849 26558 26933 D InetDiagMessage: Destroyed live tcp sockets for local address /fec0::c423:85f9:78c8:7eea, netIdRanges[[100, 64511]], uidRanges:null in 1ms
+07-24 11:05:36.851 26558 26989 D BackgroundInstallControlService: Package event received: 0
+07-24 11:05:36.857 27598 28086 I BugleRcsEngine: Connected state: [1], networkType: [MOBILE] [CONTEXT thread_id=59 ]
+07-24 11:05:36.858 27775 27775 W com.adhan.app: Verification of void androidx.compose.ui.semantics.SemanticsModifierKt.addSemanticsPropertiesFrom(androidx.compose.ui.platform.InspectorInfo, androidx.compose.ui.semantics.SemanticsConfiguration) took 503.433ms (178.77 bytecodes/s) (0B arena alloc)
+07-24 11:05:36.860 26558 27312 W libbinder.Binder: Binder transaction to android.app.job.IJobScheduler code 8 took 7709ms. Data bytes: 148 Reply bytes: 3772 Flags: 18
+07-24 11:05:36.865 26558 26558 W Looper  : Slow dispatch took 799ms main app=system_server main=true group=FOREGROUND h=android.app.job.JobServiceEngine$JobHandler c=null m=1
+07-24 11:05:36.866 23575 23601 D nativeloader: Load /data/app/~~79-A0wXBXKIAeH7ndUMghg==/com.google.android.gms-clzOdVZ9p_ZAmiNXja63pg==/base.apk!/lib/arm64-v8a/libAppDataSearch.so using class loader ns clns-9 (caller=/data/app/~~79-A0wXBXKIAeH7ndUMghg==/com.google.android.gms-clzOdVZ9p_ZAmiNXja63pg==/base.apk): ok
+07-24 11:05:36.887 26558 26593 W Looper  : Slow delivery took 940ms android.fg app=system_server main=false group=FOREGROUND h=android.os.Handler c=com.android.server.am.SameProcessApplicationThread$$ExternalSyntheticLambda1@f94d3cb m=0
+07-24 11:05:36.903 23575 27853 I SQLiteConnection: Long db operation: /data/user/0/com.google.android.gms/databases/google_app_measurement.db
+07-24 11:05:36.910 23575 23601 W native  : W0000 00:00:1784912736.905430   23601 model-utils.cc:17] No CRC32, most likely an old model; skip CRC32 check
+07-24 11:05:36.962 23575 23601 I native  : I0000 00:00:1784912736.943664   23601 permission-checker.cc:82] Creating PermissionChecker based on ACL with config_version 1 having 9 permissions defined.
+07-24 11:05:36.999 27375 28068 I DeviceStatusMonitor: DeviceStatusMonitor.handleBroadcast():138 onReceive() : Action = android.net.conn.CONNECTIVITY_CHANGE
+07-24 11:05:37.072 26558 26558 W Looper  : Slow dispatch took 205ms main app=system_server main=true group=FOREGROUND h=com.android.server.notification.NotificationManagerService$WorkerHandler c=com.android.server.notification.NotificationManagerService$CancelNotificationRunnable@f09f143 m=0
+07-24 11:05:37.079 28019 28019 D nativeloader: Configuring clns-shared-9 for other apk /apex/com.android.bt/app/BluetoothGoogle@361153600/BluetoothGoogle.apk. target_sdk_version=36, uses_libraries=, library_path=/apex/com.android.bt/app/BluetoothGoogle@361153600/lib/arm64:/system/lib64:/system_ext/lib64, permitted_path=/data:/mnt/expand:/data/user_de/0/com.google.android.bluetooth:/apex/com.android.bt/app/BluetoothGoogle@361153600:/system/lib64:/system_ext/lib64
+07-24 11:05:37.090  5663  5714 W Looper  : Slow dispatch took 4780ms SysUiBg app=com.android.systemui main=false group=TOP_APP h=android.os.Handler c=android.net.wifi.WifiManager$ScanResultsCallback$ScanResultsCallbackProxy$$ExternalSyntheticLambda0@113572b m=0
+07-24 11:05:37.091 27375 28068 I DeviceStatusMonitor: DeviceStatusMonitor.notifyIfNetworkChanged():196 notifyIfNetworkChanged: newState = METERED, airplaneModeOn = false, notifyAnyway = false
+07-24 11:05:37.094 23575 23601 W native  : W0000 00:00:1784912737.092549   23601 words-map.cc:34] INVALID_ARGUMENT: Empty URI
+07-24 11:05:37.094 23575 23601 W native  : W0000 00:00:1784912737.094756   23601 words-map.cc:38] WordsMap was not properly initialized
+07-24 11:05:37.137 27775 27775 W com.adhan.app: Verification of void androidx.compose.ui.platform.AndroidComposeViewAccessibilityDelegateCompat.bufferContentCaptureViewAppeared(int, androidx.compose.ui.platform.coreshims.ViewStructureCompat) took 111.592ms (331.56 bytecodes/s) (0B arena alloc)
+07-24 11:05:37.266 26558 26558 W Looper  : Slow dispatch took 193ms main app=system_server main=true group=FOREGROUND h=android.app.job.JobServiceEngine$JobHandler c=null m=1
+07-24 11:05:37.267 28019 28019 D nativeloader: InitApexLibraries:
+07-24 11:05:37.267 28019 28019 D nativeloader:   com_android_adservices: libhpke_jni.so:libtflite_support_classifiers_native.so
+07-24 11:05:37.267 28019 28019 D nativeloader:   com_android_appsearch: libappsearchservice.so:libicing_anywhere.so
+07-24 11:05:37.267 28019 28019 D nativeloader:   com_android_art: libartservice.so
+07-24 11:05:37.267 28019 28019 D nativeloader:   com_android_bt: libbluetooth_jni.so
+07-24 11:05:37.267 28019 28019 D nativeloader:   com_android_conscrypt: libjavacrypto.so
+07-24 11:05:37.267 28019 28019 D nativeloader:   com_android_mediaprovider: libpdfclient.so
+07-24 11:05:37.267 28019 28019 D nativeloader:   com_android_nfcservices: libnfc_nci_jni.so
+07-24 11:05:37.267 28019 28019 D nativeloader:   com_android_ondevicepersonalization: libfcp_cpp_dep_jni.so:libfcp_hpke_jni.so
+07-24 11:05:37.267 28019 28019 D nativeloader:   com_android_os_statsd: libstats_jni.so
+07-24 11:05:37.267 28019 28019 D nativeloader:   com_android_tethering: libandroid_net_connectivity_com_android_net_module_util_jni.so:libandroid_net_connectivity_com_android_net_module_util_jni_CommonConnectivityJni.so:libframework-connectivity-jni.so:libframework-connectivity-tiramisu-jni.so:libmainlinecronet.141.0.7340.3.so:libservice-connectivity.so:libservice-thread-jni.so:stable_cronet_libcrypto.so:stable_cronet_libssl.so
+07-24 11:05:37.267 28019 28019 D nativeloader:   com_android_uwb: libuwb_uci_jni_rust.so
+07-24 11:05:37.267 28019 28019 D nativeloader:   com_android_virt: libvirtualizationservice_jni.so:libvirtualmachine_jni.so
+07-24 11:05:37.267 28019 28019 D nativeloader:   com_android_wifi: lib
+07-24 11:05:37.267 30139 30139 I Choreographer: Skipped 93 frames!  The application may be doing too much work on its main thread.
+07-24 11:05:37.283 27375 27885 I HandwritingSlicingStrategy: HandwritingSlicingStrategy.getSlices():44 getSlices(): handwriting_recognition.94 useForeground=true
+07-24 11:05:37.309 26458 27984 W resolv  : SSL_connect ssl error =5, mark 0xf006e: Software caused connection abort
+07-24 11:05:37.350 23511 23511 D WM-DelayedWorkTracker: Scheduling work d5992b68-444c-4180-9b1b-bafbd3cd5d4a
+07-24 11:05:37.357 26458 14094 W resolv  : resolv_stats_set_addrs: Network 110 not found for PROTO_DOT
+07-24 11:05:37.362 26458 27984 W resolv  : TLS Handshake failed
+07-24 11:05:37.364 23511 23511 D WM-GreedyScheduler: Starting work for d5992b68-444c-4180-9b1b-bafbd3cd5d4a
+07-24 11:05:37.368 26558 28052 I system_server: libdebuggerd_client: started dumping process 26558
+07-24 11:05:37.369 26458 27984 W resolv  : resolv_cache_get_resolver_stats: NetConfig for netid 110 not found
+07-24 11:05:37.369 26458 27984 E resolv  : res_nsend: revision_id < 0
+07-24 11:05:37.370 26458 27991 W resolv  : Socket failed to connect, errno=101: Network is unreachable
+07-24 11:05:37.370 26458 27991 W resolv  : TCP Handshake failed: 101
+07-24 11:05:37.370 26458 27991 W resolv  : resolv_cache_get_resolver_stats: NetConfig for netid 110 not found
+07-24 11:05:37.370 26458 27991 E resolv  : res_nsend: revision_id < 0
+07-24 11:05:37.370 26458 27992 W resolv  : Socket failed to connect, errno=101: Network is unreachable
+07-24 11:05:37.370 26458 27992 W resolv  : TCP Handshake failed: 101
+07-24 11:05:37.403 26458 27992 W resolv  : resolv_cache_get_resolver_stats: NetConfig for netid 110 not found
+07-24 11:05:37.403 26458 27992 E resolv  : res_nsend: revision_id < 0
+07-24 11:05:37.453 26458 14094 W resolv  : resolv_stats_set_addrs: Network 110 not found for PROTO_DOH
+07-24 11:05:37.507 26558 26989 D BackgroundInstallControlService: Package event received: 0
+07-24 11:05:37.507 26558 26989 D BackgroundInstallControlService: Package event received: 0
+07-24 11:05:37.511   247   247 I tombstoned: registered intercept for pid 26558 and type kDebuggerdNativeBacktrace
+07-24 11:05:37.550 26558 26558 I libc    : Requested dump for pid 26558 (system_server)
+07-24 11:05:37.633 28155 28160 W m.android.phone: Suspending all threads took: 48.181ms
+07-24 11:05:37.665 27775 27796 I com.adhan.app: Background concurrent mark compact GC freed 524KB AllocSpace bytes, 2(40KB) LOS objects, 49% free, 3096KB/6192KB, paused 382us,1.612ms total 485.455ms
+07-24 11:05:37.893 27375 27885 I HandwritingSlicingStrategy: HandwritingSlicingStrategy.getSlices():103 getSlices(): result {slices=[{handwriting_recognition:pack_mapping_v1_lstm_20260206, m:*:*:*}, {handwriting_recognition:en_us_20251103_compact_fst_zip, m:*:*:*}, {handwriting_recognition:transformer_latin_seg_tflite_20251103_zip, m:*:*:*}, {handwriting_recognition:qrnn_en-US_reco_20251103_fst_20251103_recospec_zip, m:*:*:*}, {handwriting_recognition:transformer_latin_tflite_20251103_zip, m:*:*:*}, {handwriting_recognition:transformer_latin_conf_tflite_20251103_zip, m:*:*:*}, {handwriting_recognition:scribe_latin_20250829tfreco_tflite_zip, m:*:*:*}, {handwriting_recognition:scribe_latin_20250829tfreco_recospec_zip, m:*:*:*}], last batch=true, sync metadata=false}
+07-24 11:05:37.893 27375 27885 I SP      : Syncing handwriting_recognition (94) with slices: [{pack_mapping_v1_lstm_20260206, m:*:*:*}, {en_us_20251103_compact_fst_zip, m:*:*:*}, {transformer_latin_seg_tflite_20251103_zip, m:*:*:*}, {qrnn_en-US_reco_20251103_fst_20251103_recospec_zip, m:*:*:*}, {transformer_latin_tflite_20251103_zip, m:*:*:*}, {transformer_latin_conf_tflite_20251103_zip, m:*:*:*}, {scribe_latin_20250829tfreco_tflite_zip, m:*:*:*}, {scribe_latin_20250829tfreco_recospec_zip, m:*:*:*}], metadata: false
